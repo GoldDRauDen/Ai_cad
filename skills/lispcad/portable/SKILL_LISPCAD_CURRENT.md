@@ -1,5 +1,5 @@
 
-# SKILL_LISPCAD V4.11 PORTABLE: Drawing-First Sheet Metal Flat Pattern Extractor, Provisional-First FLAG Workflow & Verified Source-Origin Mapping
+# SKILL_LISPCAD V4.12 PORTABLE: Drawing-First Sheet Metal Flat Pattern Extractor, Material-Prefix and Local-FLAG Refinements
 
 
 ## 0. Portable Skill Contract — Mandatory for Every AI / Every Chat
@@ -36,6 +36,9 @@ When the user supplies a reference DXF or corrected CAD for comparison:
 - Never write rules such as "as discussed earlier", "as the user said before", or "use the previous chat". Replace them with explicit, self-contained instructions.
 
 ### 0.5 Versioning and Update Discipline
+
+**V4.12 direct user approval (2026-09-27):** Retain existing V4.11 preview-first and source-view fallback, adding only approved nonduplicate material-prefix classification, explicit unknown-Ø CIRCLE preview priority, unique slot-radius derivation from width/count, isolation of local feature uncertainty from an otherwise proved flat, avoidance of redundant questions, and suppression of routine shop-spacing acceptance questions. See Sections 2.1.1, 3.1, 3.3, 4.4.2, 5.2 and Appendix J. V4.11 is preserved unchanged.
+
 
 **V4.11 direct user approval (2026-09-26):** For any drawing with a plausible but not fully proved shape, construct a clearly identified REVIEW-ONLY approximation and FLAG uncertain geometry after drawing; where a reliable flat cannot be proposed, draw separately identifiable source/orthographic views and FLAG. Ask for confirmation of every unresolved issue. This permission is for a visible, auditable preview, **not** permission to assert production accuracy, to quietly invent dimensions, or to bypass the production-PASS gates. Section 4.4.1 defines the mandatory workflow and supersedes earlier STOP-before-any-drawing wording only for review-only previews. The user also confirmed the specific 036575 pattern and QA-passed job 520625-15 (Appendix I). Preserve V4.10 as an immutable historical copy.
 - Major behavior changes create a new portable version (`V4.x` or later); do not overwrite the only known-good copy without preserving the previous version.
@@ -107,6 +110,12 @@ This is the default operating mode for production DXF generation. The AI MUST sp
    - For top-to-bottom mapping, order by descending global Y position of each part cluster. If two clusters occupy the same row or overlap enough to make the order ambiguous, STOP and ask the user; do not invent a left-to-right tiebreaker unless the user has defined one.
    - Absence of TEXT/MTEXT part codes inside the DXF is acceptable only when the user has supplied an unambiguous external mapping rule.
 
+### 2.1.1 V4.12 Approved material-family prefix recognition (2026-09-27)
+
+For **sheet-metal material designations**, trim whitespace and match the full printed designation case-insensitively using: `SUS… → SUS`; `SP…` or `SS… → SS`; `A… → AL (aluminum)`. Retain the original complete grade, explicitly stated thickness and applicable corrections as provenance. Prefix classification selects the **material family for process-table lookup**; it does NOT prove that two different grades are identical. **SUS430 retains its previously approved process-specific routing:** SS/SUS430/BRASS Nobi and SUS/他 Laser R, hole limits and White Piercing. Do not silently map SUS430 to ordinary SUS Nobi. A truly unknown/non-sheet-metal designation or a material-grade conflict affecting manufacture remains separately FLAGGED.
+
+User-confirmed 520217-27 example: both `009252` and `009253` are **SS family**; their SP/SS source wording is not itself a family conflict. Exact SPHC-versus-SS400 grade equivalence is NOT asserted.
+
 ### 2.2 View Classification & Coordinate System Mapping
 - **Classification Types**: Prior to geometry extraction, classify drawing views into: `Front`, `Top`, `Side`, `Auxiliary`, `Section`, `Detail`, `Development/Flat Pattern`, `Assembly`, or `Mirror`.
 - **Primary Manufacturing View Selection**: Identify the primary 2D orthographic view containing the main bounding dimensions.
@@ -176,6 +185,7 @@ The V4.3 unconditional rule to omit uncalled-out DXF-only R0.5 is superseded. Re
 - **Slot Dimension Semantics — mandatory**: Before creating a slot, classify every length value as `OVERALL_LENGTH` (extreme end to extreme end) or `CENTER_DISTANCE / STRAIGHT_TANGENT_LENGTH` (center-to-center distance between the two semicircular ends; numerically equal to the straight tangent segment length for a stadium slot). Do not pass an unclassified value into a slot helper.
 - The canonical DXF slot spec uses OVERALL `L_TOTAL` and `W` in ONE closed LWPOLYLINE; optional AutoLISP retains `(SLOTX L_TOTAL W)` or `(SLOTY L_TOTAL W)`, where `W` is slot width / end-circle diameter and `L_TOTAL >= W`. If the drawing gives center distance `C`, convert explicitly as `L_TOTAL = C + W` before storing or drawing the slot.
 - If witness lines do not prove whether the printed slot length is overall or center-distance/tangent length, apply Section 4.4; do not guess from appearance or from a reference DXF.
+- **V4.12 quantity-only `n-R` on proven stadium slots:** If the source clearly shows stadium/oblong slots with semicircular ends and a dimensioned width `W`, each end is `R=W/2`. A `4-R` count targeting the FOUR rounded ends of TWO width-12 stadium slots resolves uniquely to FOUR `R6` ends. Trace the leader/count and confirm the two slot identities; do not mistake a `4-R` on unrelated corners or an unproved nonsemicircular end for this rule. Do not ask for a radius directly derivable from the proved width.
 - **Polygonal Cutouts**: Extracted as closed `LWPOLYLINE`s using explicit vertex arrays.
 - **Countersinks & Counterbores**: Extracted using the smallest pilot/through-hole diameter for laser cutting.
 
@@ -188,6 +198,8 @@ For 3D forming operations (which cannot be cut directly as flat outlines), map g
 2. **Piercing and ordinary manufacturing POINTs**: ByLayer on Layer 0 by default; Green (Color 3) ONLY for PDF-scoped `PIERCING + THROUGH HOLE`. A temporary unproved center/type is Magenta + FLAG. Relief slits use their own LINE-color rules.
 
 ## 3.3 Approved POINT / CIRCLE decision (first matching rule)
+
+**V4.12 unresolved circular-hole Ø gate — BEFORE numeric capacity tests:** If the PDF proves a feature is a ROUND HOLE but its diameter is awaiting customer confirmation, show a plausible integer-rounded estimated **CIRCLE** on Layer `0`, Color `6` (Magenta), with adjacent `Ø? / CONFIRM DIAMETER` and a per-code FLAG; keep every independently proved hole center, count, contour and flat exact. Mark the code PREVIEW / NO CUT. **Never convert this still-unknown Ø to POINT based on a guessed diameter or assumed minimum-hole capacity.** The ordinary `d<t/2` and workbook-threshold rules require a known effective diameter. Explicit PDF-scoped PIERCING instructions retain their independent higher priority. An independently uncertain center gets its own Magenta coordinate FLAG. If round-hole identity itself is not supported, use the existing V4.11 source-supported provisional depiction or separate proved views, not an invented verified hole.
 
 1. If the PDF explicitly applies `PIERCING + THROUGH HOLE` to a feature family: `POINT` on Layer 0, DXF color 3 (Green); Ø/M only in Stage 1 report, not CAD.
 2. Else if the PDF applies `PIERCING`: `POINT` on Layer 0, ByLayer (no explicit color 3/6), regardless of the worksheet's `白ピアス 〇/×` or nominal diameter. That worksheet column is machine **capability**, NOT drawing intent; a `×` does not suppress the explicit PIERCING POINT or create a capacity-only FLAG.
@@ -341,6 +353,12 @@ The user directly approved this universal operating change while QA reviewing `5
 
 **Precedence:** This approved V4.11 workflow supersedes V4.10's blanket `STOP before drawing` and `numeric-only Magenta` restriction **for flagged, clearly non-production previews only**. All Sections 4.1–4.3, Section 5 production validations, source-origin proof, actual PDF evidence and customer confirmation continue to govern production output.
 
+### 4.4.2 V4.12 Local FLAG isolation and necessity of questions (2026-09-27)
+
+If the actual contour, ordered faces, Nobi and face-to-flat transforms are proved, **DRAW THE PROVED FLAT** even when an unrelated round-hole diameter or coordinate remains unconfirmed. Isolate only that feature as a Magenta integer-rounded CIRCLE/coordinate preview and per-code FLAG. Do NOT downgrade the independently proven flat to VIEWS_ONLY. Where a reliable single flat genuinely cannot be inferred from formed-view topology, bend order or missing transforms, retain separate proved source views exactly as V4.11 already specifies, rather than inventing a flat.
+
+Before asking for confirmation, exhaust the PDF's explicit dimension strings, handwritten Nobi, slot end-width relation and view/face coordinate transforms. **Do not ask again about a value uniquely derivable from those proven inputs**; calculate it and close only that already-proved item. Ask targeted questions about actual still-open customer inputs, such as a genuinely unprinted Ø or datum. A reference DXF is not necessary for a transparently FLAGGED PDF-based preview. A new DXF cannot be declared production PASS without full validation and read-back.
+
 ### 4.5 Corner Filleting & Chamfer Baking
 
 **Approved V4.5 L09/L10:** SUS430 Laser R and holes use SUS/他 (Nobi remains SS), so SUS430 t6 Laser R0.5, not SS R2. Cu/Brass t6 auto Laser R0.5, at 5<t<6 upward-select t6/R0.5, and at t>6 no auto Laser R. Preserve PDF-specific R/C priority and original blank Excel cell; these are separate user-approved overrides.
@@ -453,7 +471,7 @@ Before exporting production DXF or optional AutoLISP, run the following automate
 - Every check in Section 5.1 remains mandatory even when the user asks for a short report.
 - Do not print a long PASS checklist by default. Internally execute the checks, then expose only:
   - one compact overall validation line when all required checks pass; and
-  - every `FAIL`, `FLAGGED`, `WARN`, ambiguity, or user-confirmation item.
+  - every `FAIL`, `FLAGGED`, actionable `WARN`, unresolved ambiguity or needed user confirmation; exclude nonblocking shop-distance-only advisories under §5.2.
 - A concise report MUST NOT hide an unresolved production risk. Brevity controls presentation, not engineering rigor.
 - Do not narrate exploratory reasoning, discarded hypotheses, or general sheet-metal theory unless the user asks for an audit/explanation.
 
@@ -465,6 +483,7 @@ Before exporting production DXF or optional AutoLISP, run the following automate
 | **Minimum Bridge / Web Width** | Distance between hole edge & part boundary $\ge t$ | Flag low confidence warning |
 | **Laser Piercing Accessibility** | Distance between adjacent piercings $\ge 10\text{ mm}$ | Group piercing locations |
 | **Bend Line Collision** | Distance between hole edge & bend line $\ge 2 \times t + R_{\text{bend}}$ | Flag potential hole deformation |
+**V4.12 shop-distance question policy (direct user approval):** Minimum bridge/web width, recommended inter-piercing spacing and hole-to-bend proximity are *shop advisories*, not routine questions to the user when geometry follows the PDF. Preserve PDF positions; do not delete or relocate real geometry, or block a PDF-faithful preview, merely to satisfy these heuristic distances. Keep any useful advisory checks internal/nonblocking and suppress repetitive acceptance questions in Stage 1. This does NOT waive mandatory material/hole-capacity rules, PDF-explicit clearances, actual containment, self-intersection, datum, topology, unknown dimensions or a demonstrated manufacturing impossibility. Escalate actual drawing conflicts independently.
 
 ---
 
@@ -539,6 +558,8 @@ For laser cutting, threaded holes (marked `M*`) MUST be output as pilot holes us
 | **M48** | 5.00 | 43.00 | 21.500 |
 
 ### 7.2 Approved workbook: material laser R, hole capacity, White Piercing
+
+**V4.12 family recognition prerequisite:** Apply the case-insensitive sheet-metal designation rule in §2.1.1: `SUS…→SUS`, `SP…/SS…→SS`, `A…→AL`; retain exact grade and thickness. SUS430's already-approved Nobi-versus-laser/hole split has priority over a generic SUS-family interpretation. Prefix grouping never overwrites the source material string.
 
 
 **Approved from user-supplied** `Rule_Bo_R&Hole.xlsx`, worksheet `Bo_R_Hole`, dated `2026.07.30`; calibration `520924-19`, approved 2026-09-25. This complete transcription is portable: do not require the original spreadsheet or past chat.
@@ -765,7 +786,7 @@ Do NOT reintroduce superseded V4.3 blanket DXF-only R0.5 omission, green-by-defa
 
 ## 8.3 Mandatory ONE labeled, top-to-bottom composite DXF (V4.9 approved 2026-09-26)
 
-**Default output: exactly ONE DXF.** Export `<JOB_ID>_ALL.dxf` only if every included code is independently production-PASS. If any code has a source/dimension/feature/unfold FLAG, V4.11 Magenta approximate geometry, or only separate orthographic views, deliver ONE `<JOB_ID>_ALL_REVIEW_ONLY.dxf` instead: include all codes but mark the ENTIRE file **REVIEW ONLY — NO CUT**. Never name a mixed-confidence file as production-ready. Individual per-code DXFs, JSON manifest, or ZIP are optional by *explicit current user request*, not defaults. Stage 1 per-code PASS/FLAG explanations and targeted questions remain mandatory in the response.
+**Default output: exactly ONE DXF.** Export `<JOB_ID>_ALL.dxf` only if every included code is independently production-PASS. If any code has a source/dimension/feature/unfold FLAG, V4.11 Magenta approximate geometry, or only separate orthographic views, deliver ONE `<JOB_ID>_ALL_REVIEW_ONLY.dxf` instead: include all codes but mark the ENTIRE file **REVIEW ONLY — NO CUT**. Never name a mixed-confidence file as production-ready. Individual per-code DXFs, JSON manifest, or ZIP are optional by *explicit current user request*, not defaults. Stage 1 per-code PASS/FLAG explanations and questions about **genuinely unresolved source decisions** remain mandatory in the response.
 
 Place EVERY declared part code exactly once in the job-list order **top to bottom, descending global Y**. Keep each code's actual part geometry or proved source-view group as its own nonoverlapping cluster; >=10 mm **layout-only** clearance between geometric cluster bounding boxes. Do not nest, rotate source shapes arbitrarily, alter source dimensions, re-solve geometry, or allow ambiguous cluster-to-code mapping. Use one canonical part-local mm model, apply only the manifest-recorded/verified XY translation for layout. Keep ordered code/status/translation/bbox/entity-count records internally even if no JSON is delivered; verify inverse translation against source canonical entities.
 
@@ -793,7 +814,7 @@ Only if explicitly requested, generate existing approved `c:DRAW` AutoLISP and d
 
 ## 9. DXF-first compact two-stage response
 
-**Stage 1:** concise per-code barcode/material/thickness/proved flat extent table, real geometry-affecting corrections (handwritten Nobi, mid-tolerance, rounded ID→OD, table selection/material R, proven canceled features), one aggregate PASS only for actually executed checks, and EVERY FAIL/FLAG/WARN/outstanding customer confirmation. For any V4.11 approximation, state the exact assumed shape/coordinate/type and ask a targeted question. Do not bury unproven dimensions or claim that bounding extents prove topology.
+**Stage 1:** concise per-code barcode/material/thickness/proved flat extent table, real geometry-affecting corrections (handwritten Nobi, mid-tolerance, rounded ID→OD, table selection/material R, proven canceled features), one aggregate PASS only for actually executed checks, and every actionable FAIL/FLAG/outstanding customer confirmation; routine shop-distance advisories are not customer questions (§5.2). For any V4.11 approximation, state the exact assumed shape/coordinate/type and ask a targeted question. Do not bury unproven dimensions or claim that bounding extents prove topology.
 
 **Stage 2 (default):** link exactly ONE verified code-labeled top-to-bottom composite: `<JOB>_ALL.dxf` if all codes production PASS, otherwise `<JOB>_ALL_REVIEW_ONLY.dxf` with source views/FLAGs separated under each correct code and the whole file NO CUT. Deliver optional individual DXFs/manifest only when expressly asked; Stage 1 still reports per-code statuses and customer questions. Generate Lisp only on explicit request. Unknown source-view identity or ambiguous code mapping blocks speculative export; the inability to create/verify a DXF must be reported, not replaced with invented attachments.
 
@@ -1119,3 +1140,18 @@ All THREE `Ø7` row centers MUST have `Y_cad=108 mm` in the local DXF frame. The
 **Directly approved portable lesson — DRAW → FLAG → CONFIRM:** On future drawings, when the PDF supports a reasonable but not definitive depiction, draw the provisional shape rather than omitting it; explicitly FLAG every unproved assumption after drawing. Where the views cannot be reliably joined into a flat, draw them separately, clearly labeled, and FLAG the missing information. Ask whenever the available drawing and the provisional depiction leave an actual decision unresolved. Approximate or separately projected geometry always remains REVIEW ONLY / NO CUT until the user confirms and all production checks pass. This extends preview permission beyond V4.10's numeric-only Magenta condition but **does not weaken production safety or allow fabricated silent production geometry**.
 
 **Regression checks:** (1) 036575 must no longer be flagged merely because the three-hole relationship is unconfirmed; the user has answered that question. (2) Any remaining genuinely unproved datum/orientation/geometry must retain its own independent FLAG. (3) Other uncertain sheets should contain a visible approximate Magenta preview or separately labeled source views, rather than an empty/omitted code, whenever identifiable source evidence exists. (4) A mixed-confidence composite remains REVIEW ONLY; the user QA of a prior file never substitutes for read-back and validation of a modified file.
+
+---
+
+## Appendix J — V4.12 approved Q1–Q10 calibration 520217-27 (2026-09-27; no reference DXF)
+
+The user directly answered the questions about original PDF `520217-27` and explicitly approved **deduplicating against V4.11 and updating production skills on GitHub**. This is PDF/question-answer calibration, NOT reference-DXF comparison, independent new-DXF inspection or certification of a revised export. V4.11 already established DRAW → FLAG → CONFIRM and independent VIEWS_ONLY source-view fallback; do not falsely claim these generic behaviors originated in V4.12.
+
+1. **009252 / 009253 (PDF page 2):** The user confirms SS manufacturing family for both symmetric codes. Prefixes `SP`/`SS` select SS; exact SPHC-versus-SS400 grade equivalence remains outside this family confirmation. The user confirms `160+25.5+60.5+9-2×7.76 = 239.48 mm` for their applicable flat development. Do not withhold that proved flat because the separate lower round-hole diameter is still awaiting confirmation: draw a Magenta estimated `CIRCLE` with `Ø?` and FLAG, NOT an invented `POINT`. Both codes remain PREVIEW / NO CUT until the pending diameter and other independent flags are resolved.
+2. **009254 (PDF page 3):** Two stadium slots, width `12`, four semicircular ends indicated by quantity-only `4-R` → four `R6` ends, not four independent slots or an unspecified R requiring another question. The user confirms `141+61+18−14.62 = 205.38 mm` and the Ø14 hole's shown formed-face location. These answered questions should not be repeated; remaining Section 5 checks must still be executed before production PASS.
+3. **008403 (PDF page 8):** Four Ø4 hole centers remain under customer confirmation. Preserve known geometry and keep their separately unconfirmed coordinates Magenta/FLAG; lack of a reference DXF is NOT a reason to omit a REVIEW-ONLY depiction.
+4. **010851 (PDF page 10):** The drawing does not yet prove a reliable one-piece flat. Keep correctly read orthographic/source views **separated and labeled** as existing V4.11 VIEWS_ONLY; Q8/Q9 can remain deferred instead of guessing a joined flat. This is not a new universal unfold formula.
+5. **Q10:** For PDF-defined hole/edge/bend spacing, do not repeatedly request shop-clearance acceptance, alter geometry or classify advisory spacing as a missing customer drawing dimension. Actual self-intersection, containment, material capability and independently unresolved sizes remain mandatory engineering checks.
+6. **Question-necessity regression:** Q3/Q4/Q5 (two proved flat calculations, the uniquely width-derived radius and confirmed Ø14 location) should have been solved from drawing evidence instead of treated as ambiguous. Ask only when source data still do not yield a unique answer.
+
+**Scope:** NO sample/reference DXF was supplied for this calibration. No modified 520217-27 DXF has been independently verified or user QA-PASSed by this approval. Pending Ø and Ø4 hole-center coordinates remain FLAGGED; any mixed composite remains REVIEW ONLY — NO CUT until actually revalidated.

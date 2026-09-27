@@ -7,6 +7,10 @@ Approved calibration 520924-19, 2026-09-25. Uses `../../../references/MATERIAL_R
 - Slots and polygonal cutouts follow the separate `SLOTS.md` module and topology rules. A POINT is NOT a small circle, and converting an M callout does not change the required feature count.
 - Trace the arrow/leader/note scope before applying PIERCING. A large PIERCING label elsewhere on a sheet is not blanket authorization for every feature family.
 
+## V4.12 unresolved circular-hole diameter gate — before numeric POINT/CIRCLE tests
+
+When the source confirms a feature is a ROUND HOLE but its Ø is customer-pending, draw a source-supported, integer-rounded estimated **CIRCLE** on Layer `0`, Color `6` (Magenta) with adjacent `Ø? / CONFIRM DIAMETER` note and independent FLAG. Preserve separately proved centers, quantity and flat contour. Set PREVIEW / NO CUT. Do **not** apply `d<t/2` or capacity-based POINT rules using guessed Ø; those require a known effective diameter. Explicitly scoped PIERCING remains independently authoritative. Unknown round-hole identity or center follows V4.11 source-supported preview/VIEWS_ONLY and separate flags, not a fabricated verified hole.
+
 ## 3.3 Approved POINT / CIRCLE decision (first matching rule)
 
 **L09:** For **SUS430**, apply **SUS, 他** rows to cut-hole minimum and 白ピアス capability, independently of SS/SUS430/BRASS Nobi. At t6 the inherited minimum hole threshold is t/2 and White Piercing is 〇 (capability only).

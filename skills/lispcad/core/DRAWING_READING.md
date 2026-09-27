@@ -4,6 +4,12 @@ Source: approved V4.3 production baseline. This file preserves the portable cont
 
 **Modular compatibility note:** inherited V4.3 wording such as “this document” refers to the complete approved LISPCAD rule set loaded through `AI_ENTRYPOINT.md`. The single-file portable form remains `../portable/SKILL_LISPCAD_CURRENT.md`.
 
+## V4.12 approved drawing-reading refinements (deduplicated against V4.11)
+
+For sheet-metal designation families, recognize case-insensitive `SUS…→SUS`, `SP…/SS…→SS`, `A…→AL`, while preserving the full printed grade, thickness and the approved SUS430 SS-Nobi/SUS-laser split. A family match does not assert that distinct source grades are chemically identical.
+
+Before asking, exhaust explicit witness lines, handwritten Nobi, width-derived slot-end radius and local-face transforms. If the flat is independently proved, draw it even if an unrelated round-hole Ø/center is still uncertain; isolate that feature as Magenta `CIRCLE Ø?` / coordinate FLAG instead of changing its unknown Ø to POINT. Reuse existing V4.11 VIEWS_ONLY only when the actual unfold is not supportable. Do not require sample DXF for a clearly marked preview or ask for routine PDF-conforming shop-spacing acceptance. See portable §§2.1.1, 3.3, 4.4.2, 5.2 and approved regression `520217-27`.
+
 ## V4.11 approved preview-first override — active
 
 **DRAW → FLAG → CONFIRM:** If actual PDF evidence supports a recognizable approximation but a dimension, feature type or topology remains unproved, render the provisional portion Magenta (Layer 0, DXF 62=6), add an adjacent explicit assumption/FLAG and ask the user AFTER showing it. Keep every independently proved entity exact. If a defensible flat is not available, render independently proved orthographic/source views separately and label the code `VIEWS_ONLY`. The default combined DXF is `*_ALL_REVIEW_ONLY.dxf` with global **NO CUT** whenever any FLAG remains. Only absent identifiable source views or ambiguous part-code identity stops all drawing. This V4.11 preview rule overrides the inherited V4.3/V4.10 blanket STOP-before-any-drawing wording for **review-only** output; it never weakens Section 5 production PASS or allows silent geometry invention. See [QA regression](../../../regression/qa/520625-15_V4_11_APPROVED.md) and portable §4.4.1.

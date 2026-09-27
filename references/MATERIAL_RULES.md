@@ -2,6 +2,10 @@
 
 **Approved from user-supplied** `Rule_Bo_R&Hole.xlsx`, worksheet `Bo_R_Hole`, dated `2026.07.30`; calibration `520924-19`, approved 2026-09-25. This complete transcription is portable: do not require the original spreadsheet or past chat.
 
+## V4.12 approved sheet-material prefix classification (2026-09-27)
+
+For sheet-metal grade labels, normalize whitespace/case and match family prefixes: `SUS…→SUS`, `SP…/SS…→SS`, `A…→AL`. Preserve the complete printed grade and source thickness; this routing is not proof that different exact grades are interchangeable. Previously approved SUS430 **process split** overrides generic SUS for Nobi (SS/SUS430/BRASS), whereas SUS430 laser corner R, hole limit and White Piercing use SUS/他. Unknown sheet-metal prefixes remain flagged. On job 520217-27, user directly confirmed both 009252/009253 belong to the SS family; the full SPHC-versus-SS400 grade is not adjudicated by that family statement. This V4.12 clarification leaves original workbook cells unchanged.
+
 ## Original worksheet entries (a dash means the CELL IS BLANK, not zero)
 
 | Excel row | Material group | t Min | t Max | Laser corner condition | Laser R | Minimum cut-hole diameter | 白ピアス capacity |
