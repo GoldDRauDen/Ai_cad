@@ -32,3 +32,7 @@ A printed `J` associated with a special POINT operation is **exceptional**, not 
 ## Verification and workflow
 
 Trace separately the original callout count, verified effective diameters, POINT-vs-CIRCLE type, datum for every center, and every independent FLAG. Run material-domain containment on CIRCLE features. Preserve the part and keep a distinct shop report for all converted POINTs (source Ø/M, center, method/trigger).
+
+### V4.14 approved boolean union for source-proven overlapping cut holes
+
+When the actual source proves that hole/opening CUT REGIONS genuinely intersect to form ONE connected laser-cut void, compute the geometric Boolean union and output exactly ONE continuous closed CW internal boundary for the combined region (exact ARC/LINE arcs or correct bulged LWPOLYLINE). Do NOT output each contributing complete CIRCLE on top of the union or leave redundant interior overlapping toolpaths. Count and datum-trace every ORIGINAL callout-family member independently of the resulting one DXF closed contour; containment and topology validation are still mandatory. Mere tangential contact, separately specified machining, ambiguous topology or unproved overlap do not trigger automatic union; FLAG/ask. User-approved general case: 010447 has one `Ø28.5 + 4×Ø5.5` connected cut contour built from five contributed source cut regions, preserving four Ø5.5 nominal callout locations.
