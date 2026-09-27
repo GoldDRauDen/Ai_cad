@@ -1,5 +1,5 @@
 
-# SKILL_LISPCAD V4.12 PORTABLE: Drawing-First Sheet Metal Flat Pattern Extractor, Material-Prefix and Local-FLAG Refinements
+# SKILL_LISPCAD V4.13 PORTABLE: Deduplicated Reference Units, Independently Scoped Mirrors, Inside-Face Reflection, Nobi Audit and Exact-Source Numeric Comparison
 
 
 ## 0. Portable Skill Contract — Mandatory for Every AI / Every Chat
@@ -36,6 +36,8 @@ When the user supplies a reference DXF or corrected CAD for comparison:
 - Never write rules such as "as discussed earlier", "as the user said before", or "use the previous chat". Replace them with explicit, self-contained instructions.
 
 ### 0.5 Versioning and Update Discipline
+
+**V4.13 direct approval (2026-09-27, 520315-18):** L01–L08 were approved for general use and deduplicated against V4.12. The ALREADY established slot witness-line/center-versus-overall rules, source-first completeness and no-routine-shop-clearance-questions rule remain unchanged. The genuinely NEW rules are SOURCE_UNIT_CONFLICT for reference input (§2.4.2a), independently scoped per-code mirroring (§2.2.2), INSIDE_VIEW face assembly before proved whole-flat reflection (§4.2.7.1), J-scoped handwritten Nobi/table discrepancy FLAG (§4.7), and strict <0.01 mm derived-only numeric audit separated from exact printed source values (§4.6.1). Appendix K contains self-contained user-approved regression examples; V4.12 and older releases remain immutable.
 
 **V4.12 direct user approval (2026-09-27):** Retain existing V4.11 preview-first and source-view fallback, adding only approved nonduplicate material-prefix classification, explicit unknown-Ø CIRCLE preview priority, unique slot-radius derivation from width/count, isolation of local feature uncertainty from an otherwise proved flat, avoidance of redundant questions, and suppression of routine shop-spacing acceptance questions. See Sections 2.1.1, 3.1, 3.3, 4.4.2, 5.2 and Appendix J. V4.11 is preserved unchanged.
 
@@ -135,6 +137,10 @@ For each part page, inspect in this sequence before writing any geometry:
 
 Do not generate **production** geometry while contour topology or datum is unresolved. V4.11 permits visibly provisional REVIEW-ONLY drawing (Section 4.4.1) and source-view separation; neither establishes production PASS.
 
+### 2.2.2 V4.13 original and mirrored part codes
+
+Every declared drawing code is an independent manufacturing part record. A reflected partner is constructed ONLY when actual PDF notes or explicit user instruction prove the original code, partner code, mirror axis/orientation AND what feature scope is reflected. Interpret the original PDF first; then transform the entire scoped contour, typed hole families, slots, R/C, bend lines and markings. Recheck independent partner datum, family counts and material containment. If only the original is declared, emit only that original and never invent an additional mirrored code. A reflected source view of ONE bent part is not by itself a second part code. If the reflection direction remains ambiguous after inspecting actual views, axes and dimension witnesses, FLAG that orientation and ask a targeted question rather than guessing.
+
 ### 2.3 OCR Error Correction & Context Engine
 Correct optical character recognition errors using engineering context rules:
 - `B` ↔ `8` | `O` ↔ `0` | `S` ↔ `5` | `M6` ↔ `MG` | `Ø` ↔ `O` | `0.5` ↔ `O.5`
@@ -156,6 +162,10 @@ This mode is activated ONLY when the user explicitly states that a supplied DXF 
 - If the DXF and PDF differ but the mismatch can be explained by a PDF dimension string that was previously misread, correct the PDF interpretation and record the anti-regression rule in the portable skill when validated.
 - If the DXF differs from the PDF in a way that **cannot** be supported by the PDF dimensions/callouts, do NOT silently teach that difference as a general rule. Report it as a production-CAD adjustment or source conflict and ask the user when it materially changes the part.
 - A newer visible revision note / red correction on the PDF must still be reported if it conflicts with the supplied DXF; ground-truth calibration does not erase revision chronology.
+
+#### 2.4.2a V4.13 input-reference DXF SOURCE_UNIT_CONFLICT
+
+A user-approved reference DXF's $INSUNITS header is metadata, NOT authority to automatically rescale stored CAD coordinates. Establish the reference's ACTUAL numeric units by PDF dimensions and witness lines interpreted independently, applicable job metadata and direct user confirmation. If the header conflicts with that evidence, report SOURCE_UNIT_CONFLICT and use the proved actual units for numeric geometry comparison; NEVER multiply/divide by 25.4 merely because the header claims inches. If actual units are still unproved, FLAG and ask; do not claim a valid common-mm comparison. Generated OUTPUT DXF still MUST set $INSUNITS=4. PDF-first dimensional interpretation is unchanged; a misleading header is not license to take missing measurements from the reference.
 
 #### 2.4.3 Approved material-table Laser R takes precedence over old DXF-only R0.5 exception
 
@@ -297,6 +307,10 @@ Features dimensioned on a bent flange/face MUST be transformed from the **local 
 
 This rule applies independently on both axes. Projection alignment may identify which face a feature belongs to, but may not replace the required unfold transform.
 
+#### 4.2.7.1 V4.13 INSIDE_VIEW assembled-face reflection
+
+When source views PROVE that they represent INNER faces of the bent component, tag the evidenced faces INSIDE_VIEW, record each source frame/view direction, confirm fold sequence, convert ONLY true ID dimensions using §4.6, apply the exact applicable Nobi and existing local-face-to-flat transforms, then ASSEMBLE all those inner faces in their common unfolded frame. If the evidenced intended target CAD/blank orientation is the reflection of that assembled inside-surface depiction, reflect the WHOLE assembled result about the PROVEN axis BEFORE final reference comparison or CAD-coordinate assignment. Compare each hole family using center, actual diameter/type and quantity ONLY AFTER the reference and derived flat are mapped into that SAME orientation. A left/right reversal visible before this common-frame comparison does NOT prove holes were swapped. Do not reflect every bent part by default; unproved mirror axis after full PDF tracing remains an independent FLAG/question.
+
 #### 4.2.8 Bend Sequence / Face Order Is Non-Commutative
 The total flat length equation may be numerically unchanged when two flange lengths are swapped, but **bend positions, feature transforms, and material topology are not**. Therefore:
 
@@ -391,11 +405,19 @@ $$\text{OD} = \text{ID} + \text{Offset}$$
 - Example (`135°` bend, `t = 3.0 mm`): `Offset_raw = 3.0 × tan(22.5°) ≈ 1.2426`, so `Offset = 1.24 mm`, then `OD = ID + 1.24 mm`.
 - Do not apply this special intermediate rounding rule to unrelated explicit dimensions. It is specifically the ID→OD offset normalization step.
 
+#### 4.6.1 V4.13 printed-source fidelity and derived-only numeric comparison
+
+An explicit PDF-printed dimension, coordinate or feature callout is an EXACT source input: transcribe its stated numerical value and prove its witness-line meaning. Do not use any 0.01 mm audit threshold to excuse a misread/missing number or alter a source input. Apply only independently authorized revision, mid-tolerance, ID→OD and Nobi transformations. For every applicable non-90° inside dimension, round the calculated ID→OD offset to 0.01 mm BEFORE adding it to that exact ID and subsequently deducting Nobi.
+
+If the resulting DETERMINISTIC derived CAD value differs slightly from an approved reference DXF number due solely to unrounded internal decimal representation, a numeric-only comparison may accept ABSOLUTE RESIDUAL STRICTLY <0.01 mm. Exactly 0.01 mm or more fails. Output retains the correctly rounded source-derived result, NEVER the sample's additional stored decimal places. This audit allowance is NOT a manufacturing tolerance and never overrides wrong datums, feature families/counts, topology, bend order, user-unknown sizes or any other Section 5 requirement.
+
 ### 4.7 Nobi (Bend Allowance) Lookup Priority & Sequential Formulas
 1. **Handwritten Nobi on Drawing**: Highest priority. Use directly (e.g., `-4.8`, `135° -1.71`) regardless of J-symbol.
 2. **No Handwritten Nobi + J-Symbol Present**: Look up Nobi from standard tables (Section 7.3) by Material, Thickness, Bend Length, and Angle — applying the Interpolation Rule in Section 4.8 when the exact value is not tabulated.
 3. **No Handwritten Nobi + J-Symbol Absent**: Draw the affected flange as a separate piece detached from the main body, offset by a fixed $10\text{ mm}$ gap for downstream reassembly. Set `is_flagged = true`.
 4. **J-Symbol Present + No Table Match** (including out-of-range per Section 4.8): Maintain flat blank at Outside Dimension (OD) and draw bend line at OD design position. Set `is_flagged = true`.
+
+**V4.13 handwritten/J comparison gate, AFTER the existing Rule 1:** If a real bend-related J, legible N_hand AND a genuinely compatible approved table value N_table exist for the SAME material, thickness, bend length, angle and applicable surface state, record both; DRAW all affected bends using handwritten N_hand, and FLAG HANDWRITTEN_NOBI_DIFFERS_FROM_TABLE when the two prescribed numbers differ. Do not quietly switch to the standard table. A 90° row MUST NOT be used to claim a mismatch against 165° handwriting; never fabricate N_table when no applicable row is supplied. Existing Rule 4 OD fallback applies only without an applicable handwritten Nobi; known handwriting retains Rule 1 priority even if no table matches. Keep bend J separate from exceptional J for a POINT operation (§3.4).
 
 #### Multi-Flange Sequential Coordinate Formulas (Axis from Origin 0)
 For sequential flanges ($OD_1, OD_2, \dots, OD_n$) with Nobi values ($N_1, N_2, \dots, N_{n-1}$), first preserve the proven face order from Section 4.2.8. Any non-90° ID→OD offsets used inside the $OD_i$ values MUST already be rounded to `0.01 mm` per Section 4.6 before these equations are evaluated:
@@ -444,6 +466,9 @@ Before exporting production DXF or optional AutoLISP, run the following automate
 - **Self-Intersection Check**: Ensure no overlapping edges or intersecting outer polyline loops exist.
 - **Vertex Ordering**: Outer boundaries must follow Counter-Clockwise (CCW) orientation; internal cutouts must follow Clockwise (CW) orientation.
 - **Source-Origin/Axis Mapping Check (V4.10):** For every absolute or ordinate-based feature, confirm the actual source-view origin and positive X/Y directions from drawing evidence BEFORE any DXF coordinate assignment; record its target CAD datum and signed source→CAD equation, then verify an independent edge/overall closure when available. Negative source Y is NOT a CAD Y coordinate. Transferring `Y=-30` from a proved top-left origin on a view 138 mm high to a bottom-left CAD datum MUST give `Y=108`, not `-30` or `88`. Missing origin/axis evidence is FLAGGED and prevents production PASS; do not borrow an adjacent hole/contour datum.
+- **V4.13 reference actual-unit audit:** If source DXF metadata and independent PDF/user evidence disagree, resolve SOURCE_UNIT_CONFLICT before calibrating any reference coordinate; no header-only 25.4 scaling. Generated output still has real millimeter header.
+- **V4.13 printed-versus-derived audit:** Check exact numeric printed source inputs; allow <0.01 mm only for purely internal representation/rounding differences of independently proved DERIVED numbers when auditing a reference. No source-value, geometry or coordinate-frame tolerance follows.
+- **V4.13 bend J/Nobi audit:** When both N_hand and genuinely applicable N_table exist, draw with handwriting and independently FLAG a difference. Do not compare unrelated angle/thickness/tooling table rows.
 - **Datum Graph Connectivity Check**: Every critical hole/notch/step coordinate must have a connected dimension path from an identified datum per Section 4.2.
 - **Dimension-Type Check**: Each used dimension must be classified as baseline, chain, step/local, overall, or ordinate before arithmetic.
 - **Dimension Endpoint Identity Check**: For every crowded or parallel dimension group, verify that each dimension's start/end node targets the correct entity type (`OUTER_EDGE`, `CONTOUR_EDGE/STEP`, `HOLE_CENTER`, etc.). Reusing a neighboring endpoint is a semantic FAIL.
@@ -1155,3 +1180,27 @@ The user directly answered the questions about original PDF `520217-27` and expl
 6. **Question-necessity regression:** Q3/Q4/Q5 (two proved flat calculations, the uniquely width-derived radius and confirmed Ø14 location) should have been solved from drawing evidence instead of treated as ambiguous. Ask only when source data still do not yield a unique answer.
 
 **Scope:** NO sample/reference DXF was supplied for this calibration. No modified 520217-27 DXF has been independently verified or user QA-PASSed by this approval. Pending Ø and Ø4 hole-center coordinates remain FLAGGED; any mixed composite remains REVIEW ONLY — NO CUT until actually revalidated.
+
+---
+
+## Appendix K — V4.13 approved 520315-18 calibration (2026-09-27)
+
+**Approval and dedupe:** The user approved L01–L08 for general use and approved the entire supplied ten-code 520315-18_ss.dxf as reference in PDF page order, confirmed its stored numbers are mm although its DXF header says inches, and clarified strict <0.01 mm acceptance ONLY for correctly DERIVED arithmetic residuals. V4.12 already implemented L01/L02 slot witness and center-distance semantics, first exhausting proved data before questions, and L08 suppression of ordinary shop-spacing questions. These are NOT reintroduced as new rules; only new approved scope/compare behavior is specified in §§2.2.2, 2.4.2a, 4.2.7.1, 4.6.1 and 4.7. The older AI REVIEW_ONLY export has NOT been re-exported or production certified by this approval.
+
+1. **018295, PDF page 2, L01/L02 regression:** For the Ø6.5 stadium slot the printed 4 mm distance beside the 47 mm chain actually ends on the two semicircular END CENTERS. Therefore center distance C=4, width/end diameter W=6.5 and canonical overall L_TOTAL=C+W=10.5 mm. Previously asking for missing slot length was wrong. Independently proved 12/20 distances elsewhere in this drawing describe their own hole/slot CENTER separations; never borrow a neighboring datum or reuse one slot's C for another.
+
+2. **018304, PDF page 11, L01/L02 regression:** For its Ø6.5 stadium slot the two semicircular centers are 10 mm apart, so C=10 and L_TOTAL=16.5 mm. A hypothetical dimension terminating at BOTH outside end tips is already L_TOTAL and does not gain W. These two actual examples prove that end-center and outside-tip witness endpoints, not the numerical size or printed text position, determine whether C+W is required. Do not copy 018295's result to 018304. Unreadable witnesses require inspection of all applicable source views before FLAG.
+
+3. **L03 SOURCE_UNIT_CONFLICT example:** The user explicitly confirms actual numerical reference coordinates in 520315-18_ss.dxf are millimeters even though $INSUNITS advertises inch. Independently use printed PDF mm measurements for plausibility/closure; treat reference numbers as mm WITHOUT multiplying/dividing by 25.4, and export any new CAD with $INSUNITS=4. This exception cannot be applied to an unrelated inch-header DXF without independent actual-unit evidence; FLAG and ask when unresolved.
+
+4. **L04 independently scoped mirrors:** Every code remains its own part. 018300/018301 and 018302/018303 illustrate original/mirrored candidate relationships: only source-proved partner identity, axis and full reflection scope authorize geometry reflection. First draw the PDF original; then reflect all relevant contour vertices, Ø/M families, slots, R/C, bend lines and marking into a separately checked partner. With only an original code on a future job, produce ONLY that original. If exact axis remains ambiguous after drawing witnesses/views, FLAG just that axis, not every proved dimension. Similar-looking shapes alone do not prove mirroring.
+
+5. **018297, L05 INSIDE_VIEW:** The user confirms the two apparently different M3-versus-Ø7 arrangements were BOTH correct because the source drawing depicts INSIDE formed faces and one depiction was already reflected after joining those faces. Correct test: prove source frames and face order, unfold and assemble the inside faces, apply any proved final reflection, then compare M3 and Ø7 center/type/count in the SAME target frame. The former assertion that the two groups must have been swapped was WITHDRAWN. This example does not establish a universal mirror axis for unrelated parts.
+
+6. **018295, L06 handwritten Nobi:** Both relevant ends are explicitly confirmed as 165° with handwritten 0.37 mm Nobi for each. Use these source-scoped values. General J policy: with compatible approved table data for that exact material, t, bend length, angle and surface state, keep the handwritten value for construction and FLAG HANDWRITTEN_NOBI_DIFFERS_FROM_TABLE if N_hand differs from N_table; report both. A 90° table row is never proof that a 165° handwritten value is wrong. No specific additional 018296 exception has been proved; do not invent one.
+
+7. **018300, L07 rounded computation and comparison:** The user confirms t=2 mm at the relevant 165° fold. Round offset 2×tan(7.5°) to 0.26 mm for EACH of the printed ID lengths 797 and 24, THEN calculate (797+0.26)+(24+0.26)-0.37=821.15 mm. Independently the 90° chain is 262+61.5-3.68=319.82 mm. Previously measured reference bbox approximately 821.153 differs by 0.003 (<0.01): PASS ONLY for the derived numeric comparison, with final computed CAD value still 821.15. Printed PDF numbers 797, 24, 262 and 61.5 remain EXACT and cannot be replaced with near values to match the sample. A delta exactly 0.01 fails the strict numeric check; datum/topology/type/count mistakes fail regardless.
+
+8. **L08 explicitly deduplicated:** The V4.12 §5.2 ordinary shop-clearance advisory/question rule already exists and remains unchanged. Do not claim it as a novel V4.13 skill, and do not waive real containment, material limits or customer-unknown dimensions.
+
+**Portable regression contract:** 018295/018297/018300/018304 are EXAMPLE IDs, NOT globally reusable coordinates. Each case above states the independent source evidence and dimension-witness meaning, mapping/formula, expected result, prohibited failure and FLAG boundary. A new AI can follow these semantic procedures on different codes without conversation history. User QA of this reference does not certify an unexecuted corrected CAD export.

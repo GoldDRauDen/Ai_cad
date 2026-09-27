@@ -11,8 +11,12 @@ CURRENT = ROOT / "skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"
 RELEASE = ROOT / "skills/lispcad/versions/V4.12/SKILL_LISPCAD_V4_12_PORTABLE.md"
 
 
-def test_current_equals_immutable_v412_release():
-    assert CURRENT.read_bytes() == RELEASE.read_bytes()
+def test_v412_release_preserved_as_immutable_historical_snapshot():
+    historical = RELEASE.read_text(encoding="utf-8")
+    assert historical.startswith("# SKILL_LISPCAD V4.12 PORTABLE")
+    assert "## Appendix J — V4.12" in historical
+    assert "V4.13 direct approval" not in historical
+    # CURRENT now moves independently to V4.13; it must not equal old snapshot.
 
 
 def test_user_approved_arithmetic():

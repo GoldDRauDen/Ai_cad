@@ -4,6 +4,14 @@ Source: approved V4.3 production baseline. This file preserves the portable cont
 
 **Modular compatibility note:** inherited V4.3 wording such as “this document” refers to the complete approved LISPCAD rule set loaded through `AI_ENTRYPOINT.md`. The single-file portable form remains `../portable/SKILL_LISPCAD_CURRENT.md`.
 
+## V4.13 approved 520315-18 additions — existing slot/shop rules NOT duplicated
+
+**Reference SOURCE_UNIT_CONFLICT:** A reference DXF $INSUNITS header is metadata, not automatic geometric truth. Before comparing sample geometry, verify actual numeric units against independently read PDF witness-line dimensions and the user's explicit unit confirmation. The approved 520315-18_ss.dxf has a misleading inch header but actual mm numbers: DO NOT multiply/divide by 25.4. If a different sample's true units remain unresolved, FLAG and ask. Newly generated DXF still uses $INSUNITS=4.
+
+**Each code is independently declared; MIRROR is source scoped:** Only construct a reflected partner when the drawing/user establishes original and target codes, axis/orientation and the exact reflection scope. Reflect the complete proven geometry including contour, distinct hole families, slots, R/C, bends and markings; then revalidate the partner. If only the original is requested, do not invent a second code. A mirror of INSIDE views within one part does not create an undeclared part code.
+
+**Already-approved rules:** Exhaust whole slot dimension strings and verify END-CENTER versus OUTSIDE-TIP witnesses before asking (existing §§3.1 and 4.2.4); do not reintroduce routine shop-spacing approval questions (existing V4.12 §5.2). See new examples 018295/018304 and case 018297 in regression/qa/520315-18_V4_13_APPROVED.md.
+
 ## V4.12 approved drawing-reading refinements (deduplicated against V4.11)
 
 For sheet-metal designation families, recognize case-insensitive `SUS…→SUS`, `SP…/SS…→SS`, `A…→AL`, while preserving the full printed grade, thickness and the approved SUS430 SS-Nobi/SUS-laser split. A family match does not assert that distinct source grades are chemically identical.
