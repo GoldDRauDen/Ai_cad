@@ -1,12 +1,18 @@
-# TrainAiCad — DXF-first production (V4.13)
+# TrainAiCad — DXF-first production (V4.14)
 
 TrainAiCad is a user-calibrated CAD production skill repository, **not an automatic training environment**. Only user-approved rules enter the production skill. Begin with [AI_ENTRYPOINT.md](AI_ENTRYPOINT.md).
+
+## Approved V4.14 six-code DXF audit — 520217-26 (2026-09-27)
+
+The user returned and approved Q01–Q07 and L01–L08 for the **six referenced codes only**, then requested deduplication against GitHub and direct push of nonduplicate production lessons. For a SPECIFIC audit of an already generated AI DXF, compare **AI DXF with customer reference DXF first**; consult the PDF only afterward to identify why the AI diverged. PDF-FIRST still governs creation of new drawings. V4.14 also records the actual notch end-arc-center dimension witnesses, conditional actual symmetry-vs-outside-edge datum precedence, width-proven semicircular groove R and grouped n×m-R callouts, one Boolean-union cut contour for truly overlapping hole regions, and physical ARC/LINE-vs-bulged-polyline equality. Historical old-AI DXF match results for 010428 and 010429 are regression guards, not newly regenerated production certification. V4.13's actual-mm despite inch-header and exact printed dimensions versus strictly <0.01 **DERIVED-only** numeric residual were duplicates and remain unchanged.
+
+[User-approved six-code regression](regression/qa/520217-26_V4_14_APPROVED.md) · [Current V4.14 portable](skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md) · [Immutable V4.14 release](skills/lispcad/versions/V4.14/SKILL_LISPCAD_V4_14_PORTABLE.md) · [Previous immutable V4.13](skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md).
 
 ## Approved V4.13 deduplicated calibration — 520315-18 (2026-09-27)
 
 The user approved all L01–L08 generally, and the ten-code 520315-18_ss.dxf reference as intended geometry with actual **mm** coordinates despite an inch header. Deduplication against V4.12 removed already-established slot center-vs-overall witness rules, the need to exhaust explicit PDF calculations before questioning, and ordinary shop-spacing acceptance-question suppression. Only NEW V4.13 rules: reference INPUT unit conflict without blind 25.4 scaling; per-code original/mirror relationship and reflected feature scope; assembling inner bent faces before any proven final reflection; a J/handwritten-Nobi-versus-applicable-table mismatch FLAG while retaining the handwritten geometry; and derived-only numerical comparison tolerance **strictly <0.01 mm** while retaining exact printed dimensions. Case IDs such as 018300 are regression EXAMPLES, not universal part dimensions. The approved reference does not certify a newly regenerated AI DXF.
 
-[Self-contained approved regression](regression/qa/520315-18_V4_13_APPROVED.md) · [Current V4.13 portable](skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md) · [Immutable V4.13 release](skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md) · [Preserved V4.12](skills/lispcad/versions/V4.12/SKILL_LISPCAD_V4_12_PORTABLE.md).
+[Self-contained approved regression](regression/qa/520315-18_V4_13_APPROVED.md) · [Current V4.14 portable](skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md) · [Immutable V4.13 release](skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md) · [Preserved V4.12](skills/lispcad/versions/V4.12/SKILL_LISPCAD_V4_12_PORTABLE.md).
 
 ## Approved V4.12 deduplicated calibration — 520217-27 (2026-09-27)
 
@@ -36,7 +42,7 @@ The user **directly approved** the previously proposed source-frame lesson using
 
 ## Current modules and implementation
 
-- [Portable current V4.13](skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md), identical to [immutable V4.13 release](skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md); [historical immutable V4.12](skills/lispcad/versions/V4.12/SKILL_LISPCAD_V4_12_PORTABLE.md); [historical V4.11](skills/lispcad/versions/V4.11/SKILL_LISPCAD_V4_11_PORTABLE.md); [historical V4.10](skills/lispcad/versions/V4.10/SKILL_LISPCAD_V4_10_PORTABLE.md) preserved; [historical V4.9](skills/lispcad/versions/V4.9/SKILL_LISPCAD_V4_9_PORTABLE.md) preserved; [historical V4.8](skills/lispcad/versions/V4.8/SKILL_LISPCAD_V4_8_PORTABLE.md) preserved; [historical V4.7](skills/lispcad/versions/V4.7/SKILL_LISPCAD_V4_7_PORTABLE.md) preserved. [Historical V4.6](skills/lispcad/versions/V4.6/SKILL_LISPCAD_V4_6_PORTABLE.md) preserved.
+- [Portable current V4.14](skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md), identical to [immutable V4.14 release](skills/lispcad/versions/V4.14/SKILL_LISPCAD_V4_14_PORTABLE.md); [historical immutable V4.13](skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md); [historical immutable V4.12](skills/lispcad/versions/V4.12/SKILL_LISPCAD_V4_12_PORTABLE.md); [historical V4.11](skills/lispcad/versions/V4.11/SKILL_LISPCAD_V4_11_PORTABLE.md); [historical V4.10](skills/lispcad/versions/V4.10/SKILL_LISPCAD_V4_10_PORTABLE.md) preserved; [historical V4.9](skills/lispcad/versions/V4.9/SKILL_LISPCAD_V4_9_PORTABLE.md) preserved; [historical V4.8](skills/lispcad/versions/V4.8/SKILL_LISPCAD_V4_8_PORTABLE.md) preserved; [historical V4.7](skills/lispcad/versions/V4.7/SKILL_LISPCAD_V4_7_PORTABLE.md) preserved. [Historical V4.6](skills/lispcad/versions/V4.6/SKILL_LISPCAD_V4_6_PORTABLE.md) preserved.
 - `skills/lispcad/core/`: DRAWING_READING, DATUM_DIMENSION, VALIDATION, CAD_OUTPUT; load all before working.
 - `skills/lispcad/{modes,topology,features}/`: load all applicable composable manufacturing rules.
 - `references/`: full approved material, Nobi and metric-thread pilot tables.
