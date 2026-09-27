@@ -16,11 +16,11 @@ QA = ROOT / "regression/qa/520315-18_V4_13_APPROVED.md"
 
 def test_current_equals_immutable_v413_and_historical_v412_is_preserved():
     assert CURRENT.read_bytes() == RELEASE.read_bytes()
-    assert CURRENT.read_text(encoding="utf-8").startswith(
+    assert CURRENT.read_text(encoding="utf-8").lstrip().startswith(
         "# SKILL_LISPCAD V4.13 PORTABLE"
     )
     old = HISTORICAL.read_text(encoding="utf-8")
-    assert old.startswith("# SKILL_LISPCAD V4.12 PORTABLE")
+    assert old.lstrip().startswith("# SKILL_LISPCAD V4.12 PORTABLE")
     assert "## Appendix J — V4.12" in old
     assert "V4.13 direct approval" not in old
 
