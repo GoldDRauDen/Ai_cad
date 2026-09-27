@@ -18,3 +18,8 @@ Approved calibration 520924-19, 2026-09-25. Governing table: `../../../reference
 
 ### Material-table validation
 Record source material, thickness, chosen worksheet row, eligible corner class, R/C overrides, and each generated automatic radius; compare PDF and ground-truth DXF *after* this classification. A DXF R0.5 that matches the approved material table is expected and must not be excluded from regression comparisons.
+
+
+#### V4.14 — width-proven semicircular notch/groove R and scoped n×m-R
+
+Extend existing V4.12 stadium-slot end logic to a **real semicircular notch/groove BOTTOM** only where the PDF contour and dimension witnesses uniquely prove the shown groove width W is the full diameter of its half-circle: **R=W/2**. Read `n×m-R` by actual source grouping and the m eligible arc positions within each group; do not treat it as n separate shapes or borrow a nearby R callout. Independent mouth/edge radius families retain their own quantities. If width, half-circle topology, leader scope, or different inner/outer R is uncertain, FLAG rather than infer R from the picture. Directly approved regression 010421: width 6 → `2×2-R` means **4 bottom R3**, separately `2×4-R1` means **8 mouth R1**. Explicit PDF R overrides any material automatic Laser R at THAT corner.
