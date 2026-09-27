@@ -81,6 +81,10 @@ Features dimensioned on a bent flange/face MUST be transformed from the **local 
 
 This rule applies independently on both axes. Projection alignment may identify which face a feature belongs to, but may not replace the required unfold transform.
 
+#### 4.2.7.2 V4.14 approved symmetry/explicit-edge-dimension precedence
+
+If actual PDF geometry PROVES a symmetry axis and there is NO controlling outer-edge dimension for a repeated feature family, use that axis to construct the symmetric centers/positions and retain a datum trace. When the same feature family has an explicit physical outside-edge dimension, **DRAW ACCORDING TO THE PRINTED EDGE DIMENSION** even if a centerline is also shown. A printed axis that coexists with source-proved actual asymmetry or mutually inconsistent witnesses is a specific FLAG/question after fully tracing all source evidence; do not silently force visual symmetry. For features on bent faces, source-frame lock and the independent per-face local→global-flat transform remain mandatory. User-approved 010420 Q03 documents this priority.
+
 #### 4.2.8 Bend Sequence / Face Order Is Non-Commutative
 The total flat length equation may be numerically unchanged when two flange lengths are swapped, but **bend positions, feature transforms, and material topology are not**. Therefore:
 
