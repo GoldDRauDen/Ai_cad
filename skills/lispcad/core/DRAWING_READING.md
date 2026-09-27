@@ -45,7 +45,7 @@ When moving this skill to another AI or chat, apply rules in this order:
 If a current user instruction conflicts with a safety/anti-error rule in this skill (for example: guessing an unreadable dimension from a bounding box), STOP and report the conflict instead of silently weakening the rule.
 
 ### 0.3 Portable Calibration / Regression Learning Protocol
-When the user supplies a reference DXF or corrected CAD for comparison:
+When the user supplies a reference DXF or corrected CAD for PDF-interpretation calibration (NOT a specifically requested direct audit of an already created AI DXF):
 1. **Interpret the PDF first** without using DXF coordinates to fill missing information.
 2. Compare the independently derived geometry against the user-approved reference.
 3. Classify each mismatch by semantic cause: datum, dimension-chain type, step/local dimension, feature type, C/R topology, tolerance/Nobi, or source conflict.
@@ -170,6 +170,10 @@ This mode is activated ONLY when the user explicitly states that a supplied DXF 
 - If the DXF and PDF differ but the mismatch can be explained by a PDF dimension string that was previously misread, correct the PDF interpretation and record the anti-regression rule in the portable skill when validated.
 - If the DXF differs from the PDF in a way that **cannot** be supported by the PDF dimensions/callouts, do NOT silently teach that difference as a general rule. Report it as a production-CAD adjustment or source conflict and ask the user when it materially changes the part.
 - A newer visible revision note / red correction on the PDF must still be reported if it conflicts with the supplied DXF; ground-truth calibration does not erase revision chronology.
+
+#### 2.4.2b V4.14 approved DIRECT AUDIT of pre-existing AI DXF against a reference
+
+If the user's objective is to evaluate **the AI's already-exported DXF** against a customer-approved reference DXF, compare **those TWO DXFs FIRST**, matching only proved drawing-code clusters and actual user/PDF-confirmed coordinate units, then normalizing layout-only translation and any independently proved orientation. Audit full physical outer/inner boundaries, each hole/slot/cutout family (type, diameter, original quantity and coordinates), true R/C, complete unfolded extent, each double-line bend-pair coordinate and its clipping to real material. ARC+LINE in the reference and exact, closed LWPOLYLINE/bulge in the AI output are geometrically equivalent; raw entity counts alone are not a failure. A source/orthographic face is only PARTIAL if the reference has a complete flat, irrespective of its locally correct holes. Report MATCH/PARTIAL/DIFF **per code**, protect MATCHed parts from later edits, and **only THEN** revisit the PDF to identify why the AI made each error. This is distinct from creating a NEW PDF-based drawing: existing PDF-FIRST rules are unchanged, and sample DXF is never a hidden replacement for an unproved PDF dimension. Approved case: `regression/qa/520217-26_V4_14_APPROVED.md`.
 
 #### 2.4.3 Approved material-table Laser R takes precedence over old DXF-only R0.5 exception
 
