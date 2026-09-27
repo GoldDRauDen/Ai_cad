@@ -14,10 +14,13 @@ HISTORICAL = ROOT / "skills/lispcad/versions/V4.12/SKILL_LISPCAD_V4_12_PORTABLE.
 QA = ROOT / "regression/qa/520315-18_V4_13_APPROVED.md"
 
 
-def test_current_equals_immutable_v413_and_historical_v412_is_preserved():
-    assert CURRENT.read_bytes() == RELEASE.read_bytes()
+def test_v413_snapshot_immutable_and_current_v414_preserves_v413():
+    old_v413 = RELEASE.read_text(encoding="utf-8")
+    assert old_v413.lstrip().startswith("# SKILL_LISPCAD V4.13 PORTABLE")
+    assert "## Appendix K — V4.13" in old_v413
+    assert "## Appendix L — V4.14" not in old_v413
     assert CURRENT.read_text(encoding="utf-8").lstrip().startswith(
-        "# SKILL_LISPCAD V4.13 PORTABLE"
+        "# SKILL_LISPCAD V4.14 PORTABLE"
     )
     old = HISTORICAL.read_text(encoding="utf-8")
     assert old.lstrip().startswith("# SKILL_LISPCAD V4.12 PORTABLE")
