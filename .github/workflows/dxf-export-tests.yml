@@ -1,17 +1,27 @@
-name: DXF export regression
+name: TrainAiCad regression
 on:
   push:
     paths:
-      - 'tools/export_dxf.py'
-      - 'tools/DXF_INPUT_SCHEMA.md'
+      - 'AGENTS.md'
+      - 'AI_ENTRYPOINT.md'
+      - 'skills/**'
+      - 'references/**'
+      - 'regression/**'
+      - 'tools/**'
       - 'tests/**'
       - 'requirements.txt'
       - '.github/workflows/dxf-export-tests.yml'
   pull_request:
     paths:
+      - 'AGENTS.md'
+      - 'AI_ENTRYPOINT.md'
+      - 'skills/**'
+      - 'references/**'
+      - 'regression/**'
       - 'tools/**'
       - 'tests/**'
       - 'requirements.txt'
+      - '.github/workflows/dxf-export-tests.yml'
 jobs:
   serializer:
     runs-on: ubuntu-latest

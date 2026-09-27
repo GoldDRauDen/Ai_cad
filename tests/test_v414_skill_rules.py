@@ -1,5 +1,6 @@
 """V4.14 documentation and approved arithmetic regression; NOT a manufacturing DXF certification."""
 from pathlib import Path
+import re
 from decimal import Decimal as D
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,9 +10,24 @@ OLDER = ROOT / "skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md"
 QA = ROOT / "regression/qa/520217-26_V4_14_APPROVED.md"
 
 
-def test_current_equals_v414_and_history_stays_immutable():
-    assert CURRENT.read_bytes() == RELEASE.read_bytes()
-    assert CURRENT.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.14 PORTABLE")
+def test_current_matches_declared_approved_release_and_preserves_v414():
+    """Current follows the approved entrypoint; historical V4.14 is immutable."""
+    entrypoint = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    match = re.search(r"Current production release is [*][*](V[0-9]+[.][0-9]+)[*][*]", entrypoint)
+    assert match, "Entrypoint must declare the currently approved production release"
+    active_version = match.group(1)
+    major, minor = map(int, active_version[1:].split("."))
+    assert (major, minor) >= (4, 14)
+    active_file = (ROOT / "skills/lispcad/versions" / active_version
+                   / f"SKILL_LISPCAD_{active_version.replace('.', '_')}_PORTABLE.md")
+    assert active_file.is_file(), "Active production snapshot must exist"
+    assert CURRENT.read_bytes() == active_file.read_bytes()
+    assert CURRENT.read_text(encoding="utf-8").startswith(
+        f"# SKILL_LISPCAD {active_version} PORTABLE"
+    )
+    historical_v414 = RELEASE.read_text(encoding="utf-8")
+    assert historical_v414.startswith("# SKILL_LISPCAD V4.14 PORTABLE")
+    assert "## Appendix L — V4.14" in historical_v414
     old = OLDER.read_text(encoding="utf-8")
     assert old.startswith("# SKILL_LISPCAD V4.13 PORTABLE")
     assert "## Appendix K — V4.13" in old
