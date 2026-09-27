@@ -1,4 +1,4 @@
-# SKILL_LISPCAD V4.13 PORTABLE: Deduplicated Reference Units, Independently Scoped Mirrors, Inside-Face Reflection, Nobi Audit and Exact-Source Numeric Comparison
+# SKILL_LISPCAD V4.14 PORTABLE: Approved AI-DXF Direct Audit, Source-Proven Symmetry, Groove R and Hole-Union Regression
 
 
 ## 0. Portable Skill Contract — Mandatory for Every AI / Every Chat
@@ -20,7 +20,7 @@ When moving this skill to another AI or chat, apply rules in this order:
 If a current user instruction conflicts with a safety/anti-error rule in this skill (for example: guessing an unreadable dimension from a bounding box), STOP and report the conflict instead of silently weakening the rule.
 
 ### 0.3 Portable Calibration / Regression Learning Protocol
-When the user supplies a reference DXF or corrected CAD for comparison:
+When the user supplies a reference DXF or corrected CAD for PDF-interpretation calibration (NOT a specifically requested direct audit of an ALREADY MADE AI DXF, which follows §2.4.2b):
 1. **Interpret the PDF first** without using DXF coordinates to fill missing information.
 2. Compare the independently derived geometry against the user-approved reference.
 3. Classify each mismatch by semantic cause: datum, dimension-chain type, step/local dimension, feature type, C/R topology, tolerance/Nobi, or source conflict.
@@ -35,6 +35,10 @@ When the user supplies a reference DXF or corrected CAD for comparison:
 - Never write rules such as "as discussed earlier", "as the user said before", or "use the previous chat". Replace them with explicit, self-contained instructions.
 
 ### 0.5 Versioning and Update Discipline
+
+**V4.14 direct approval (2026-09-27; 520217-26 six-code audit):** User individually accepted L01–L08 and Q01–Q07, explicitly asked to deduplicate against latest GitHub production skills and push nonduplicate items. New: direct pre-existing AI-DXF-vs-reference audit before PDF diagnosis, source-supported symmetry datum precedence, width-proven semicircular groove-bottom R and n×m-R scope, one Boolean-union cut outline for proven overlapping holes, and physically equivalent ARC/LINE versus bulged-polyline comparisons. Already V4.13 and NOT repeated as novel: reference true-unit/header conflict, exact printed source dimensions and strictly <0.01 derived-only residual. In addition to self-contained Appendix L, see approved modular regression `regression/qa/520217-26_V4_14_APPROVED.md`. NO regenerated six- or twelve-code DXF is certified by this skill approval.
+
+
 
 **V4.13 direct approval (2026-09-27, 520315-18):** L01–L08 were approved for general use and deduplicated against V4.12. The ALREADY established slot witness-line/center-versus-overall rules, source-first completeness and no-routine-shop-clearance-questions rule remain unchanged. The genuinely NEW rules are SOURCE_UNIT_CONFLICT for reference input (§2.4.2a), independently scoped per-code mirroring (§2.2.2), INSIDE_VIEW face assembly before proved whole-flat reflection (§4.2.7.1), J-scoped handwritten Nobi/table discrepancy FLAG (§4.7), and strict <0.01 mm derived-only numeric audit separated from exact printed source values (§4.6.1). Appendix K contains self-contained user-approved regression examples; V4.12 and older releases remain immutable.
 
@@ -166,6 +170,10 @@ This mode is activated ONLY when the user explicitly states that a supplied DXF 
 
 A user-approved reference DXF's $INSUNITS header is metadata, NOT authority to automatically rescale stored CAD coordinates. Establish the reference's ACTUAL numeric units by PDF dimensions and witness lines interpreted independently, applicable job metadata and direct user confirmation. If the header conflicts with that evidence, report SOURCE_UNIT_CONFLICT and use the proved actual units for numeric geometry comparison; NEVER multiply/divide by 25.4 merely because the header claims inches. If actual units are still unproved, FLAG and ask; do not claim a valid common-mm comparison. Generated OUTPUT DXF still MUST set $INSUNITS=4. PDF-first dimensional interpretation is unchanged; a misleading header is not license to take missing measurements from the reference.
 
+#### 2.4.2b V4.14 approved DIRECT AUDIT of pre-existing AI DXF against a reference
+
+If the user's objective is to evaluate **the AI's already-exported DXF** against a customer-approved reference DXF, compare **those TWO DXFs FIRST**, matching only proved drawing-code clusters and actual user/PDF-confirmed coordinate units, then normalizing layout-only translation and any independently proved orientation. Audit full physical outer/inner boundaries, each hole/slot/cutout family (type, diameter, original quantity and coordinates), true R/C, complete unfolded extent, each double-line bend-pair coordinate and its clipping to real material. ARC+LINE in the reference and exact, closed LWPOLYLINE/bulge in the AI output are geometrically equivalent; raw entity counts alone are not a failure. A source/orthographic face is only PARTIAL if the reference has a complete flat, irrespective of its locally correct holes. Report MATCH/PARTIAL/DIFF **per code**, protect MATCHed parts from later edits, and **only THEN** revisit the PDF to identify why the AI made each error. This is distinct from creating a NEW PDF-based drawing: existing PDF-FIRST rules are unchanged, and sample DXF is never a hidden replacement for an unproved PDF dimension. Approved case: `regression/qa/520217-26_V4_14_APPROVED.md`.
+
 #### 2.4.3 Approved material-table Laser R takes precedence over old DXF-only R0.5 exception
 
 The V4.3 unconditional rule to omit uncalled-out DXF-only R0.5 is superseded. Read the approved material table embedded in Section 7.2 (modular reference: `references/MATERIAL_RULES.md`) and apply automatic Laser R0.5, R2 and R3 to **eligible, uncalled-out** corners according to material/thickness and corner class. Explicit PDF R or C at a corner always overrides its material-table auto R. A shop-added R not prescribed by the PDF or approved table may be omitted only with direct user confirmation or an approved shop specification; otherwise FLAG a source conflict. This rule never authorizes inventing contour topology, flattening a relief into a fillet, or silently adjusting explicitly dimensioned PDF geometry.
@@ -197,6 +205,10 @@ The V4.3 unconditional rule to omit uncalled-out DXF-only R0.5 is superseded. Re
 - **V4.12 quantity-only `n-R` on proven stadium slots:** If the source clearly shows stadium/oblong slots with semicircular ends and a dimensioned width `W`, each end is `R=W/2`. A `4-R` count targeting the FOUR rounded ends of TWO width-12 stadium slots resolves uniquely to FOUR `R6` ends. Trace the leader/count and confirm the two slot identities; do not mistake a `4-R` on unrelated corners or an unproved nonsemicircular end for this rule. Do not ask for a radius directly derivable from the proved width.
 - **Polygonal Cutouts**: Extracted as closed `LWPOLYLINE`s using explicit vertex arrays.
 - **Countersinks & Counterbores**: Extracted using the smallest pilot/through-hole diameter for laser cutting.
+
+### 3.1.1 V4.14 approved boolean union for source-proven overlapping cut holes
+
+When the actual source proves that hole/opening CUT REGIONS genuinely intersect to form ONE connected laser-cut void, compute the geometric Boolean union and output exactly ONE continuous closed CW internal boundary for the combined region (exact ARC/LINE arcs or correct bulged LWPOLYLINE). Do NOT output each contributing complete CIRCLE on top of the union or leave redundant interior overlapping toolpaths. Count and datum-trace every ORIGINAL callout-family member independently of the resulting one DXF closed contour; containment and topology validation are still mandatory. Mere tangential contact, separately specified machining, ambiguous topology or unproved overlap do not trigger automatic union; FLAG/ask. User-approved general case: 010447 has one `Ø28.5 + 4×Ø5.5` connected cut contour built from five contributed source cut regions, preserving four Ø5.5 nominal callout locations.
 
 ### 3.2 3D Forming Features Mapping (To 2D Flat Pattern)
 For 3D forming operations (which cannot be cut directly as flat outlines), map geometry into 2D laser manufacturing layers:
@@ -310,6 +322,10 @@ This rule applies independently on both axes. Projection alignment may identify 
 
 When source views PROVE that they represent INNER faces of the bent component, tag the evidenced faces INSIDE_VIEW, record each source frame/view direction, confirm fold sequence, convert ONLY true ID dimensions using §4.6, apply the exact applicable Nobi and existing local-face-to-flat transforms, then ASSEMBLE all those inner faces in their common unfolded frame. If the evidenced intended target CAD/blank orientation is the reflection of that assembled inside-surface depiction, reflect the WHOLE assembled result about the PROVEN axis BEFORE final reference comparison or CAD-coordinate assignment. Compare each hole family using center, actual diameter/type and quantity ONLY AFTER the reference and derived flat are mapped into that SAME orientation. A left/right reversal visible before this common-frame comparison does NOT prove holes were swapped. Do not reflect every bent part by default; unproved mirror axis after full PDF tracing remains an independent FLAG/question.
 
+#### 4.2.7.2 V4.14 approved symmetry/explicit-edge-dimension precedence
+
+If actual PDF geometry PROVES a symmetry axis and there is NO controlling outer-edge dimension for a repeated feature family, use that axis to construct the symmetric centers/positions and retain a datum trace. When the same feature family has an explicit physical outside-edge dimension, **DRAW ACCORDING TO THE PRINTED EDGE DIMENSION** even if a centerline is also shown. A printed axis that coexists with source-proved actual asymmetry or mutually inconsistent witnesses is a specific FLAG/question after fully tracing all source evidence; do not silently force visual symmetry. For features on bent faces, source-frame lock and the independent per-face local→global-flat transform remain mandatory. User-approved 010420 Q03 documents this priority.
+
 #### 4.2.8 Bend Sequence / Face Order Is Non-Commutative
 The total flat length equation may be numerically unchanged when two flange lengths are swapped, but **bend positions, feature transforms, and material topology are not**. Therefore:
 
@@ -385,6 +401,10 @@ Before asking for confirmation, exhaust the PDF's explicit dimension strings, ha
 - **Callout topology and count:** a leader is evidence of target corner class, not global scope; identify the candidate equivalent corners by their material topology and count (`6-C5`, `2-C10`, `4-R5` etc). Distinct R and C families MUST match their own n-calls.
 - **Geometry:** bake an explicit R into polyline tangent points/bulges (for a CCW 90° arc, `bulge=tan(90°/4)=0.41421356` with sign from actual sweep). A straight C replaces the corner with two tangent-offset vertices and bulge 0. A sharp interior U-notch stays sharp unless the PDF explicitly requires an interior R or an approved material rule for that particular class applies.
 - **Relief is not Laser R:** an `R=t` relief at two oppositely folding edges whose outside extents must remain unchanged is a manufacturing clearance with distinct topology. Do not spread Laser R to reliefs. `055958` contains **ONE** confirmed Section 4.10 slit relief composed of two connected LINEs and one local ARC R0.5; the arc is not a second relief or a material-table automatic Laser R.
+
+#### 4.5.1 V4.14 — width-proven semicircular notch/groove R and scoped n×m-R
+
+Extend existing V4.12 stadium-slot end logic to a **real semicircular notch/groove BOTTOM** only where the PDF contour and dimension witnesses uniquely prove the shown groove width W is the full diameter of its half-circle: **R=W/2**. Read `n×m-R` by actual source grouping and the m eligible arc positions within each group; do not treat it as n separate shapes or borrow a nearby R callout. Independent mouth/edge radius families retain their own quantities. If width, half-circle topology, leader scope, or different inner/outer R is uncertain, FLAG rather than infer R from the picture. Directly approved regression 010421: width 6 → `2×2-R` means **4 bottom R3**, separately `2×4-R1` means **8 mouth R1**. Explicit PDF R overrides any material automatic Laser R at THAT corner.
 
 ### Material-table validation
 Record source material, thickness, chosen worksheet row, eligible corner class, R/C overrides, and each generated automatic radius; compare PDF and ground-truth DXF *after* this classification. A DXF R0.5 that matches the approved material table is expected and must not be excluded from regression comparisons.
@@ -475,6 +495,9 @@ Before exporting production DXF or optional AutoLISP, run the following automate
 - **Reference-Datum Check**: Parenthesized/reference dimensions must retain their actual extension-line datum; using the nominal value directly as a global coordinate without datum proof is FAIL.
 - **Chain Closure Check**: Where an overall width/height is present, verify that the proven chain closes to the overall dimension. A closure failure is a semantic FAIL even if the CAD polyline itself is perfectly closed.
 - **Reference DXF Comparison Check**: When Section 2.4 is active, compare feature coordinates and topology against the master DXF after PDF interpretation. Apply the approved material-table auto Laser R first; a matching DXF R0.5/R2 must not be excluded solely because PDF omitted R/C. Omit only explicitly confirmed downstream shop-only differences.
+- **V4.14 direct existing-output comparison:** When asked whether the AI's EXISTING file matches the approved reference, compare those TWO DXF files first (§2.4.2b), normalizing only proved source units/orientation and layout translation; accept exact ARC+LINE versus exact bulged-polyline physical curve equivalence, but never missing flats, wrong holes, wrong bend lines or five overlapping circles instead of a proved cut union. Report each part MATCH/PARTIAL/DIFF and recheck every formerly MATCH part after editing. Only afterwards consult independently read PDF to explain a discrepancy; the old PDF-first creation rule remains unchanged.
+
+
 - **Feature Count Closure Check**: For every explicit quantity callout (`n-Ø`, `n-M*`, `n-slot`, `n-R`, `n-C`, repeated notch family, etc.), the generated family count MUST equal `n`. Thread-to-pilot conversion changes diameter representation, not the required count. Missing or extra members are FAIL, not WARN. First classify active versus proven canceled callouts under Section 2.5. A fully canceled family requires ZERO surviving entities, while every retained family must independently meet its stated quantity.
 - **Connected primitives are not separate manufacturing features (approved `055958` regression)**: Count by proved topology, actual manufacturing operation, and endpoint connectivity, **not** by the number of same-colored DXF LINE/ARC entities. One approved `055958` Section 4.10 slit contains Green `LINE 55A` + `ARC 55B R0.5` + `LINE 55C`, which meet at their endpoints: feature count **1**, constituent entity count **3**. Common color alone does not prove that unrelated entities form one feature. The local R0.5 in this specific case is not a universal requirement of all slit reliefs. Remove only this slit method/count FLAG; independently uncertain customer sizes/datum still FLAG.
 - **V4.8 cancellation-scope audit:** Assert zero entities of each fully canceled hole family in individual and composite DXFs; preserve separate active counts and remove obsolete finishing warnings. If only a tolerance/finish fragment was crossed or its target scope is unclear, retain proven holes and request clarification.
@@ -1203,3 +1226,58 @@ The user directly answered the questions about original PDF `520217-27` and expl
 8. **L08 explicitly deduplicated:** The V4.12 §5.2 ordinary shop-clearance advisory/question rule already exists and remains unchanged. Do not claim it as a novel V4.13 skill, and do not waive real containment, material limits or customer-unknown dimensions.
 
 **Portable regression contract:** 018295/018297/018300/018304 are EXAMPLE IDs, NOT globally reusable coordinates. Each case above states the independent source evidence and dimension-witness meaning, mapping/formula, expected result, prohibited failure and FLAG boundary. A new AI can follow these semantic procedures on different codes without conversation history. User QA of this reference does not certify an unexecuted corrected CAD export.
+
+
+## Appendix L — V4.14 approved 520217-26 user answers and self-contained six-code regression
+
+
+**Source and approval:** User returned the answered 520217-26 Markdown report, checked **OK individually for L01–L08** and overall approval of these checked lessons, then expressly requested comparing against current GitHub skills, skipping duplicates, and pushing new approved rules. This is a six-code **existing AI DXF versus reference DXF audit**: compare `520217-26_ALL_REVIEW_ONLY.dxf` (the earlier AI output) **directly** with the customer-approved `520217-26_ss.dxf`; PDF is used **afterwards** to diagnose semantic causes. No revised DXF and no other six job codes are certified by this approval. Actual reference numeric units are mm despite the sample's misleading `INSUNITS=1`.
+
+## Approved, deduplicated production lessons
+
+| Lesson | Disposition against pre-existing V4.13 |
+|---|---|
+| L01 | **NEW general audit mode:** If the user asks whether **pre-existing AI-produced geometry** matches approved DXF, first compare the TWO DXFs, mapped by actual part code, established actual units, same orientation and removal of layout-only translation. Compare real contour curves, holes/slots/cutouts and original family counts, R/C, face-to-flat placements, bend-line pairs and material-only clipping. Classify MATCH/PARTIAL/DIFF **per code**; only then inspect the PDF for root causes. PDF-first remains mandatory for NEW PDF-based geometry extraction, never copy unknown PDF dimensions from DXF. |
+| L02 | Existing V4.10/V4.11 VIEWS_ONLY versus full flat: **NEW six-code regression**, not a duplicate new general rule. |
+| L03 | Existing user-handwritten Nobi, ID→OD intermediate rounding and ordered unfolding: **NEW six-code regression**, not a replacement Nobi table. |
+| L04 | V4.12 already covered width-proven stadium-slot semicircular ends; **NEW conditioned extension** to width-proven semicircular *groove/notch bottoms* and separately scoped `n×m-R` arc-family counts. |
+| L05 | **NEW regression:** recompare formerly correct 010428/010429 before/after editing the other four codes. |
+| L06 | **NEW user-approved general shop rule:** when source proves that cut holes genuinely overlap into ONE connected cut void, output exactly the closed exterior **Boolean union** boundary (no overlapping full-circle cut paths), while auditing every original n-Ø callout and containing the resulting cut region. Do not auto-union merely tangent regions, distinct processes or unproved topology. |
+| L07 | Existing per-face transformations preserved. **NEW conditioned datum precedence:** explicit edge/outer-edge dimension overrides a merely drawn symmetry axis for that family. When actual axis is established and no controlling outside-edge dimension exists, place proved mirrored family symmetrically. A printed axis with demonstrably asymmetric/contradictory PDF dimensions requires a precise FLAG. **NEW per-face regression** for 010420 and 010447. |
+| L08 | **ALREADY APPROVED V4.13, DO NOT DUPLICATE:** `SOURCE_UNIT_CONFLICT`, user-proven actual mm despite inch header, mm output, printed PDF numerical dimensions EXACT, strict residual **<0.01 mm** for a correctly computed DERIVED value only. Not a tolerance for incorrect source values, topology, holes or bends. |
+| Q06 | **NEW clarification for reference audit:** geometric equivalence of exact ARC+LINE versus closed LWPOLYLINE with exact bulges is acceptable; unequal raw entity counts are not a failure when actual cut/bend curves coincide. Still require CAD closure, shape, material-domain and feature-family QA. |
+
+## Seven direct answers; transferable semantic cause versus job-specific coordinates
+
+**Q01 / 010419 arc-center witness:** Printed `2 mm` lies BETWEEN the two semicircular end-arc centers of one stadium/notch. Printed `19.5 mm` ends at the FIRST INNER end-arc center, NOT the midpoint of the notch; printed `157 mm` reaches the second notch's relevant end-arc center, NOT the notch midpoint. The two center pairs in the local customer DXF are **X=19.5/21.5** and **X=176.5/178.5**; the earlier AI put every one of four oblong notches **X+1 mm**. This specific X chain and error are regression values only. The portable rule is to tag actual dimension-witness ENDPOINT type (end-arc center vs slot center vs tip), never substitute the center of a whole notch.
+
+**Q02 / 010419 OD conversion:** User explicitly confirmed both printed 191 and 35 are ID for the relevant 128° fold of t0.8: each `Round_0.01[0.8×tan((180−128)/2)] = 0.39 mm`. Deduct ONE handwritten Nobi 0.56: `191+35+0.39+0.39−0.56=226.22 mm`. One bend zone has TWO dashed lines local Y **190.83/191.39**, 0.56 apart; never deduct Nobi twice simply because two lines exist.
+
+**Q03 / 010420 symmetry datum:** Proved axis with no outside-edge dimension for the target → symmetric by that axis. If an actual outer-edge dimension is present, use that explicit dimension even when an axis is drawn. If a printed centerline conflicts with actual asymmetric PDF geometry/measurements, FLAG after tracing all witnesses. The reference middle axis is local Y **132.51**; a proved 128.5 middle face has local half-height 64.25, so `Y_flat=132.51+(Y_face−64.25)` is a *case-specific* valid face transform, NOT an excuse to ignore edge dimensions on another job.
+
+**Q04 / 010447 actual ordered five OD portions:** User specified, following the lower bend view, `16 | (ID60+2.3)=62.3 | (ID80+2.3+2.3)=84.6 | (ID60+2.3)=62.3 | 16`, **in that order** from the left outside free edge. The OD sum is **241.20**, not 222.72; subtract the already confirmed **FOUR × handwritten Nobi 4.62 = 18.48** to obtain **222.72 mm** flat. The abbreviated user line `16+62.3+84.6+62.3+16=222.72` therefore expresses the final flat result with Nobi understood; do not teach its bare sum as 222.72. Specific reference bend X pairs: **11.38/16, 69.06/73.68, 149.04/153.66, 206.72/211.34**. Reference central cutout source X56 becomes flat X111.36; central-face holes X26/86 → X81.36/141.36; outer-edge hole columns measured from the free edges become X5/217.72. Do NOT rigidly translate every source feature by the middle-face offset: lock each face's local start/end, orientation and actual dimension endpoint.
+
+**Q05 / overlapping holes:** Explicit user approval of GENERAL rule for genuinely intersecting laser-cut hole regions. For 010447, `Ø28.5 + 4×Ø5.5` is FIVE contributing source cut regions but ONE resultant closed contiguous cut boundary; original four Ø5.5 callout characteristics are still audited individually.
+
+**Q06 / DXF entity type:** User says matching **actual physical geometry** is sufficient. Exact ARC+LINE in sample versus correctly closed LWPOLYLINE/bulge in produced DXF are equivalent; raw entity counts do not define feature equality. This DOES NOT permit flattening true arcs, wrong hole identities or incorrectly joined/split boundaries.
+
+**Q07 / precision:** A true calculation/representation comparison residual **strictly <0.01 mm** may pass if the DERIVED result was computed from exact printed sources with approved rounding rules. All PRINTED PDF numbers must be entered and used 100% exactly. An error in original witness, source-value, part identity, hole family or bend geometry never passes merely by this numeric threshold. **Deduplicated from V4.13**, not newly invented here.
+
+## Six-code direct old-AI ↔ customer reference regression
+
+| Drawing code / PDF | Reference flat bbox (mm) | Old AI audit outcome and required regression |
+|---|---|---|
+| `010419` / page 3 | **198×226.22** | **DIFF:** AI only formed/source 198×191 + other detached view; missing sloped flange flat and 2 bend lines, four 7×5 notch positions X+1. Reference bender Y190.83/191.39, outer R3 at two flange corners and table R0.5 at two opposite eligible corners. Derive flat using Q02; X coordinates using Q01 end-arc-center chain. |
+| `010420` / page 4 | **440×265.02** | **PARTIAL:** 12 source-view holes match family/count/relative locations, but faces remain detached; no complete flat, four bend lines missing and no proven global-flat center transforms. `69.2+128.5+2.4+69.2−2×2.14=265.02`. Bend pairs Y **67.06/69.20** and **195.82/197.96**; apply Q03 witness/symmetry gate before per-face mapping. |
+| `010421` / page 5 | **440×203.26** | **DIFF:** only one of two Ø6, one side of notches, missing complete flat and four bend lines. `42.2+128.5+2.4+42.2−2×6.02=203.26`; bend pairs Y **36.18/42.20** and **161.06/167.08**; two Ø6 centers at reference X15,Y7/196.26. `2×2-R`: TWO opposed notch groups × TWO semicircular bottom arcs = 4×R3 from width 6. Separately `2×4-R1`: 8 mouth R1 arcs. NEVER reuse 010420 Nobi 2.14. |
+| `010428` / page 6 | **266.64×25** | **MATCH** in original direct DXF audit: actual contour, 2 Ø9+2 M8 pilot Ø6.8 and four bend zones/eight lines. Preserve full physical geometry in all future rebuilds; ARC/LINE vs bulged-polyline entity totals immaterial. |
+| `010429` / page 7 | **266.64×70** | **MATCH** in original direct DXF audit: stepped contour/R3, 2 Ø9+4 M5 pilot Ø4.2 and four bend zones/eight correctly material-clipped lines on narrowed legs. Preserve exact physical geometry and clipping in every rebuild. |
+| `010447` / page 8 | **222.72×45** | **PARTIAL:** AI had only 112×45 source face, eight Ø5, one proper connected `Ø28.5+4×Ø5.5` cut geometry; lacked four unfolded bend zones/eight lines and proper global placements. User Q04 five OD portion sequence minus FOUR handwritten Nobi resolves full 222.72 flat. Map middle vs outside feature families using their own local face/edge datum. |
+
+The original direct comparison of **010428 and 010429** found physical-curve residual around **0.001 mm**; this is a *past audit fact*, not an executed validation of a newly generated V4.14 DXF. No code is newly given manufacturing PASS merely by accepting this regression.
+
+## Negative assertions and approval boundary
+
+FAIL if auditing customer DXF against PDF instead of the two specified DXFs; treating source-only face as finished flat; placing Q01 19.5 at a notch midpoint; applying +1 mm notch shift; transferring Nobi 2.14 from 010420 to 010421; using a symmetry axis to discard explicit outer-edge dimensions; setting 010447 OD SUM 241.20 equal to flat 222.72 before subtracting 18.48; leaving five intersecting CIRCLE cut paths in place of the required connected union; or mutating 010428/010429 while claiming regression stability. Also FAIL if different underlying DXF entity types alone are treated as geometric mismatch, or if an explicit printed source dimension is loosened by the derived-only <0.01 rule.
+
+**Not claimed:** No corrected six-code or full twelve-code DXF was exported, independently read back and production certified in this calibration. Only these six old-AI-versus-sample results are approved; the other six codes and all remaining unproved parameters retain existing review-only treatment. Old V4.13 and earlier release snapshots must remain untouched.
