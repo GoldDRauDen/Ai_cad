@@ -1,4 +1,4 @@
-# SKILL_LISPCAD V4.15 PORTABLE: Approved Acute-Bend <85° Outside-Dimension Construction + V4.14 Rules
+# SKILL_LISPCAD V4.16 PORTABLE: Approved Face-Ownership, R-Family Closure + BOXMET Slit Relief
 
 
 ## 0. Portable Skill Contract — Mandatory for Every AI / Every Chat
@@ -35,6 +35,9 @@ When the user supplies a reference DXF or corrected CAD for PDF-interpretation c
 - Never write rules such as "as discussed earlier", "as the user said before", or "use the previous chat". Replace them with explicit, self-contained instructions.
 
 ### 0.5 Versioning and Update Discipline
+
+**V4.16 direct approval (2026-09-28; 520801-04 / BOXMET-style box slit):** User directly approved the corrected interpretation after direct old-AI ↔ customer-approved DXF audit and supplied an explanatory DXF plus the production `Boxmetcommand.cs` tool. New, deduplicated rules: (1) reconstruct each formed face before assembly and keep contour dimensions separate from hole/slot-center dimensions; (2) close explicit R/C family quantity and actual convex/concave arc topology before any automatic Laser-R pass; (3) for source-proved BOXMET-style four-flange boxes, generate the required four corner slit reliefs using the BOXMET orientation gate, `SlitLen=t+0.2`, the tool's LeadVal branch, and one connected `LINE + ARC R0.5 + LINE` feature per corner. Do NOT auto-apply BOXMET slit logic to ordinary L/U/Z profiles, a single flange/free edge, or unrelated relief topology. The generic one-relief/three-primitive concept from approved `055958` already existed and is not duplicated as a new lesson. Approved regression: `regression/qa/520801-04_V4_16_APPROVED.md`; mandatory BOXMET reference: `references/BOXMET_SLIT_RELIEF.md`.
+
 
 
 **V4.15 direct approval (2026-09-28; acute-bend <85° outside-OD construction):** Adds the acute-bend `<85°` outside-dimension construction. Reconstruct the real rounded bend with proved `Rin`, `Rout=Rin+t`, measure the two physical 外寸法 from the outside envelope, then apply Nobi. Do not measure to a theoretical sharp intersection and do not use a reference DXF as a hidden source of those ODs. Portable reference: `references/ACUTE_BEND_LT85_METHOD.md`; regression: `regression/qa/ACUTE_BEND_LT85_APPROVED.md`.
@@ -142,6 +145,17 @@ For each part page, inspect in this sequence before writing any geometry:
 7. **Only then generate CAD coordinates** and run Section 5 validation.
 
 Do not generate **production** geometry while contour topology or datum is unresolved. V4.11 permits visibly provisional REVIEW-ONLY drawing (Section 4.4.1) and source-view separation; neither establishes production PASS.
+
+### 2.2.1a V4.16 — Face-first dimension ownership before unfold
+
+For every bent/multi-face drawing, reconstruct each visible formed face independently before joining faces or applying Nobi. Every used dimension must be assigned to BOTH its actual witness endpoints and exactly one semantic graph: `FACE_CONTOUR`, `HOLE/SLOT_CENTER_OR_SIZE`, `BEND/FACE_TRANSITION`, or another explicitly proved local feature.
+
+- A dimension between hole/slot centers is a feature-position dimension even when it lies near or parallel to an outer contour. It MUST NOT be reused as a contour edge or bend-axis dimension.
+- Complete the contour and local feature graph of each face from dimensions whose witnesses actually belong to that face; only then join the faces through proved bend adjacency and apply ordered Nobi.
+- Projection alignment identifies which face a dimension/feature belongs to; it is not permission to borrow a number from an adjacent face.
+- After the original is fully assembled, a partner may be mirrored only when the source/user proves the full mirror scope; all contour, holes/slots, R/C, BEND and markings in that scope must mirror together.
+
+**Approved regression 520801-04 / 044812-044813:** printed `25` is the center-to-center dimension of the two `9.5 × R1.75` long holes on the face whose proved envelope is `(4+7+17) × (8+25+8) = 28 × 41`; it is NOT a contour or bend-axis dimension. The adjacent face contributes `21`; with handwritten Nobi `3.68`, the proved flat contribution is `28 + 21 - 3.68 = 45.32`. `044813` is the approved full mirror partner of `044812`.
 
 ### 2.2.2 V4.13 original and mirrored part codes
 
@@ -405,6 +419,14 @@ Before asking for confirmation, exhaust the PDF's explicit dimension strings, ha
 - **Geometry:** bake an explicit R into polyline tangent points/bulges (for a CCW 90° arc, `bulge=tan(90°/4)=0.41421356` with sign from actual sweep). A straight C replaces the corner with two tangent-offset vertices and bulge 0. A sharp interior U-notch stays sharp unless the PDF explicitly requires an interior R or an approved material rule for that particular class applies.
 - **Relief is not Laser R:** an `R=t` relief at two oppositely folding edges whose outside extents must remain unchanged is a manufacturing clearance with distinct topology. Do not spread Laser R to reliefs. `055958` contains **ONE** confirmed Section 4.10 slit relief composed of two connected LINEs and one local ARC R0.5; the arc is not a second relief or a material-table automatic Laser R.
 
+#### 4.5.0a V4.16 — Explicit R/C family quantity closure before automatic Laser R
+
+For each printed R/C family, identify the actual view and the corner class visibly targeted by its leader/callout. Count that indicated class first (convex/outside or concave/re-entrant), and verify that each candidate is actually drawn as an arc/chamfer rather than a sharp corner. Close the printed family quantity before looking to a different view/corner class and **before** applying material-table automatic Laser R.
+
+If the first candidate class does not close the printed quantity, inspect the remaining visible candidate corners/views and their actual topology; drafting conventions differ by customer, so the text position alone is never a universal scope rule. Never replace a still-unclosed explicit R/C family member with automatic R0.5/R2/R3.
+
+**Approved regression 520801-04 / 044841:** explicit `R5` family closes as left `4×R5` + right `4×R5` + bottom `2×R5` = **10×R5**, all on proved convex outside corners. The old AI result `6×R5 + 8×R0.5` is a FAIL.
+
 #### 4.5.1 V4.14 — width-proven semicircular notch/groove R and scoped n×m-R
 
 Extend existing V4.12 stadium-slot end logic to a **real semicircular notch/groove BOTTOM** only where the PDF contour and dimension witnesses uniquely prove the shown groove width W is the full diameter of its half-circle: **R=W/2**. Read `n×m-R` by actual source grouping and the m eligible arc positions within each group; do not treat it as n separate shapes or borrow a nearby R callout. Independent mouth/edge radius families retain their own quantities. If width, half-circle topology, leader scope, or different inner/outer R is uncertain, FLAG rather than infer R from the picture. Directly approved regression 010421: width 6 → `2×2-R` means **4 bottom R3**, separately `2×4-R1` means **8 mouth R1**. Explicit PDF R overrides any material automatic Laser R at THAT corner.
@@ -497,6 +519,27 @@ For flanges stepping inward before joining the body:
 - When **two outer edges fold in different directions** and both outside dimensions must remain unchanged, create an `R=t` escape relief at their intersection without shortening either outside dimension. This is a distinct topology/operation from the standard slit relief and from material-table automatic laser fillets. Determine its exact tangency and retained-material side from the real bend/edge topology; if those are unclear, do not invent them.
 - In `055962`, `t=2 mm` gives the two confirmed R2 reliefs. A separately observed R2 on an unbent corner is NOT automatically this relief.
 - **`055958` (approved Q47/Q48): EXACTLY ONE standard Section 4.10 slit relief.** Its verified standalone DXF has three Green entities on Layer `0`, joined at endpoints: `LINE 55A` → `ARC 55B R0.5` → `LINE 55C`. Count **ONE connected machining feature**, NOT three reliefs. Its approved method is the existing crossing-bend slit rule (retract the longer edge by `t`, cut inward `t+0.2`, then diagonal to the proved bend intersection). The local `ARC R0.5` is **specific to this example**, not a mandatory arc for other slits or an automatic material-table Laser R. The old **slit method/count FLAG is RESOLVED**; customer-unconfirmed sizes and any independent datum/geometry FLAG remain. Never hardcode these reference coordinates as a universal construction.
+
+#### 4.10.1 V4.16 — BOXMET-style four-flange box slit relief
+
+When the source proves a BOXMET-style box flat — a central/base rectangle with four adjacent bent flanges and box-corner intersections where adjacent flange bends would otherwise interfere/deform — load `references/BOXMET_SLIT_RELIEF.md` and generate the BOXMET slits. In this proved topology, **do not omit the slit merely because the outer contour already closes**.
+
+**Scope/omission gate:** Do NOT auto-add BOXMET slits to an ordinary L/U/Z profile, a single flange or free edge, a non-crossing bend, or unrelated relief/seam topology. A drawing-specific alternate/cancelled relief remains higher authority. Lack of BOXMET topology means “rule not applicable”, not “missing slit”.
+
+BOXMET orientation:
+- if `L >= W`: Bottom/Top flaps retreat by `t`; four slits occur at those Bottom/Top retreat corners;
+- if `W > L`: Right/Left flaps retreat by `t`; four slits occur at those Right/Left retreat corners.
+
+BOXMET parameters:
+- `SlitLen = t + 0.2`;
+- `LeadVal = 3.0` only when the tool material value is exactly `SS` and `t < 6.0`; otherwise `LeadVal = 6.0`;
+- fillet `R = 0.5`;
+- each slit is **ONE connected manufacturing feature** `LINE + ARC R0.5 + LINE`, Layer 0, ACI 3 Green;
+- construct the R0.5 as a true tangent fillet between the slit ray and lead ray; it is not automatic material Laser R;
+- interrupt the dashed bend/reference segment wherever the solid slit/cut occupies that same local corner segment.
+
+Approved regression `044858/044859`, `t=1.5`: `SlitLen=1.7`, tool else-branch `LeadVal=6`, included ray angle `135°`, tangent trim `0.207106781...`, giving straight portions `1.492893219...` and `8.278174593...` around the `R0.5` arc. Both approved mirror codes require the corresponding slit.
+
 
 ---
 
@@ -1320,3 +1363,18 @@ The user directly approved the method after an independent `TEST.dxf` reconstruc
 **Negative regression:** FAIL when an AI measures either leg to the theoretical sharp-line intersection, silently substitutes generic ID→OD arithmetic, takes OD values from a reference DXF instead of deriving them, or uses the `<0.01 mm` derived residual rule to alter printed source dimensions.
 
 See `references/ACUTE_BEND_LT85_METHOD.md` and `regression/qa/ACUTE_BEND_LT85_APPROVED.md`.
+
+---
+
+## Appendix N — V4.16 approved 520801-04 face/R/BOXMET regression (2026-09-28)
+
+**Approval boundary:** The user supplied customer-approved `520801-04_ss.dxf`, then supplied `044812,13hd.dxf`, answered the targeted explanation report, supplied `Boxmetcommand.cs`, and directly approved/pushed these deduplicated lessons. This approval promotes interpretation/BOXMET rules and regression assertions; it does NOT by itself certify a regenerated 520801-04 production DXF.
+
+1. **044812/044813 — face ownership:** `25` belongs to the two long-hole centers on the `28×41` face, not the contour/bend graph. Use face-first reconstruction; adjacent face contribution `21`; Nobi `3.68`; flat contribution `45.32`. `044813` is the full approved mirror partner.
+2. **044841 — R quantity closure:** explicit `10×R5` = left 4 + right 4 + bottom 2. Close explicit R/C quantity and visible arc topology before automatic Laser R.
+3. **044858/044859 — BOXMET slit:** at the proved box-corner transition around the `285 | 43` relationship, preserve the manufacturing slit that prevents bend deformation/interference. For `t=1.5`, BOXMET gives `SlitLen=1.7`, `LeadVal=6`, tangent R0.5, straight portions approximately `1.4929` and `8.2782`. The partner mirrors the complete feature.
+4. **Deduplication:** `055958` already established that one relief can be one connected `LINE + ARC R0.5 + LINE` feature. V4.16 does not re-claim that topology as new; it adds the BOXMET scope/orientation/parameter construction and the new 520801-04 regressions.
+5. **Negative regression:** FAIL when a slot-center dimension is reused as a contour/bend distance; when an explicit R family is left unclosed and auto-R fills its places; when a BOXMET slit is omitted because the contour is closed; when a BOXMET slit is added to a non-BOX topology; or when a mirror partner is mapped to the wrong barcode.
+
+Executable checks: `regression/tools/check_520801_04_v416.py`. Modular approved record: `regression/qa/520801-04_V4_16_APPROVED.md`. BOXMET construction reference: `references/BOXMET_SLIT_RELIEF.md`.
+

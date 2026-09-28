@@ -40,6 +40,15 @@ Before using any dimension numerically, classify it as one of the following:
 - If two dimensions visually touch but their witness lines terminate on different geometry, classify them separately.
 - Use the overall size only as a closure test: if `sum(chain segments) != overall`, mark the chain `FLAGGED` and re-read the extension lines; do not force-fit the numbers.
 
+#### 4.2.2a V4.16 Face-First Dimension Ownership
+
+Before unfolding any multi-face part, reconstruct each visible formed face as its own contour/feature model. Tag every used dimension by actual witness endpoints and assign it to one semantic graph: face contour, hole/slot center-or-size, bend/face transition, or another proved local feature.
+
+- A hole/slot-center dimension never becomes a contour or bend-axis dimension merely because it is parallel, nearby, or numerically convenient.
+- Finish each face's contour and feature graph from that face's own witnesses before joining adjacent faces and deducting Nobi.
+- Projection alignment may identify the owning face but does not transfer dimension ownership across faces.
+- Approved 044812/044813 regression: `25` is the center distance of two `9.5×R1.75` long holes on the `28×41` face; use `28 + 21 - 3.68 = 45.32` for the proved two-face flat contribution, not `25-3.68` as a contour/bend coordinate.
+
 #### 4.2.3 Required Datum Trace Record
 For every hole row, notch, step, or repeated feature pattern, retain a trace record containing: `axis`, `datum entity`, `dimension type`, `equation`, and `result`. This trace must be auditable in Stage 1 for any feature that was previously ambiguous or that disagrees with a reference DXF.
 
