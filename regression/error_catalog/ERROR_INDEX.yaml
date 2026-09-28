@@ -1,0 +1,825 @@
+# PHASE 1 PASSIVE INDEX ONLY; approved for repository storage, NOT a production skill.
+# Historical case examples are NOT verified recurrence events or released-production escapes.
+schema_version: 1.0-PASSIVE
+status: PASSIVE_INDEX_NOT_PRODUCTION_SKILL
+repo: GoldDRauDen/TrainAiCad
+inventory_snapshot_commit: 5646e2af94b520385c986a79723a3788fb43d3ab
+# Inventory commit identifies the inspected regression sources, NOT a pinned skill.
+source_entrypoint: AI_ENTRYPOINT.md
+phase1_integration:
+  auto_load_by_agent: false
+  automatic_escalation: false
+  exporter_or_qa_hooks: false
+  incident_history_recording: false
+  read_only_manual_cli: true
+active_production_skill: skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md
+authority:
+  priority:
+  - user current explicit instructions
+  - current approved portable production skill and modules
+  - currently applicable approved regressions
+  - this catalog as retrieval and QA metadata only
+  new_lesson_requires_direct_user_approval: true
+  unknown_customer_dimension_may_not_be_filled_from_regression: true
+  existing_cad_skill_gates_never_relaxed_by_this_catalog: true
+  no_automatic_skill_mutation: true
+  legacy_superseded_fragments_never_override_current_skill: true
+severity_levels:
+  L1_ADVISORY: Non-cut metadata/presentation discrepancy with no demonstrated manufacturing geometry impact.
+  L2_LOCAL_FEATURE: One isolated local feature; contained and detected before release.
+  L3_MAJOR_GEOMETRY: Wrong dimensional witness, source coverage, cut geometry, or group can scrap affected
+    part.
+  L4_CUT_RISK: Wrong datum/contour/unfold/process/identity/release gate may produce a plausibly valid but incorrect
+    manufacturing file.
+severity_rule: Baseline is a triage proposal, not a score calculated from number of historical regression files;
+  raise to L4 for an actual production escape. Existing skill release gate always takes precedence.
+event_policy:
+  event_scope: one independently verified production-job + mechanism signature; multiple codes hit by the same
+    underlying defect in a job count one event, retain affected_codes
+  count_only: reviewed events with exact job ID, source artifact, observed wrong result, correct expected result,
+    detection stage, root-cause evidence
+  historical_cases_are_examples_not_recurrence_counters: true
+  historical_production_escape_state: UNKNOWN_NOT_ASSUMED_ZERO
+  counters_since_catalog_start_at_zero: true
+  release_escape_definition: incorrect DXF was actually marked production PASS/released and failure was discovered
+    after release; REVIEW_ONLY old-AI mismatch is not automatically an escape
+  detection_stage_values:
+  - PDF_READING
+  - GEOMETRY_BUILD
+  - PRE_EXPORT_QA
+  - SAVED_DXF_READBACK
+  - POST_PRODUCTION_RELEASE
+  - CUSTOMER_OPERATOR
+  recurrence_response:
+    '1': ADVISORY_PLUS_REGRESSION
+    '2': MANDATORY_PREFLIGHT_EVIDENCE
+    '3': HARD_GATE_REVIEW_ONLY_IF_UNPROVEN
+    4+: SYSTEMIC_DETERMINISTIC_GUARD_OR_MANUAL_ENGINEERING_HOLD
+  production_escape_override: At first confirmed production escape, immediately HARD_GATE and engineering root-cause
+    review; consider manual hold or deterministic guard based on risk. Never lower an existing production-skill
+    gate.
+  reset_policy: Never erase original incident history. A verified fix creates a new effective-rule revision;
+    retain previous counts and monitor post-fix recurrence separately.
+  auto_promotion_to_skill: false
+gates:
+  G_SOURCE: Source PDF actually available, all relevant images viewed, original physical outlines/notices inspected.
+  G_SOURCE_VIEW: Separately proved true source-view topology, not just bounding rectangles.
+  G_DATUM: Physical per-view origin and axis signs locked, with explicit source-to-CAD transform.
+  G_DIMENSION: Every used dimension linked to actual two witness endpoints, feature family and correct datum.
+  G_GEOMETRY: Real material contour ordered and non-self-intersecting; physical arcs/features represented.
+  G_FEATURE: Feature family quantities/types/leader scope, including cancellations and source->represented
+    cut union.
+  G_UNFOLD: Face sequence, ID→OD, Nobi, actual flat and physically clipped paired bend lines.
+  G_SEMANTIC_QA: Actually executed CAD/PDF manufacturing QA; not merely claimed checks or structural header
+    pass.
+  G_DXF_READBACK: Serialized saved file audited including all original entities, true curves and layout translation.
+  G_RELEASE: No global production PASS with any unresolved feature, unknown source or preview part; REVIEW_ONLY
+    means NO CUT.
+  G_REFERENCE_AUDIT: For existing-output audit only, compare AI DXF with user-approved reference first, actual
+    units proven, then diagnose via PDF.
+families:
+  SOURCE_COVERAGE:
+    description: Missing relevant source views, witness lines or corrections, or substituting view bounds for
+      actual view geometry.
+    baseline_severity: L3
+    risk_tags:
+    - MULTI_VIEW
+    - SECTION_VIEW
+    - CROWDED_DIMENSIONS
+    - HANDWRITTEN_NOTE
+    - PDF_SOURCE_UNAVAILABLE
+    source_evidence_required:
+    - original PDF readable
+    - all applicable views, sections and corrections inspected
+    - proven visible source-view topology; never substitute bbox
+    gate_ids:
+    - G_SOURCE
+    - G_SOURCE_VIEW
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  DATUM_FRAME:
+    description: Wrong physical zero, coordinate-axis signs, or source-ordinate to CAD transformation.
+    baseline_severity: L4
+    risk_tags:
+    - ABSOLUTE_ORDINATE
+    - SIGNED_COORDINATE
+    - TOP_LEFT_SOURCE
+    source_evidence_required:
+    - physical source origin per view
+    - signed source X/Y directions
+    - proved transform to target CAD datum
+    gate_ids:
+    - G_DATUM
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  DIM_WITNESS_ENDPOINT:
+    description: Correctly read a number but attach its witnesses to the wrong edges, centers, tips or feature
+      family.
+    baseline_severity: L3
+    risk_tags:
+    - CROWDED_DIMENSIONS
+    - CENTER_DISTANCE
+    - OUTSIDE_EDGE_DIMENSION
+    - REFERENCE_DIMENSION
+    source_evidence_required:
+    - two actual witness endpoints and endpoint types
+    - dimension-to-feature family identity
+    - consistent independent chain closure
+    gate_ids:
+    - G_DIMENSION
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  CONTOUR_TOPOLOGY:
+    description: Missing steps/notches/cutouts or false rectangle despite correct overall extents.
+    baseline_severity: L4
+    risk_tags:
+    - STEPPED_CONTOUR
+    - NOTCH
+    - CUTOUT
+    - OPEN_CENTER
+    source_evidence_required:
+    - ordered real outer vertices/curves, not only W×H
+    - called-out steps/R/C and material polygon
+    - inner cut containment in actual polygon
+    gate_ids:
+    - G_GEOMETRY
+    - G_SEMANTIC_QA
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  FEATURE_IDENTITY_COUNT:
+    description: Wrong operation/diameter family, missing/cancelled items or erroneous original family count.
+    baseline_severity: L4
+    risk_tags:
+    - MULTIPLE_HOLE_FAMILIES
+    - CROSSED_OUT_CALLOUT
+    - TAPPED_HOLES
+    - OVERLAPPING_HOLES
+    source_evidence_required:
+    - typed original feature-family inventory
+    - actual original counts/leader scope and cancellation status
+    - represented entity/connected-region counts independently audited
+    gate_ids:
+    - G_FEATURE
+    - G_SEMANTIC_QA
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  FEATURE_GEOMETRY:
+    description: Wrong true geometry of slots/R/C, reliefs, intersecting cut voids or non-equivalent DXF curves.
+    baseline_severity: L3
+    risk_tags:
+    - SLOT
+    - GROOVE
+    - CHAMFER_RADIUS
+    - OVERLAPPING_HOLES
+    - RELIEF
+    source_evidence_required:
+    - source-proven endpoint and radius semantics
+    - true ARC/bulge/straight cut topology
+    - Boolean union only for proven intersecting cut regions
+    gate_ids:
+    - G_FEATURE
+    - G_SEMANTIC_QA
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  BEND_UNFOLD:
+    description: Wrong face/bend order, Nobi, ID→OD, true flat length, bend-zone location/domain.
+    baseline_severity: L4
+    risk_tags:
+    - MULTI_FACE
+    - HANDWRITTEN_NOBI
+    - ID_TO_OD
+    - BEND_LINES
+    - U_PROFILE
+    source_evidence_required:
+    - source-proven face and bend sequence
+    - approved material/thickness Nobi and ID→OD rounding order
+    - actual flat extent and paired bend lines clipped to material
+    gate_ids:
+    - G_UNFOLD
+    - G_SEMANTIC_QA
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  VIEW_TRANSFORM_MIRROR:
+    description: Wrong local-face→global-flat transform, inside-view orientation or scoped code mirror.
+    baseline_severity: L4
+    risk_tags:
+    - INSIDE_VIEW
+    - MIRROR
+    - MULTI_FACE
+    - FORMED_FACE_HOLES
+    source_evidence_required:
+    - per-face local-to-flat transform
+    - original/mirror code pairing and reflection scope if proved
+    - independent typed feature coordinates after transformation
+    gate_ids:
+    - G_DATUM
+    - G_UNFOLD
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  MATERIAL_PROCESS:
+    description: Wrong material/grade/thickness/process routing; automatic R, PIERCING or tap pilot representation.
+    baseline_severity: L4
+    risk_tags:
+    - SUS430
+    - CU_BRASS
+    - PIERCING
+    - LASER_R
+    - TAPPED_HOLES
+    source_evidence_required:
+    - exact grade and thickness plus applicable reference rows
+    - process-specific routing including Nobi vs Laser R
+    - correct POINT/CIRCLE/relief colors and no invented operations
+    gate_ids:
+    - G_FEATURE
+    - G_SEMANTIC_QA
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  DXF_OUTPUT:
+    description: Incorrect composite packaging, layer/colour, cut/noncut separation, physical entity serialization
+      or release filename.
+    baseline_severity: L4
+    risk_tags:
+    - COMPOSITE_EXPORT
+    - LAYER_COLOR
+    - VIEWS_ONLY
+    - PREVIEW_UNCERTAINTY
+    source_evidence_required:
+    - one checked canonical geometry per code
+    - one correctly named composite DXF and unambiguous review-only state
+    - saved-file read-back; inverse translation, true curves, proper non-cut labels
+    gate_ids:
+    - G_DXF_READBACK
+    - G_RELEASE
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  FALSE_PASS:
+    description: False production release from bbox-only, empty geometry, unexecuted semantic QA or unresolved
+      feature.
+    baseline_severity: L4
+    risk_tags:
+    - BBOX_ONLY
+    - NO_GEOMETRY_PROGRESS
+    - STRUCTURAL_QA_ONLY
+    - UNRESOLVED_FEATURE
+    - SEMANTIC_QA_MISSING
+    source_evidence_required:
+    - independently executed PDF-semantic/manufacturing checks
+    - no unresolved flags in claimed production PASS
+    - a structural read-back never substitutes for geometric/source QA
+    gate_ids:
+    - G_SEMANTIC_QA
+    - G_RELEASE
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+  REFERENCE_AUDIT:
+    description: Incorrect already-exported DXF comparison, user-confirmed units, true-curve equivalence or
+      precision interpretation.
+    baseline_severity: L3
+    risk_tags:
+    - EXISTING_DXF_AUDIT
+    - DXF_HEADER_UNIT_CONFLICT
+    - CURVE_ENTITY_EQUIVALENCE
+    - DERIVED_TOLERANCE
+    source_evidence_required:
+    - actual user-proven numeric units
+    - existing AI DXF vs user-approved reference first for that audit request
+    - physical-curve comparison and exact printed vs derived-only tolerance
+    gate_ids:
+    - G_REFERENCE_AUDIT
+    approved_rule_status: EXISTING_PRODUCTION_RULES_ONLY
+    historical_incidents_confirmed: null
+    new_incidents: []
+    recurrence_since_catalog: 0
+    production_escapes_since_catalog: 0
+    response_state: UNACTIVATED_DRAFT
+risk_routes:
+  ABSOLUTE_ORDINATE:
+  - DATUM_FRAME
+  - DIM_WITNESS_ENDPOINT
+  SIGNED_COORDINATE:
+  - DATUM_FRAME
+  TOP_LEFT_SOURCE:
+  - DATUM_FRAME
+  CROWDED_DIMENSIONS:
+  - SOURCE_COVERAGE
+  - DIM_WITNESS_ENDPOINT
+  - FEATURE_IDENTITY_COUNT
+  CENTER_DISTANCE:
+  - DIM_WITNESS_ENDPOINT
+  - FEATURE_GEOMETRY
+  OUTSIDE_EDGE_DIMENSION:
+  - DIM_WITNESS_ENDPOINT
+  - DATUM_FRAME
+  REFERENCE_DIMENSION:
+  - DIM_WITNESS_ENDPOINT
+  - BEND_UNFOLD
+  STEPPED_CONTOUR:
+  - CONTOUR_TOPOLOGY
+  - DIM_WITNESS_ENDPOINT
+  NOTCH:
+  - CONTOUR_TOPOLOGY
+  - FEATURE_GEOMETRY
+  CUTOUT:
+  - CONTOUR_TOPOLOGY
+  - FEATURE_GEOMETRY
+  OPEN_CENTER:
+  - CONTOUR_TOPOLOGY
+  - BEND_UNFOLD
+  MULTIPLE_HOLE_FAMILIES:
+  - FEATURE_IDENTITY_COUNT
+  - DIM_WITNESS_ENDPOINT
+  CROSSED_OUT_CALLOUT:
+  - FEATURE_IDENTITY_COUNT
+  TAPPED_HOLES:
+  - FEATURE_IDENTITY_COUNT
+  - MATERIAL_PROCESS
+  OVERLAPPING_HOLES:
+  - FEATURE_IDENTITY_COUNT
+  - FEATURE_GEOMETRY
+  SLOT:
+  - FEATURE_GEOMETRY
+  - DIM_WITNESS_ENDPOINT
+  GROOVE:
+  - FEATURE_GEOMETRY
+  - CONTOUR_TOPOLOGY
+  CHAMFER_RADIUS:
+  - FEATURE_GEOMETRY
+  - CONTOUR_TOPOLOGY
+  RELIEF:
+  - FEATURE_GEOMETRY
+  - BEND_UNFOLD
+  MULTI_FACE:
+  - BEND_UNFOLD
+  - VIEW_TRANSFORM_MIRROR
+  - SOURCE_COVERAGE
+  HANDWRITTEN_NOBI:
+  - BEND_UNFOLD
+  - SOURCE_COVERAGE
+  ID_TO_OD:
+  - BEND_UNFOLD
+  BEND_LINES:
+  - BEND_UNFOLD
+  U_PROFILE:
+  - BEND_UNFOLD
+  - CONTOUR_TOPOLOGY
+  INSIDE_VIEW:
+  - VIEW_TRANSFORM_MIRROR
+  - BEND_UNFOLD
+  MIRROR:
+  - VIEW_TRANSFORM_MIRROR
+  FORMED_FACE_HOLES:
+  - VIEW_TRANSFORM_MIRROR
+  SUS430:
+  - MATERIAL_PROCESS
+  CU_BRASS:
+  - MATERIAL_PROCESS
+  PIERCING:
+  - MATERIAL_PROCESS
+  - FEATURE_IDENTITY_COUNT
+  LASER_R:
+  - MATERIAL_PROCESS
+  - FEATURE_GEOMETRY
+  COMPOSITE_EXPORT:
+  - DXF_OUTPUT
+  LAYER_COLOR:
+  - DXF_OUTPUT
+  - MATERIAL_PROCESS
+  VIEWS_ONLY:
+  - DXF_OUTPUT
+  - SOURCE_COVERAGE
+  - FALSE_PASS
+  PREVIEW_UNCERTAINTY:
+  - DXF_OUTPUT
+  - FALSE_PASS
+  EXISTING_DXF_AUDIT:
+  - REFERENCE_AUDIT
+  DXF_HEADER_UNIT_CONFLICT:
+  - REFERENCE_AUDIT
+  CURVE_ENTITY_EQUIVALENCE:
+  - REFERENCE_AUDIT
+  - FEATURE_GEOMETRY
+  DERIVED_TOLERANCE:
+  - REFERENCE_AUDIT
+  BBOX_ONLY:
+  - FALSE_PASS
+  - CONTOUR_TOPOLOGY
+  NO_GEOMETRY_PROGRESS:
+  - FALSE_PASS
+  - SOURCE_COVERAGE
+  STRUCTURAL_QA_ONLY:
+  - FALSE_PASS
+  UNRESOLVED_FEATURE:
+  - FALSE_PASS
+  - FEATURE_IDENTITY_COUNT
+  SEMANTIC_QA_MISSING:
+  - FALSE_PASS
+  SECTION_VIEW:
+  - SOURCE_COVERAGE
+  HANDWRITTEN_NOTE:
+  - SOURCE_COVERAGE
+  PDF_SOURCE_UNAVAILABLE:
+  - SOURCE_COVERAGE
+regression_cases:
+- path: regression/bend/520317-09.md
+  scope: LEGACY_APPROVED_V4_3
+  scenarios:
+  - case_id: 018263
+    families:
+    - CONTOUR_TOPOLOGY
+    - FALSE_PASS
+    regression_target: L-shaped 182.70×53 outline, not W×H rectangle; reject holes outside material
+  - case_id: 018264
+    families:
+    - BEND_UNFOLD
+    - FEATURE_IDENTITY_COUNT
+    - FEATURE_GEOMETRY
+    regression_target: Round 165° ID→OD offset before Nobi; keep middle M4; C10+W4.5 slot overall 14.5
+  - case_id: 018265
+    families:
+    - CONTOUR_TOPOLOGY
+    regression_target: Prove stepped/radiused outline independently of 140×95.2 extent
+  - case_id: 018266
+    families:
+    - SOURCE_COVERAGE
+    - FEATURE_IDENTITY_COUNT
+    regression_target: Exhaust crowded witnesses; independently audit 8-Ø5.5, 20-M5, 6-M6, 2-M4 families
+  - case_id: 018267/018268
+    families:
+    - BEND_UNFOLD
+    regression_target: Do not use nearby parenthesized formed overall instead of two-axis unfold
+  - case_id: 018269/018271
+    families:
+    - BEND_UNFOLD
+    regression_target: Do not replace actual unfold with nearby reference lengths
+  - case_id: 018270
+    families:
+    - VIEW_TRANSFORM_MIRROR
+    - DATUM_FRAME
+    regression_target: Transform flange-local hole 17/42 via actual face start to flat
+  - case_id: 018273
+    families:
+    - BEND_UNFOLD
+    - CONTOUR_TOPOLOGY
+    regression_target: Prove flange order and clip bend lines to U-profile material
+  - case_id: containment
+    families:
+    - FALSE_PASS
+    - CONTOUR_TOPOLOGY
+    regression_target: Executed hole containment and bend-domain checks, not visual bbox inference
+  precedence_notes:
+  - V4.3 blanket omission of DXF-only R0.5 is SUPERSEDED where current approved material table requires automatic
+    Laser R; current portable skill has precedence.
+- path: regression/datum/520709-07_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_8
+  scenarios:
+  - case_id: 039915
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - BEND_UNFOLD
+    regression_target: OD outer-step datum 25.00 independent of bend coordinate 27.36
+  - case_id: 039918/039919
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - FEATURE_IDENTITY_COUNT
+    - VIEW_TRANSFORM_MIRROR
+    - FEATURE_GEOMETRY
+    regression_target: Printed slope 50, solve R10 tangencies, distinct M4 vs Ø5, mirror whole proven geometry
+  - case_id: '040006'
+    families:
+    - FEATURE_IDENTITY_COUNT
+    regression_target: Entire crossed-out 2-Ø8H7 group cancelled; retain 6-M8 and 4-Ø9
+- path: regression/datum/520728-06_043793_TOP_LEFT_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_10
+  scenarios:
+  - case_id: 043793
+    families:
+    - DATUM_FRAME
+    - DIM_WITNESS_ENDPOINT
+    regression_target: Prove top-left signed Y=-30, H=138, hence three Ø7 CAD Y=108; Y=88 fails
+- path: regression/datum/520919-05.md
+  scope: LEGACY_APPROVED_V4_3
+  scenarios:
+  - case_id: '054615'
+    families:
+    - DIM_WITNESS_ENDPOINT
+    regression_target: Vertical hole centers Y45, not Y55 from double-counted 10 offset
+  - case_id: '054621'
+    families:
+    - DIM_WITNESS_ENDPOINT
+    regression_target: X baseline 40 followed by 130+130, not unrelated +10
+  - case_id: '054622'
+    families:
+    - DATUM_FRAME
+    - DIM_WITNESS_ENDPOINT
+    regression_target: Maintain actual top-edge datum, not nearest hole row
+  - case_id: 054619
+    families:
+    - DIM_WITNESS_ENDPOINT
+    regression_target: Contour top-step datum independent of neighboring hole-row datum
+  - case_id: '054616'
+    families:
+    - DIM_WITNESS_ENDPOINT
+    regression_target: Hole-center X360 distinct from independent contour X375
+  - case_id: '054612'
+    families:
+    - FEATURE_IDENTITY_COUNT
+    - FEATURE_GEOMETRY
+    regression_target: 6-C5, 2-C10, 4-R5 families retain type, count and geometry
+  - case_id: reference_scope
+    families:
+    - REFERENCE_AUDIT
+    regression_target: Use PDF first for new shapes; reference does not provide hidden dimensions
+  precedence_notes:
+  - Legacy global PDF-sharp/DXF-only R0.5 exclusion is SUPERSEDED for eligible current-approved automatic Laser
+    R.
+- path: regression/datum/520919-07.md
+  scope: LEGACY_APPROVED_V4_3
+  scenarios:
+  - case_id: '054633'
+    families:
+    - DIM_WITNESS_ENDPOINT
+    regression_target: Ø5.5 family X100/808 uses outer-edge datum, not Ø7 family offset
+  - case_id: '054634'
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - FEATURE_IDENTITY_COUNT
+    regression_target: Crowded Ø7 and Ø5.5 witnesses terminate on different feature types
+  - case_id: '054636'
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - CONTOUR_TOPOLOGY
+    regression_target: 215 to outer right edge yields step X190, not hole-center-derived X180
+  - case_id: 054638
+    families:
+    - CONTOUR_TOPOLOGY
+    - DIM_WITNESS_ENDPOINT
+    regression_target: 405×633 extent still requires inward stepped contour and reference-specific hole datum
+  - case_id: 054631/054632/054635/054637
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - CONTOUR_TOPOLOGY
+    regression_target: 'Positive controls: previously matching chains and contours must remain unchanged'
+  precedence_notes:
+  - Legacy no-R0.5 assumption is conditional on current approved table; older PDF/DXF rule cannot override
+    material auto-R.
+- path: regression/export/DXF_DUAL_EXPORT.md
+  scope: HISTORICAL_OPT_IN_V4_7
+  scenarios:
+  - case_id: dual_export
+    families:
+    - DXF_OUTPUT
+    - FALSE_PASS
+    regression_target: Only explicit-request legacy per-code + composite export; identical checked geometry
+      and structural read-back
+  precedence_notes:
+  - Default dual export was SUPERSEDED by V4.9 single composite; never route as current default.
+- path: regression/export/DXF_SINGLE_COMPOSITE.md
+  scope: CURRENT_APPROVED_OUTPUT_V4_9
+  scenarios:
+  - case_id: single_composite
+    families:
+    - DXF_OUTPUT
+    regression_target: One page-order code-labeled top-to-bottom composite with non-cut AI_META and ≥10mm spacing
+  - case_id: mixed_status
+    families:
+    - DXF_OUTPUT
+    - FALSE_PASS
+    - SOURCE_COVERAGE
+    regression_target: Any unresolved part => one _ALL_REVIEW_ONLY with NO CUT, source views truly proved
+  - case_id: serializer_limit
+    families:
+    - FALSE_PASS
+    regression_target: Structural read-back is not PDF-semantic PASS
+- path: regression/features/520924-19_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_6
+  scenarios:
+  - case_id: 055955/055956
+    families:
+    - MATERIAL_PROCESS
+    - FEATURE_GEOMETRY
+    regression_target: SS t9 material-table automatic R2, eligible corners; typed pilot POINT/CIRCLE
+  - case_id: PIERCING_TABLE
+    families:
+    - MATERIAL_PROCESS
+    - FEATURE_IDENTITY_COUNT
+    regression_target: Scoped PIERCING and min hole threshold, not blanket green POINT
+  - case_id: 055957
+    families:
+    - FEATURE_IDENTITY_COUNT
+    - SOURCE_COVERAGE
+    regression_target: Retained inside cutout is not second detached sheet; special J leader remains pending
+  - case_id: 055958
+    families:
+    - FEATURE_GEOMETRY
+    - FEATURE_IDENTITY_COUNT
+    - VIEW_TRANSFORM_MIRROR
+    regression_target: One connected Green slit from three primitives, R50 not R60, face-local hole locations
+  - case_id: 055959
+    families:
+    - CONTOUR_TOPOLOGY
+    - FALSE_PASS
+    regression_target: 22 holes and correct bbox cannot conceal wrong 5mm stepped contour
+  - case_id: 055962
+    families:
+    - BEND_UNFOLD
+    - FEATURE_GEOMETRY
+    regression_target: Two R=t reliefs preserve both OD dimensions and bend lines clip to actual material
+  - case_id: 055963/055964
+    families:
+    - MATERIAL_PROCESS
+    - FEATURE_IDENTITY_COUNT
+    regression_target: M6 POINT/CIRCLE by actual PDF process; unproved R5 remains FLAG
+  - case_id: SUS430_L09
+    families:
+    - MATERIAL_PROCESS
+    regression_target: Use SS Nobi but SUS/other Laser R and cut-hole rules
+  - case_id: CU_BRASS_L10
+    families:
+    - MATERIAL_PROCESS
+    regression_target: t5.5/6 -> R0.5, >t6 no automatic R; other table cells unchanged
+  precedence_notes:
+  - Special J source leader for 055957 and independent customer-unknown dimensions are NOT RESOLVED; do not
+    turn into exact production fixtures.
+- path: regression/qa/520217-26_V4_14_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_14
+  scenarios:
+  - case_id: existing_dxf_audit
+    families:
+    - REFERENCE_AUDIT
+    regression_target: AI DXF ↔ customer DXF first only for existing-output audit; source PDF later for root
+      cause
+  - case_id: 010419
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - BEND_UNFOLD
+    - FEATURE_GEOMETRY
+    regression_target: Notch arc-center witness vs midpoint; one 128° Nobi deduction; exact true R
+  - case_id: '010420'
+    families:
+    - DATUM_FRAME
+    - DIM_WITNESS_ENDPOINT
+    - BEND_UNFOLD
+    - VIEW_TRANSFORM_MIRROR
+    regression_target: Proven symmetry conditional on edge dimensions; face-to-flat and two bend zones
+  - case_id: '010421'
+    families:
+    - FEATURE_IDENTITY_COUNT
+    - FEATURE_GEOMETRY
+    - BEND_UNFOLD
+    regression_target: Two Ø6, independent R families and own Nobi; do not borrow 010420
+  - case_id: 010428/010429
+    families:
+    - CONTOUR_TOPOLOGY
+    - BEND_UNFOLD
+    - FEATURE_IDENTITY_COUNT
+    regression_target: 'POSITIVE REGRESSION: old-AI match on these 2 only; must preserve full contour, holes
+      and 8 bend lines'
+  - case_id: '010447'
+    families:
+    - BEND_UNFOLD
+    - VIEW_TRANSFORM_MIRROR
+    - FEATURE_GEOMETRY
+    - FEATURE_IDENTITY_COUNT
+    regression_target: OD sum 241.20 then 4×4.62 Nobi -> 222.72; source-scoped holes; Ø28.5+4×Ø5.5 union
+  - case_id: curve_comparison
+    families:
+    - REFERENCE_AUDIT
+    regression_target: True ARC+LINE equivalent to closed bulged polyline; exact source input vs <0.01 derived
+      comparison
+  precedence_notes:
+  - No newly regenerated six-code or twelve-code DXF certified; previous 010428/429 MATCH are historical direct
+    audit only.
+- path: regression/qa/520217-27_V4_12_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_12
+  scenarios:
+  - case_id: 009252/009253
+    families:
+    - MATERIAL_PROCESS
+    - FALSE_PASS
+    regression_target: Material family vs grade; proved flat retained despite customer-pending Ø as Magenta
+      CIRCLE review
+  - case_id: 009254
+    families:
+    - FEATURE_GEOMETRY
+    - BEND_UNFOLD
+    regression_target: Two W12 stadium slots with four R6 ends and confirmed 205.38 flat
+  - case_id: 008403
+    families:
+    - SOURCE_COVERAGE
+    - FALSE_PASS
+    regression_target: Customer-pending four Ø4 centers stay local Magenta/FLAG, not invented or blocked entirely
+  - case_id: 010851
+    families:
+    - SOURCE_COVERAGE
+    - BEND_UNFOLD
+    - FALSE_PASS
+    regression_target: Welded/bent drawing lacks safe one-piece flat; real separate proved VIEWS_ONLY
+  - case_id: shop_spacing
+    families:
+    - FALSE_PASS
+    regression_target: No repeated ordinary shop spacing confirmation; mandatory actual QA continues
+  precedence_notes:
+  - Approved interpretation and review workflow, NOT a newly certified reference DXF; unresolved customer inputs
+    remain open.
+- path: regression/qa/520315-18_V4_13_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_13
+  scenarios:
+  - case_id: 018295/018304
+    families:
+    - DIM_WITNESS_ENDPOINT
+    - FEATURE_GEOMETRY
+    regression_target: Distinguish slot END-CENTER vs OUTSIDE-TIP, C+W only when sourced to centers
+  - case_id: reference_units
+    families:
+    - REFERENCE_AUDIT
+    regression_target: Declared INSUNITS=inch but actual reference numeric coordinates are user-proven mm
+  - case_id: 018300/018301/018302/018303
+    families:
+    - VIEW_TRANSFORM_MIRROR
+    regression_target: Mirror original to separately coded target only with proven pairing/scope
+  - case_id: 018297
+    families:
+    - VIEW_TRANSFORM_MIRROR
+    - BEND_UNFOLD
+    regression_target: Assemble INSIDE_VIEW faces before any proven final target reflection
+  - case_id: 018295_NOBI
+    families:
+    - BEND_UNFOLD
+    regression_target: Handwritten Nobi wins; mismatch FLAG only against genuinely compatible table row
+  - case_id: 018300_ARITHMETIC
+    families:
+    - BEND_UNFOLD
+    - REFERENCE_AUDIT
+    regression_target: Round offset before Nobi; PDF printed values exact, strict <0.01 only derived comparison
+  precedence_notes:
+  - No newly regenerated production DXF certification from approved reference.
+- path: regression/qa/520625-15_V4_11_APPROVED.md
+  scope: DIRECT_USER_APPROVED_V4_11
+  scenarios:
+  - case_id: '036575'
+    families:
+    - FEATURE_IDENTITY_COUNT
+    - DATUM_FRAME
+    regression_target: Ø300 disk with two Ø5 diametric 180-apart and one center Ø9; keep proven exact relationship
+  - case_id: review_preview
+    families:
+    - SOURCE_COVERAGE
+    - FALSE_PASS
+    - DXF_OUTPUT
+    regression_target: Preserve source-proved geometry; Magenta/FLAG uncertain, real VIEWS_ONLY when no defensible
+      flat, mixed composite NO CUT
+  precedence_notes:
+  - Prior delivered seven-code QA PASS is not automatic certification of a modified DXF.
+not_regression_cases:
+- regression/datum/README.md
+- regression/features/README.md
+- regression/topology/README.md
+next_steps:
+- PHASE 1 COMPLETE: store passive index and read-only CLI/tests, with no automatic CAD integration.
+- PHASE 2 REQUIRES SEPARATE APPROVAL: automatic regression routing and any live escalation.
+- PHASE 2 REQUIRES SEPARATE APPROVAL: verified incident ledger or detectors affecting DXF release.
+- New engineering lessons still require separate direct user approval.
