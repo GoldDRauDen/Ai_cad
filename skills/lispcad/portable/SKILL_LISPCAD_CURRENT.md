@@ -1,4 +1,4 @@
-# SKILL_LISPCAD V4.14 PORTABLE: Approved AI-DXF Direct Audit, Source-Proven Symmetry, Groove R and Hole-Union Regression
+# SKILL_LISPCAD V4.15 PORTABLE: Approved Acute-Bend <85° Outside-Dimension Construction + V4.14 Rules
 
 
 ## 0. Portable Skill Contract — Mandatory for Every AI / Every Chat
@@ -35,6 +35,9 @@ When the user supplies a reference DXF or corrected CAD for PDF-interpretation c
 - Never write rules such as "as discussed earlier", "as the user said before", or "use the previous chat". Replace them with explicit, self-contained instructions.
 
 ### 0.5 Versioning and Update Discipline
+
+
+**V4.15 direct approval (2026-09-28; acute-bend <85° outside-OD construction):** Adds the acute-bend `<85°` outside-dimension construction. Reconstruct the real rounded bend with proved `Rin`, `Rout=Rin+t`, measure the two physical 外寸法 from the outside envelope, then apply Nobi. Do not measure to a theoretical sharp intersection and do not use a reference DXF as a hidden source of those ODs. Portable reference: `references/ACUTE_BEND_LT85_METHOD.md`; regression: `regression/qa/ACUTE_BEND_LT85_APPROVED.md`.
 
 **V4.14 direct approval (2026-09-27; 520217-26 six-code audit):** User individually accepted L01–L08 and Q01–Q07, explicitly asked to deduplicate against latest GitHub production skills and push nonduplicate items. New: direct pre-existing AI-DXF-vs-reference audit before PDF diagnosis, source-supported symmetry datum precedence, width-proven semicircular groove-bottom R and n×m-R scope, one Boolean-union cut outline for proven overlapping holes, and physically equivalent ARC/LINE versus bulged-polyline comparisons. Already V4.13 and NOT repeated as novel: reference true-unit/header conflict, exact printed source dimensions and strictly <0.01 derived-only residual. In addition to self-contained Appendix L, see approved modular regression `regression/qa/520217-26_V4_14_APPROVED.md`. NO regenerated six- or twelve-code DXF is certified by this skill approval.
 
@@ -429,6 +432,27 @@ $$\text{OD} = \text{ID} + \text{Offset}$$
 An explicit PDF-printed dimension, coordinate or feature callout is an EXACT source input: transcribe its stated numerical value and prove its witness-line meaning. Do not use any 0.01 mm audit threshold to excuse a misread/missing number or alter a source input. Apply only independently authorized revision, mid-tolerance, ID→OD and Nobi transformations. For every applicable non-90° inside dimension, round the calculated ID→OD offset to 0.01 mm BEFORE adding it to that exact ID and subsequently deducting Nobi.
 
 If the resulting DETERMINISTIC derived CAD value differs slightly from an approved reference DXF number due solely to unrounded internal decimal representation, a numeric-only comparison may accept ABSOLUTE RESIDUAL STRICTLY <0.01 mm. Exactly 0.01 mm or more fails. Output retains the correctly rounded source-derived result, NEVER the sample's additional stored decimal places. This audit allowance is NOT a manufacturing tolerance and never overrides wrong datums, feature families/counts, topology, bend order, user-unknown sizes or any other Section 5 requirement.
+
+
+#### 4.6.2 V4.15 — acute bend `<85°`: geometric outside-dimension measurement
+
+When the proved included bend angle is **strictly `<85°`** and the approved shop method requires acute-bend outside-dimension construction, do NOT obtain the two flange ODs from the theoretical sharp intersection and do NOT substitute the generic §4.6 non-90° ID→OD offset as the controlling method.
+
+1. Reconstruct the exact formed faces from source dimensions/witnesses.
+2. Apply the proved inside bend radius `Rin`; construct `Rout = Rin + t`.
+3. Preserve each real free edge and face direction.
+4. Measure the two **外寸法 / physical outside dimensions** from the resulting outside envelope: `OD1`, `OD2`.
+5. Apply Nobi only after those two ODs are established:
+   `L_flat = OD1 + OD2 - N`.
+6. If unfolding starts from face 1, the double bend lines are:
+   `BEND_LINE_1 = OD1 - N`, `BEND_LINE_2 = OD1`; spacing exactly `N`.
+7. Clip both bend lines to the actual material domain crossing the bend.
+8. A user-approved DXF sample may confirm the independently reconstructed OD values but MUST NOT supply a PDF-missing OD.
+
+If angle, `t`, `Rin`, face identity/direction or free-edge datum is unresolved, FLAG rather than inventing the OD. Exact printed source dimensions remain exact. Derived numeric audit residual `<0.01 mm` is representation-only per §4.6.1.
+
+Portable method: `references/ACUTE_BEND_LT85_METHOD.md`. Mandatory from-source implementation contract: `references/ACUTE_BEND_LT85_FROM_SOURCE.md`. A regression is invalid if approved OD outputs are used as geometric inputs or to choose topology/normal signs. Reproducer: `regression/tools/check_acute_bend_lt85.py`. Approved regression: `regression/qa/ACUTE_BEND_LT85_APPROVED.md`.
+
 
 ### 4.7 Nobi (Bend Allowance) Lookup Priority & Sequential Formulas
 1. **Handwritten Nobi on Drawing**: Highest priority. Use directly (e.g., `-4.8`, `135° -1.71`) regardless of J-symbol.
@@ -1281,3 +1305,18 @@ The original direct comparison of **010428 and 010429** found physical-curve res
 FAIL if auditing customer DXF against PDF instead of the two specified DXFs; treating source-only face as finished flat; placing Q01 19.5 at a notch midpoint; applying +1 mm notch shift; transferring Nobi 2.14 from 010420 to 010421; using a symmetry axis to discard explicit outer-edge dimensions; setting 010447 OD SUM 241.20 equal to flat 222.72 before subtracting 18.48; leaving five intersecting CIRCLE cut paths in place of the required connected union; or mutating 010428/010429 while claiming regression stability. Also FAIL if different underlying DXF entity types alone are treated as geometric mismatch, or if an explicit printed source dimension is loosened by the derived-only <0.01 rule.
 
 **Not claimed:** No corrected six-code or full twelve-code DXF was exported, independently read back and production certified in this calibration. Only these six old-AI-versus-sample results are approved; the other six codes and all remaining unproved parameters retain existing review-only treatment. Old V4.13 and earlier release snapshots must remain untouched.
+
+
+---
+
+## Appendix M — V4.15 approved acute-bend `<85°` OD regression (2026-09-28)
+
+The user directly approved the method after an independent `TEST.dxf` reconstruction and a proof DXF were produced.
+
+**Approved TEST case:** included angle 75°, `t=3.0`, `Rin=0.6`, `Rout=3.6`. Reconstruct the real rounded bend and measure the outside envelope. Expected derived results: `OD1=182.014217 mm` (report 182.01) and `OD2=49.712236 mm` (report 49.71). The proof file is verification evidence only; future AIs must reproduce the values from the source geometry/method instead of reading them back as hidden dimensions.
+
+**Real-job supporting regression:** `520925-03 / 056135`, included angle 83.66°, t4.5. After the same acute-bend outside-envelope method, the approved audit produced OD1 121.93 and OD2 56.90; with handwritten Nobi 6.70, flat length is 172.13 and the bend pair is 115.23 / 121.93. These coordinates are job-specific, not generic inputs.
+
+**Negative regression:** FAIL when an AI measures either leg to the theoretical sharp-line intersection, silently substitutes generic ID→OD arithmetic, takes OD values from a reference DXF instead of deriving them, or uses the `<0.01 mm` derived residual rule to alter printed source dimensions.
+
+See `references/ACUTE_BEND_LT85_METHOD.md` and `regression/qa/ACUTE_BEND_LT85_APPROVED.md`.

@@ -55,6 +55,22 @@ $$\text{OD} = \text{ID} + \text{Offset}$$
 - Example (`135°` bend, `t = 3.0 mm`): `Offset_raw = 3.0 × tan(22.5°) ≈ 1.2426`, so `Offset = 1.24 mm`, then `OD = ID + 1.24 mm`.
 - Do not apply this special intermediate rounding rule to unrelated explicit dimensions. It is specifically the ID→OD offset normalization step.
 
+
+### 4.6.2 V4.15 — Acute bend `<85°`: construct real radius, then measure outside OD
+
+When the **proved included bend angle is strictly <85°**, this approved method takes precedence over using the generic §4.6 tangent-offset equation as the controlling OD construction for that bend.
+
+1. Load `../../../references/ACUTE_BEND_LT85_METHOD.md` and the mandatory implementation contract `../../../references/ACUTE_BEND_LT85_FROM_SOURCE.md`.
+2. Reconstruct both formed faces and their real free edges/inside surfaces from source evidence.
+3. Apply the proved inside bend radius `Rin`; construct `Rout = Rin + t`.
+4. Find the real bend center from the intersection of the two `Rin`-offset inside-face lines.
+5. Measure `OD1` and `OD2` from the **physical outside envelope (外寸法)**. **Do not measure to the theoretical sharp intersection (交点).**
+6. Only after both ODs are proved, apply the applicable Nobi: `L_flat = OD1 + OD2 - Nobi`. If unfolding starts from face 1, the double bend lines are `OD1-Nobi` and `OD1`.
+7. A reference/proof DXF may confirm the independently reconstructed result but may never supply a PDF-missing OD or choose topology/normal signs.
+
+Approved executable regression: `../../../regression/tools/check_acute_bend_lt85.py`; proof assets: `../../../regression/assets/acute_bend_lt85/`.
+
+
 ### 4.7 Nobi (Bend Allowance) Lookup Priority & Sequential Formulas
 1. **Handwritten Nobi on Drawing**: Highest priority. Use directly (e.g., `-4.8`, `135° -1.71`) regardless of J-symbol.
 2. **No Handwritten Nobi + J-Symbol Present**: Look up Nobi from standard tables (Section 7.3) by Material, Thickness, Bend Length, and Angle — applying the Interpolation Rule in Section 4.8 when the exact value is not tabulated.
