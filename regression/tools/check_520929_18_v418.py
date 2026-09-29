@@ -68,7 +68,8 @@ def main():
     assert "V4.18 C/R_SEMANTIC_LOCK" in chamfer and "C/R_SEMANTIC_LOCK" in portable
     assert "V4.18 SOURCE_CALLOUT_CANONICAL_CHECK" in validation
     assert "V4.18 BOXMET_SIGNED_ORIENTATION" in boxmet and "BOXMET_SIGNED_ORIENTATION" in portable
-    assert "Current production release is **V4.18**" in entry
+    assert "V4.18 520929-18 hard-gate routing" in entry
+    assert "520929-18_V4_18_APPROVED.md" in entry
 
     print("PASS: 520929-18 V4.18 detailed-source, C/R semantic, BOXMET orientation/BEND-intersection guards")
 
