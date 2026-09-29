@@ -23,7 +23,7 @@ EXPECT=$(grep -o 'Current production release is \*\*V[0-9.]*\*\*' ../../AI_ENTRY
 echo "expected release pin: $EXPECT"
 
 LIST=$($INS --method tools/list 2>/dev/null)
-for t in open_cad_job submit_cad_evidence route_cad_parts build_canonical_geometry get_cad_job ingest_cad_file; do
+for t in open_cad_job submit_cad_evidence route_cad_parts build_canonical_geometry export_dxf audit_dxf get_cad_job ingest_cad_file; do
   echo "$LIST" | grep -q "\"name\": \"$t\"" && ok "tool listed: $t" || bad "tool listed: $t"
 done
 
@@ -137,6 +137,21 @@ grep -q '"mode": "PDF_DATA_RAW"' "data/jobs/$E_JOB.json" && ok "E: mode persiste
 grep -q '"mode": "TRAIN_REFERENCE"' "data/jobs/$REF_JOB.json" && ok "F: mode persisted on disk" || bad "F file: $REF_JOB"
 grep -q '"mode": "PDF_ONLY"' "data/jobs/$JOB.json" && ok "locked job persisted PDF_ONLY" || bad "lock file: $JOB"
 grep -q '"dxf"' "data/jobs/$JOB.json" && bad "PDF_ONLY job carries a DXF descriptor" || ok "PDF_ONLY job has no DXF"
+
+# 14. V0.3 FULL E2E: canonical geometry -> real DXF -> independent read-back -> PRODUCTION_PASS
+QA='{"schema":"MANUFACTURING_QA_V1","jobId":"'"$JOB"'","code":"056648","checks":{"contour_topology":"PASS","datum":"PASS","feature_count":"PASS","unfold":"N/A","containment":"PASS","bend_domain":"N/A","material_rules":"PASS","slot_semantics":"PASS"},"foldBack":"N/A","approvedForExport":true}'
+OUT=$(call export_dxf "jobId=$JOB" "qa=[$QA]")
+echo "$OUT" | grep -q '"state": "DXF_WRITTEN"' && ok "V0.3 export => DXF_WRITTEN" || bad "export: $OUT"
+echo "$OUT" | grep -q '_ALL.dxf' && ok "composite DXF created" || bad "export filename: $OUT"
+DXF_PATH=$(echo "$OUT" | sed -n 's/.*"absolutePath": "\([^"]*\.dxf\)".*/\1/p' | head -1)
+[ -n "$DXF_PATH" ] && [ -f "$DXF_PATH" ] && ok "DXF file exists" || bad "DXF path missing: $DXF_PATH"
+
+OUT=$(call audit_dxf "jobId=$JOB")
+echo "$OUT" | grep -q '"state": "PRODUCTION_PASS"' && ok "read-back => PRODUCTION_PASS" || bad "audit state: $OUT"
+echo "$OUT" | grep -q '"insunits": 4' && ok "read-back units mm" || bad "audit units: $OUT"
+echo "$OUT" | grep -q '"auditErrorCount": 0' && ok "read-back audit errors=0" || bad "audit errors: $OUT"
+echo "$OUT" | grep -q '"aiMetaPlot": 0' && ok "AI_META non-plot" || bad "AI_META: $OUT"
+echo "$OUT" | grep -q '"056648"' && ok "code label read-back" || bad "labels: $OUT"
 
 echo "---- inspector e2e: $PASS passed, $FAIL failed ----"
 echo "JOB_ID=$JOB"

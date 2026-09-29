@@ -12,6 +12,7 @@ import {
 } from "./core.js";
 import { downloadUri, storeSource } from "./ingest.js";
 import { GeometrySourceV1 } from "./geometry.js";
+import { ManufacturingQaV1 } from "./dxf.js";
 
 const BASE64 = /^[A-Za-z0-9+/\s]*={0,2}$/;
 
@@ -23,7 +24,7 @@ function json(value: unknown) {
 
 export function buildServer(): McpServer {
   const server = new McpServer(
-    { name: "TrainAiCad", version: "0.2.0" },
+    { name: "TrainAiCad", version: "0.3.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -88,10 +89,33 @@ export function buildServer(): McpServer {
   );
 
   server.registerTool(
+    "export_dxf",
+    {
+      description:
+        "Serialize GEOMETRY_READY canonical geometry to one composite mm DXF using the approved TrainAiCad Python serializer. Requires explicit MANUFACTURING_QA_V1 for every code.",
+      inputSchema: z.object({
+        jobId: z.string().min(1),
+        qa: z.array(ManufacturingQaV1).min(1)
+      })
+    },
+    async ({ jobId, qa }) => json(publicJob(jobStore.exportDxf(jobId, qa)))
+  );
+
+  server.registerTool(
+    "audit_dxf",
+    {
+      description:
+        "Re-open and independently audit the DXF written by export_dxf. Only a clean read-back advances DXF_READBACK -> QA_COMPLETE -> PRODUCTION_PASS.",
+      inputSchema: z.object({ jobId: z.string().min(1) })
+    },
+    async ({ jobId }) => json(publicJob(jobStore.auditDxf(jobId)))
+  );
+
+  server.registerTool(
     "get_cad_job",
     {
       description:
-        "Read current experimental job state, release pin, source policy, routes, canonical geometry and flags. V0.2 still has no DXF/production PASS path.",
+        "Read current experimental job state, release pin, source policy, routes, canonical geometry and flags. V0.3 exposes DXF output/read-back status; PRODUCTION_PASS is reachable only after export + independent audit.",
       inputSchema: z.object({ jobId: z.string().min(1) })
     },
     async ({ jobId }) => json(publicJob(jobStore.get(jobId)))

@@ -32,6 +32,6 @@ createServer((req, res) => {
   void nodeHandler(req, res);
 }).listen(port, "127.0.0.1", () => {
   console.error(
-    `[TrainAiCad MCP] V0.2 canonical-geometry experimental; production release pin=${release.release}; http://127.0.0.1:${port}/mcp`
+    `[TrainAiCad MCP] V0.3 full-pipeline experimental; production release pin=${release.release}; http://127.0.0.1:${port}/mcp`
   );
 });

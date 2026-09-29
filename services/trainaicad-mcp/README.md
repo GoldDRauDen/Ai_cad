@@ -1,4 +1,4 @@
-# TrainAiCad MCP V0.2 — Canonical Geometry
+# TrainAiCad MCP V0.3 — Full Pipeline Runtime
 
 This service is an experimental MCP runtime boundary for TrainAiCad. It does **not** modify or replace the current production LISPCAD skill.
 
@@ -80,3 +80,18 @@ V0.3: composite DXF export, re-open/read-back and independent CUT/HOLE/BEND/KEGA
 - Unsupported mixed-axis, variable-width, bent-feature-transform, relief-domain or incomplete graph cases fail to `REVIEW_REQUIRED`; V0.2 does not guess or reverse-fit.
 - `foldBack=STRUCTURAL_ONLY_V02` is explicitly not G8 production proof.
 
+
+
+## V0.3 full runtime
+
+V0.3 closes the runtime pipeline:
+`ingest -> source mode -> CAD_EVIDENCE_V1 -> routing -> GEOMETRY_SOURCE_V1 -> CANONICAL_GEOMETRY_V1 -> MANUFACTURING_QA_V1 -> export_dxf -> audit_dxf -> PRODUCTION_PASS`.
+
+- `export_dxf` reuses the approved repository serializer `tools/export_dxf.py` and produces one code-labeled composite mm DXF.
+- The serializer performs its own write/read-back structural audit.
+- `audit_dxf` then independently re-opens the produced file again through the MCP bridge and validates DXF audit errors, mm units, Layer 0 manufacturing geometry, non-plot AI_META and exact code-label order.
+- `PRODUCTION_PASS` is reachable only through `GEOMETRY_READY -> DXF_WRITTEN -> DXF_READBACK -> QA_COMPLETE -> PRODUCTION_PASS`.
+- Bent parts additionally require explicit full `foldBack=PASS`; V0.2 structural-only fold-back can never authorize production export.
+- Unsafe/unsupported feature serialization fails closed rather than approximating geometry.
+
+Runtime prerequisites now include Node 22+ and Python with repo `requirements.txt`.

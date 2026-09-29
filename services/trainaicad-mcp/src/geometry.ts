@@ -48,7 +48,25 @@ const SlotGeometry = z.object({
 const PolylineGeometry = z.object({
   kind: z.literal("POLYLINE"),
   closed: z.boolean(),
-  points: z.array(Point2).min(2)
+  points: z.array(Point2).min(2),
+  bulges: z.array(z.number().finite()).optional()
+}).superRefine((v, ctx) => {
+  if (v.bulges && v.bulges.length !== v.points.length) {
+    ctx.addIssue({ code: "custom", message: "POLYLINE bulges length must match points length" });
+  }
+});
+
+const ArcGeometry = z.object({
+  kind: z.literal("ARC"),
+  center: Point2,
+  radius: z.number().positive(),
+  startAngleDeg: z.number().finite(),
+  endAngleDeg: z.number().finite()
+});
+
+const PointGeometry = z.object({
+  kind: z.literal("POINT"),
+  point: Point2
 });
 
 const LineGeometry = z.object({
@@ -61,7 +79,9 @@ export const LocalFeatureGeometry = z.discriminatedUnion("kind", [
   CircleGeometry,
   SlotGeometry,
   PolylineGeometry,
-  LineGeometry
+  LineGeometry,
+  ArcGeometry,
+  PointGeometry
 ]);
 export type LocalFeatureGeometry = z.infer<typeof LocalFeatureGeometry>;
 
@@ -90,8 +110,13 @@ const GeometryFaceSource = z.object({
   faceId: z.string().min(1),
   sourceView: z.string().min(1),
   contour: z.array(Point2).min(3),
+  contourBulges: z.array(z.number().finite()).optional(),
   outsideLength: TechnicalNumber.optional(),
   transverseWidth: TechnicalNumber.optional()
+}).superRefine((v, ctx) => {
+  if (v.contourBulges && v.contourBulges.length !== v.contour.length) {
+    ctx.addIssue({ code: "custom", message: "face contourBulges length must match contour length" });
+  }
 });
 
 const GeometryBendSource = z.object({
@@ -148,6 +173,7 @@ export type CanonicalGeometryV1 = {
   sourceMode: JobMode;
   sourceSha256: string;
   outerContours: Point2[][];
+  outerBulges: number[][];
   features: CanonicalFeature[];
   bendZones: CanonicalBendZone[];
   faceMap: Array<{
@@ -359,6 +385,7 @@ function buildFlat(job: CadJob, source: GeometrySourceV1): GeometryBuildResult {
     sourceMode: job.mode,
     sourceSha256: source.sourceSha256,
     outerContours: [face!.contour],
+    outerBulges: [face!.contourBulges ?? face!.contour.map(() => 0)],
     features: source.features.flatMap((f) =>
       f.geometries.map((geometry, index) => ({
         featureId: f.featureId,
@@ -499,6 +526,7 @@ function buildLinearChain(job: CadJob, source: GeometrySourceV1): GeometryBuildR
       { x: flatLength, y: width },
       { x: 0, y: width }
     ]],
+    outerBulges: [[0, 0, 0, 0]],
     features: [],
     bendZones,
     faceMap,
