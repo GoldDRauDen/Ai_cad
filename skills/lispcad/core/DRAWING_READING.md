@@ -1,5 +1,10 @@
 # LISPCAD Core — Drawing Reading & Execution Contract
 
+
+## V4.18 approved 520929-18 — detailed-source bundle authority hardening
+
+**V4.18 DETAILED_SOURCE_BUNDLE:** A Page-1/job-list row is a summary/mapping source, not an automatic override of the detailed drawing page. For the same barcode/code, when the detailed page contains a mutually consistent bundle of (a) matching code identity, (b) explicit material/thickness, (c) dimension-witnessed formed geometry, and (d) handwritten/printed Nobi or flat arithmetic that closes those dimensions, and there is no later revision/red correction/cancellation with higher authority, use that detailed bundle to resolve a contradictory summary row without asking. This is NOT a rule that “barcode page always wins”: if the detailed evidence does not close, identity is uncertain, or a higher-authority revision conflicts, FLAG/ask. In NEW_PDF_TO_DXF, a later reference DXF may verify the resolution but must not supply missing construction dimensions.
+
 Source: approved V4.3 production baseline. This file preserves the portable contract, execution pipeline, drawing interpretation rules, and Japanese drawing terminology.
 
 **Modular compatibility note:** inherited V4.3 wording such as “this document” refers to the complete approved LISPCAD rule set loaded through `AI_ENTRYPOINT.md`. The single-file portable form remains `../portable/SKILL_LISPCAD_CURRENT.md`.
@@ -119,9 +124,10 @@ This is the default operating mode for direct production DXF generation. The AI 
    - Read revision information only when it directly changes geometry, dimensions, material, thickness, or Nobi.
    - Do not parse unrelated title-block/administrative text unless needed to resolve a conflict.
 3. **Multi-Page Synchronization**:
-   - If the same part has conflicting material, thickness, dimension, or handwritten correction across pages, apply the Section 4.1 authority hierarchy only when revision authority is explicit.
-   - If the conflict cannot be resolved explicitly, STOP and ask the user. Do not infer the intended value from drawing appearance, filename, surrounding jobs, or common shop practice.
-   - When a Page 1 job list exists, use it only to map part code/material/thickness or declared ordering; do not let list text replace the dimensions shown on the drawing page.
+   - If the same part has conflicting material, thickness, dimension, or handwritten correction across pages, first apply the Section 4.1 authority hierarchy. For a Page-1/job-list summary conflicting with the same-code detailed drawing page, also apply the V4.18 **DETAILED_SOURCE_BUNDLE** rule below.
+   - If neither the authority hierarchy nor the detailed-source bundle resolves the conflict, STOP and ask the user. Do not infer the intended value from drawing appearance, filename, surrounding jobs, or common shop practice.
+   - When a Page 1 job list exists, use it primarily to map part code/material/thickness and declared ordering; list text must not silently replace dimension-witnessed detailed geometry.
+   - **V4.18 DETAILED_SOURCE_BUNDLE resolution:** for the same barcode/code, if the detailed page independently closes code identity + explicit material/thickness + dimension-witnessed formed geometry + applicable Nobi/flat arithmetic, and no higher-authority revision/red correction/cancellation contradicts it, that internally closed detailed bundle resolves a contradictory summary row. Record the conflict and the closure evidence. Do not generalize this into “barcode page always wins”; incomplete or non-closing bundles remain FLAGGED. A customer/reference DXF is audit evidence only after the PDF-derived resolution in NEW_PDF_TO_DXF.
 
 4. **Merged Multi-Part DXF Mapping Protocol**:
    - A single DXF MAY contain multiple part clusters; separate DXF files per part are not required.

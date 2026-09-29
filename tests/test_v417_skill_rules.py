@@ -1,4 +1,4 @@
-"""V4.17 520929-10 production-skill hardening regression."""
+"""V4.17 520929-10 historical hardening regression retained under later CURRENT releases."""
 from pathlib import Path
 import subprocess,sys
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,9 +12,9 @@ VALID=ROOT/"skills/lispcad/core/VALIDATION.md"
 def test_release_and_routing():
     entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
-    assert "Current production release is **V4.17**" in entry
-    assert CURRENT.read_bytes()==RELEASE.read_bytes()
-    assert skill.startswith("# SKILL_LISPCAD V4.17 PORTABLE")
+    assert "Current production release is **V4.18**" in entry
+    assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.17 PORTABLE")
+    assert "V4.17 direct approval" in skill
     assert OLD.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.16 PORTABLE")
     assert "520929-10_V4_17_APPROVED.md" in entry
 
