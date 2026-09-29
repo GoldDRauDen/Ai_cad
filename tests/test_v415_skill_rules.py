@@ -14,18 +14,17 @@ FIX=ROOT/"regression/assets/acute_bend_lt85/ACUTE_BEND_LT85_SOURCE_FIXTURE.dxf"
 PROOF=ROOT/"regression/assets/acute_bend_lt85/ACUTE_BEND_LT85_OD_PROOF.dxf"
 SVG=ROOT/"regression/assets/acute_bend_lt85/ACUTE_BEND_LT85_CONSTRUCTION.svg"
 BEND=ROOT/"skills/lispcad/modes/BEND_UNFOLD.md"
-def test_v415_active_v414_preserved():
+def test_v415_preserved_v414_preserved():
     entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
-    assert re.search(r"Current production release is [*][*]V4[.]15[*][*]",entry)
-    assert CURRENT.read_bytes()==RELEASE.read_bytes()
-    assert CURRENT.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.15 PORTABLE")
+    assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.15 PORTABLE")
     assert V414.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.14 PORTABLE")
+    assert "V4.15" in entry
 def test_rule_routed_and_reproducible():
     skill=CURRENT.read_text(encoding="utf-8"); bend=BEND.read_text(encoding="utf-8")
     assert "4.6.2 V4.15" in skill and "ACUTE_BEND_LT85_FROM_SOURCE.md" in skill
     assert "ACUTE_BEND_LT85_FROM_SOURCE.md" in bend
     assert "theoretical sharp intersection" in METHOD.read_text(encoding="utf-8")
-    assert "approved OD numbers" in FROM.read_text(encoding="utf-8")
+    assert "approved OD values" in FROM.read_text(encoding="utf-8")
     assert "job-specific regression evidence" in QA.read_text(encoding="utf-8")
 def test_runner_recomputes_from_fixture():
     cp=subprocess.run([sys.executable,str(RUNNER)],cwd=ROOT,text=True,capture_output=True,check=True)

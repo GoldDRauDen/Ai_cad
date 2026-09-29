@@ -5,12 +5,10 @@ ROOT=Path(__file__).resolve().parents[1]
 CURRENT=ROOT/"skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"
 RELEASE=ROOT/"skills/lispcad/versions/V4.16/SKILL_LISPCAD_V4_16_PORTABLE.md"
 OLD=ROOT/"skills/lispcad/versions/V4.15/SKILL_LISPCAD_V4_15_PORTABLE.md"
-def test_release_and_routing():
+def test_v416_preserved_and_routing_retained():
     entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
-    assert "Current production release is **V4.16**" in entry
-    assert CURRENT.read_bytes()==RELEASE.read_bytes()
-    assert skill.startswith("# SKILL_LISPCAD V4.16 PORTABLE")
+    assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.16 PORTABLE")
     assert OLD.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.15 PORTABLE")
     assert "Face-first dimension ownership" in skill
     assert "Explicit R/C family quantity closure" in skill

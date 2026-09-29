@@ -1,5 +1,7 @@
-# SKILL_LISPCAD V4.16 PORTABLE: Approved Face-Ownership, R-Family Closure + BOXMET Slit Relief
+# SKILL_LISPCAD V4.17 PORTABLE: Approved 520929-10 Geometry-Guard Regression
 
+
+**V4.17 direct approval (2026-09-29, 520929-10):** After a direct pre-existing AI-DXF ↔ customer-sample DXF audit and subsequent PDF diagnosis, the user approved promotion of the deduplicated anti-regression guards below. This release HARDENS existing witness/datum/mirror/KEGAKI/reference-unit rules; it does not create a new Nobi/material formula and does not authorize borrowing coordinates from a reference DXF for NEW_PDF_TO_DXF construction. Mandatory negative regressions: slot width/end-radius must follow the actual source callout and witness semantics; barcode/code pairing is never sufficient evidence for mirroring; dimensions witnessed from a top/outside edge must be converted from that proved datum rather than from a slot tangent or visual bbox; KEGAKI is audited independently and a resolved KEGAKI must not remain Magenta PREVIEW; and a customer reference $INSUNITS conflict is non-blocking for physical-geometry comparison once actual mm units are independently proved. Approved record: `regression/qa/520929-10_V4_17_APPROVED.md`.
 
 ## 0. Portable Skill Contract — Mandatory for Every AI / Every Chat
 
@@ -159,7 +161,9 @@ For every bent/multi-face drawing, reconstruct each visible formed face independ
 
 ### 2.2.2 V4.13 original and mirrored part codes
 
-Every declared drawing code is an independent manufacturing part record. A reflected partner is constructed ONLY when actual PDF notes or explicit user instruction prove the original code, partner code, mirror axis/orientation AND what feature scope is reflected. Interpret the original PDF first; then transform the entire scoped contour, typed hole families, slots, R/C, bend lines and markings. Recheck independent partner datum, family counts and material containment. If only the original is declared, emit only that original and never invent an additional mirrored code. A reflected source view of ONE bent part is not by itself a second part code. If the reflection direction remains ambiguous after inspecting actual views, axes and dimension witnesses, FLAG that orientation and ask a targeted question rather than guessing.
+Every declared drawing code is an independent manufacturing part record. A reflected partner is constructed ONLY when actual PDF notes or explicit user instruction prove the original code, partner code, mirror axis/orientation AND what feature scope is reflected.
+
+**V4.17 HARD MIRROR GATE:** code adjacency, consecutive barcodes, equal nominal size, similar silhouette, or a left/right-looking page arrangement are NOT mirror evidence. Before applying any reflection, record the source evidence that proves the partner relation and reflection scope. If that proof is absent, reconstruct the partner independently from its own source view. A wrong reflection is a production FAIL even when the resulting bbox and feature count look plausible. Interpret the original PDF first; then transform the entire scoped contour, typed hole families, slots, R/C, bend lines and markings. Recheck independent partner datum, family counts and material containment. If only the original is declared, emit only that original and never invent an additional mirrored code. A reflected source view of ONE bent part is not by itself a second part code. If the reflection direction remains ambiguous after inspecting actual views, axes and dimension witnesses, FLAG that orientation and ask a targeted question rather than guessing.
 
 ### 2.3 OCR Error Correction & Context Engine
 Correct optical character recognition errors using engineering context rules:
@@ -1378,3 +1382,19 @@ See `references/ACUTE_BEND_LT85_METHOD.md` and `regression/qa/ACUTE_BEND_LT85_AP
 
 Executable checks: `regression/tools/check_520801_04_v416.py`. Modular approved record: `regression/qa/520801-04_V4_16_APPROVED.md`. BOXMET construction reference: `references/BOXMET_SLIT_RELIEF.md`.
 
+
+
+---
+
+## Appendix O — V4.17 approved 520929-10 geometry-guard regression (2026-09-29)
+
+**Approval boundary:** The user approved the direct audit conclusions and explicitly instructed PUSH. The customer sample is authoritative for physical contour/feature comparison for this calibration. The user also clarified that its `$INSUNITS=1` header is a CAD metadata issue that they may later change to mm; therefore that header alone is NOT a geometry failure. This approval promotes anti-regression guards and assertions, not a regenerated 520929-10 production DXF certification.
+
+1. **056638 / 056639 — slot witness and KEGAKI:** the source/sample slot family is width/end-diameter `W=9`, therefore stadium end radius `R=4.5`; FAIL if a nearby `10` is substituted to create W10/R5. KEGAKI is a separate feature family and must be checked independently from CUT/BEND.
+2. **056646 / 056647 — no inferred mirror:** both approved flats use the same physical contour rather than an automatically reflected partner contour. FAIL if 056647 is mirrored merely because it is the paired/adjacent code. Its slot family is also W9/R4.5 and KEGAKI must be complete.
+3. **056648 — top-edge datum:** approved plate is 50×32 with W10/R5 stadium slot. The slot centerline is witnessed 10 mm from the proved TOP edge, so in a bottom-origin target frame `Y=32-10=22`. FAIL if a tangent/radius visual inference produces Y=17 or any other value inconsistent with the source witness.
+4. **056649 — resolved KEGAKI state:** existing proved CUT and M8 pilot geometry remain independent. The approved KEGAKI offset is `12-3=9` across the 16 mm height. Once the source/reference closes that uncertainty, production output uses normal KEGAKI property (Red per current CAD output rules), not Magenta PREVIEW.
+5. **Reference metadata boundary:** sample `$INSUNITS=1` is non-blocking here because actual numeric geometry is independently established as mm by source/user confirmation. Do not scale by 25.4. New production DXF remains mm/`$INSUNITS=4` under normal export rules. This is a regression application of existing §2.4.2a, not a new universal exception.
+6. **Hard negative regression:** FAIL on wrong slot width/radius despite correct outer contour; FAIL on unproved mirroring; FAIL on datum-origin/witness conversion error; FAIL when any required KEGAKI segment is missing; FAIL when resolved KEGAKI remains provisional solely due to stale AI uncertainty. Reference header metadata mismatch alone does not fail physical geometry once actual units are proved.
+
+Executable checks: `regression/tools/check_520929_10_v417.py`. Modular approved record: `regression/qa/520929-10_V4_17_APPROVED.md`.
