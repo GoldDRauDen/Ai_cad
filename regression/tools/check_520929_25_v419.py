@@ -77,10 +77,10 @@ def main():
     validation = (root/"skills/lispcad/core/VALIDATION.md").read_text(encoding="utf-8")
     drawing = (root/"skills/lispcad/core/DRAWING_READING.md").read_text(encoding="utf-8")
 
-    assert portable == release
-    assert portable.startswith("# SKILL_LISPCAD V4.19 PORTABLE")
+    assert release.startswith("# SKILL_LISPCAD V4.19 PORTABLE")
+    assert "V4.19 direct approval / PUSH" in portable
     assert old.startswith("# SKILL_LISPCAD V4.18 PORTABLE")
-    assert "Current production release is **V4.19**" in entry
+    assert "V4.19 520929-25 hard-gate routing" in entry
     for token in [
         "FACE_GRAPH", "FEATURE_OWNERSHIP_LOCKED", "BEND_SIGN_LOCKED",
         "CONSTRAINTS_CLOSED", "FOLD_BACK_MATCH", "BEND_DOMAIN_LOCKED"
