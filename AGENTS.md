@@ -13,11 +13,15 @@
 
 **Authority:** The user's explicit task and the **currently resolved approved production skill** control engineering interpretation, output and QA. `AGENTS.md` controls execution efficiency only and must never loosen or replace the active skill's safety/accuracy requirements. The repository is a store of **user-approved production rules and regression cases**, not an automatic training environment. Never promote a new lesson, alter existing production skills, or push to GitHub without the user's separate, direct approval.
 
-## 2. Separate the two job modes before inspecting the drawing
+## 2. Classify the source relationship before inspecting geometry
 
-- **NEW_PDF_TO_DXF:** Interpret the original PDF **independently first**, including actual contour topology, witness lines, datum/source axes, feature counts and all required views. An existing approved reference DXF or regression case is used ONLY for a subsequent explicitly authorized calibration/verification; it is never a hidden ruler for missing PDF dimensions.
-- **DIRECT_EXISTING_DXF_AUDIT:** If the task explicitly compares an AI's **already exported DXF** against a user-approved reference DXF, compare the **two DXFs first**, matching proven part codes and real units and normalizing only proved orientation/layout translations. Compare physical contours (not raw DXF entity counts), typed cut features, original family counts, bend lines and full flats; report MATCH/PARTIAL/DIFF per code. Consult PDF **afterward** to diagnose errors. Follow the current skill if this mode evolves.
-- Do not run the expensive PDF-recognition pipeline when the current task needs only a direct existing-DXF audit.
+Load `references/SOURCE_DATA_CLASSIFICATION.md` and select exactly one:
+- **PDF_ONLY:** PDF/image source; in explicit training/calibration do not stop merely to ask if an unprovided DATA DXF exists.
+- **PDF_DATA_RAW:** customer CAD DATA belongs to same PDF/page. Extract DATA geometry 100%; PDF controls semantics/dimensions/revisions/Nobi. PDF+DXF together defaults here unless user declares sample/clean/reference. Boxed DATA stamp indicates page CAD exists.
+- **TRAIN_REFERENCE:** user-declared clean/sample/approved/training DXF; audit/calibration evidence, not raw geometry extraction.
+- **DIRECT_EXISTING_DXF_AUDIT:** compare existing AI DXF vs approved reference first, then diagnose via PDF.
+
+General V4.20 raw-DATA boundary: Delta<0.1 mm no FLAG; Delta>=0.1 mm FLAG. KH433 has its separately approved customer-specific boundary.
 
 ## 3. Source receipt: actually SEE each drawing; cache without losing evidence
 
@@ -30,6 +34,8 @@
 ## 4. Geometry-first, one drawing code end-to-end
 
 For every code, use the **mandatory reading and manufacturing sequence specified by the current portable skill**; the following gates ensure that the model's interpretation actually becomes CAD:
+
+**G0 — Mechanical classification.** Create the `references/MECHANICAL_CLASSIFIER.md` record: source mode, part class, face count, bend axes/angles/signs, independent feature inventory and loaded modules. Labels route work but never replace source evidence or V4.19 FACE_GRAPH closure.
 
 **G1 — Real view topology.** Trace each source view's *actual ordered edges*, steps, tabs, notches, contour cutouts, holes, slots, R/C arcs and feature quantities. Overall dimensions are bounding metadata, not proof of a rectangle. A rectangular source-view entity is allowed ONLY if its four actual edges and intervening topology are independently established. `VIEWS_ONLY` must reproduce independently verified source-view geometry, not four-point bounding-box placeholders.
 

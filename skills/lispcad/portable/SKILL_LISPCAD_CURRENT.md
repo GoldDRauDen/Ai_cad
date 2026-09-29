@@ -1,5 +1,7 @@
-# SKILL_LISPCAD V4.19 PORTABLE: Approved 520929-25 Constraint-Closed FACE_GRAPH / Fold-Back Hardening
+# SKILL_LISPCAD V4.20 PORTABLE: Approved Source/Data Classification + Mechanical Feature Routing / KEGAKI-SLIT-RIB Hardening
 
+
+**V4.20 direct approval / PUSH (2026-09-29):** User approved source/data classification plus mechanical-feature routing. Source modes: PDF_ONLY, PDF_DATA_RAW, TRAIN_REFERENCE, DIRECT_EXISTING_DXF_AUDIT. In PDF_DATA_RAW, DATA supplies geometry 100% and PDF controls semantics/dimensions/revisions/Nobi. General DATA<->PDF boundary is strict: Delta<0.1 mm no FLAG; Delta>=0.1 mm FLAG. KH433 keeps its explicit <1.0/>=1.0 customer exception when topology/identity is unchanged. Mechanical classification is mandatory before geometry; CUT/HOLE-SLOT/BEND/KEGAKI/PIASU/SLIT-RIB/RIB are independent QA families. New modules define curved-slot one-contour cleanup, functional KEGAKI including PL1/PL2 and RIB footprints, Green as supporting rather than decisive evidence, independent RIB routing, 90° slit depth t+0.2, and >90° slit depth D=t*sin(theta) for 90<theta<180.
 
 **V4.19 direct approval / PUSH (2026-09-29, 520929-25):** After the user declared `520929-25_SS.dxf` customer-approved ground truth, the existing AI DXF was audited directly against it before PDF root-cause diagnosis. V4.18 already required face-first reconstruction and non-commutative face order; the new nonduplicate hardening makes those rules **enforceable** through a mandatory constraint-closed signed `FACE_GRAPH`: every used dimension owns explicit witnesses/semantics; every feature owns a host face/local datum; every bend owns ordered adjacent faces, signed orientation and actual material domain; competing topologies block production; and every generated flat MUST pass `FOLD_BACK_MATCH` / source reprojection before DXF serialization. This adds no Nobi/material formula. Mandatory protocol: `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`. Approved regression: `regression/qa/520929-25_V4_19_APPROVED.md`; executable checker: `regression/tools/check_520929_25_v419.py`.
 
@@ -109,6 +111,12 @@ This is the default operating mode for production DXF generation. The AI MUST sp
 
 ## 2. Drawing Interpretation, View Mapping & OCR Rules
 
+### 2.0 V4.20 Source/Data Mode Lock
+
+Before interpretation load `references/SOURCE_DATA_CLASSIFICATION.md` and classify PDF_ONLY / PDF_DATA_RAW / TRAIN_REFERENCE / DIRECT_EXISTING_DXF_AUDIT. A boxed/stamped DATA on the PDF indicates page CAD exists. PDF+DXF supplied together defaults to PDF_DATA_RAW unless user declares it sample/clean/approved/reference.
+
+For PDF_DATA_RAW, extract source geometry from DATA 100% and use PDF for semantic/dimensional/revision control. General same-parameter comparison: Delta<0.1 mm no FLAG; Delta>=0.1 mm FLAG. Exactly 0.1 flags. KH433 uses only its explicit <1.0/>=1.0 exception.
+
 ### 2.1 Pre-Screening & Multi-Page Document Protocol
 1. **Pre-Screening Criteria**: Skip processing if barcode/drawing code is completely absent or if the page contains purely textual notes without graphical part representations.
 2. **Minimum Metadata Only — mandatory, concise**:
@@ -134,6 +142,10 @@ This is the default operating mode for production DXF generation. The AI MUST sp
 For **sheet-metal material designations**, trim whitespace and match the full printed designation case-insensitively using: `SUS… → SUS`; `SP…` or `SS… → SS`; `A… → AL (aluminum)`. Retain the original complete grade, explicitly stated thickness and applicable corrections as provenance. Prefix classification selects the **material family for process-table lookup**; it does NOT prove that two different grades are identical. **SUS430 retains its previously approved process-specific routing:** SS/SUS430/BRASS Nobi and SUS/他 Laser R, hole limits and White Piercing. Do not silently map SUS430 to ordinary SUS Nobi. A truly unknown/non-sheet-metal designation or a material-grade conflict affecting manufacture remains separately FLAGGED.
 
 User-confirmed 520217-27 example: both `009252` and `009253` are **SS family**; their SP/SS source wording is not itself a family conflict. Exact SPHC-versus-SS400 grade equivalence is NOT asserted.
+
+### 2.1.2 V4.20 Mechanical Classification Gate
+
+Before canonical geometry load `references/MECHANICAL_CLASSIFIER.md` and record source mode, part class, face count, bend axes/angles/signs, independent feature inventory, evidence and loaded modules. Labels route work but never replace V4.19 FACE_GRAPH/FOLD_BACK proof.
 
 ### 2.2 View Classification & Coordinate System Mapping
 - **Classification Types**: Prior to geometry extraction, classify drawing views into: `Front`, `Top`, `Side`, `Auxiliary`, `Section`, `Detail`, `Development/Flat Pattern`, `Assembly`, or `Mirror`.
@@ -236,6 +248,14 @@ The V4.3 unconditional rule to omit uncalled-out DXF-only R0.5 is superseded. Re
 ### 3.1.1 V4.14 approved boolean union for source-proven overlapping cut holes
 
 When the actual source proves that hole/opening CUT REGIONS genuinely intersect to form ONE connected laser-cut void, compute the geometric Boolean union and output exactly ONE continuous closed CW internal boundary for the combined region (exact ARC/LINE arcs or correct bulged LWPOLYLINE). Do NOT output each contributing complete CIRCLE on top of the union or leave redundant interior overlapping toolpaths. Count and datum-trace every ORIGINAL callout-family member independently of the resulting one DXF closed contour; containment and topology validation are still mandatory. Mere tangential contact, separately specified machining, ambiguous topology or unproved overlap do not trigger automatic union; FLAG/ask. User-approved general case: 010447 has one `Ø28.5 + 4×Ø5.5` connected cut contour built from five contributed source cut regions, preserving four Ø5.5 nominal callout locations.
+
+### 3.1.2 V4.20 feature routing
+
+- Circular-arc slot -> load `skills/lispcad/features/CURVED_SLOT.md`; final CUT is exactly one closed contour.
+- KEGAKI -> load `skills/lispcad/features/KEGAKI.md`; independent Red locating family with host-face/fold-back proof.
+- SLIT/RELIEF -> load `skills/lispcad/features/SLIT_RELIEF.md`; classify mechanism first. 90° uses t+0.2; approved >90° family uses D=t*sin(theta), 90<theta<180.
+- RIB -> load `skills/lispcad/features/RIB.md`; uncancelled valid RIB is independent part; main-part RIB KEGAKI is independent.
+- Green color is supporting evidence only; Green POINT PIASU and connected Green LINE/ARC relief are different families.
 
 ### 3.2 3D Forming Features Mapping (To 2D Flat Pattern)
 For 3D forming operations (which cannot be cut directly as flat outlines), map geometry into 2D laser manufacturing layers:
@@ -579,6 +599,10 @@ Approved regression `044858/044859`, `t=1.5`: `SlitLen=1.7`, tool else-branch `L
 
 
 ---
+
+## V4.20 additional production gates
+
+Before PASS, source relationship and mechanical classifier must be complete. Audit CUT, HOLE/SLOT, BEND, KEGAKI, PIASU, SLIT/RELIEF and RIB independently when present. Raw DATA/PDF uses the strict customer threshold. Curved slot must have one clean closed CUT loop with no lens/helper/duplicate path. KEGAKI needs host-face/datum/fold-back function. Green semantics need entity/type/topology/callout proof, not color alone. Slit mechanism must be routed without mixing 90°, >90°, BOXMET or other relief rules. RIB part and main-part RIB locating marks have independent cancellation/status.
 
 ## 5. Error Detection & Manufacturing Validation Engine
 
@@ -1450,3 +1474,18 @@ Executable checks: `regression/tools/check_520929_10_v417.py`. Modular approved 
 6. **Negative regression:** FAIL on bbox-only validation, overall-sum face-order selection, global placement before feature ownership, unsigned U/Z collapse, BEND through voids, unresolved competing graph, reference reverse-fit, or production PASS before FOLD_BACK_MATCH.
 
 Portable protocol: `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`. Executable regression: `regression/tools/check_520929_25_v419.py`.
+
+
+## Appendix Q — V4.20 approved source/data + mechanical-feature calibration (2026-09-29)
+
+User corrected the general DATA<->PDF boundary to strict `Delta<0.1 mm no FLAG / Delta>=0.1 mm FLAG`, confirmed no remaining questions and instructed PUSH.
+
+Mandatory records:
+- `references/SOURCE_DATA_CLASSIFICATION.md`
+- `references/MECHANICAL_CLASSIFIER.md`
+- `regression/qa/520928-20_V4_20_APPROVED.md`
+- `regression/qa/HD4_V4_20_APPROVED.md`
+- `regression/qa/SILT_GT90_V4_20_APPROVED.md`
+- `regression/tools/check_v420_source_mech.py`
+
+V4.19 FACE_GRAPH/FOLD_BACK and all earlier approved Nobi/material/output rules remain unchanged except for the separate V4.20 source/feature mechanisms explicitly stated above.
