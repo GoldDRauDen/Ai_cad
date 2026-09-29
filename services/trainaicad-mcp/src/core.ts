@@ -1,6 +1,8 @@
 import { createHash, randomUUID } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { dataRoot } from "./ingest.js";
+import { jevStatus } from "./jev.js";
 import {
   CadEvidenceV1,
   type CadEvidenceV1 as Evidence,
@@ -49,7 +51,7 @@ export function readReleasePin(repoRoot = resolveRepoRoot()): ReleasePin {
   };
 }
 
-const allowed: Readonly<Record<JobState, readonly JobState[]>> = {
+export const allowedTransitions: Readonly<Record<JobState, readonly JobState[]>> = {
   CREATED: ["SOURCE_READY"],
   SOURCE_READY: ["EVIDENCE_READY"],
   EVIDENCE_READY: ["ROUTED", "REVIEW_REQUIRED"],
@@ -66,7 +68,7 @@ const allowed: Readonly<Record<JobState, readonly JobState[]>> = {
 };
 
 export function assertTransition(from: JobState, to: JobState): void {
-  if (!allowed[from].includes(to)) {
+  if (!allowedTransitions[from].includes(to)) {
     throw new Error(`INVALID_JOB_TRANSITION: ${from} -> ${to}`);
   }
 }
@@ -89,6 +91,16 @@ export function resolveJobMode(
 class JobStore {
   private jobs = new Map<string, CadJob>();
 
+  private file(jobId: string): string {
+    return join(dataRoot(), "jobs", `${jobId}.json`);
+  }
+
+  /** Filesystem-backed so jobs survive restarts and never depend on a chat session. */
+  private persist(job: CadJob): void {
+    mkdirSync(join(dataRoot(), "jobs"), { recursive: true });
+    writeFileSync(this.file(job.jobId), JSON.stringify(job, null, 2));
+  }
+
   create(source: SourceDescriptor, referenceDxf: SourceDescriptor | undefined, requested: JobModeRequested): CadJob {
     const now = new Date().toISOString();
     const job: CadJob = {
@@ -105,11 +117,19 @@ class JobStore {
       updatedAt: now
     };
     this.jobs.set(job.jobId, job);
+    this.persist(job);
     return this.transition(job.jobId, "SOURCE_READY");
   }
 
   get(jobId: string): CadJob {
-    const job = this.jobs.get(jobId);
+    let job = this.jobs.get(jobId);
+    if (!job) {
+      const file = this.file(jobId);
+      if (existsSync(file)) {
+        job = JSON.parse(readFileSync(file, "utf8")) as CadJob;
+        this.jobs.set(jobId, job);
+      }
+    }
     if (!job) throw new Error(`JOB_NOT_FOUND: ${jobId}`);
     return job;
   }
@@ -119,6 +139,7 @@ class JobStore {
     assertTransition(job.state, next);
     job.state = next;
     job.updatedAt = new Date().toISOString();
+    this.persist(job);
     return job;
   }
 
@@ -145,6 +166,7 @@ class JobStore {
     if (job.state === "SOURCE_READY") return this.transition(jobId, "EVIDENCE_READY");
     job.state = "EVIDENCE_READY";
     job.updatedAt = new Date().toISOString();
+    this.persist(job);
     return job;
   }
 
@@ -181,20 +203,6 @@ const featureModules: Partial<Record<Evidence["features"][number]["family"], str
 
 function unique(values: string[]): string[] {
   return [...new Set(values)];
-}
-
-function jevShadow(_evidence: Evidence): RouteResult["jev"] {
-  const mode = process.env.JEV_MODE ?? "disabled";
-  if (mode === "mock") {
-    return { mode, verdict: "MOCK_MATCH", detail: "V0.1 mock only; hard router remains authoritative" };
-  }
-  return {
-    mode,
-    verdict: "UNAVAILABLE",
-    detail: mode === "shadow"
-      ? "V0.1 shadow contract is present; network Jev client intentionally not configured"
-      : "Jev disabled"
-  };
 }
 
 export function routeEvidence(evidence: Evidence): RouteResult {
@@ -251,7 +259,7 @@ export function routeEvidence(evidence: Evidence): RouteResult {
     modules: unique(modules),
     specialRules: unique(specialRules),
     status: blocked ? "REVIEW_REQUIRED" : "ROUTED",
-    jev: jevShadow(evidence)
+    jev: jevStatus()
   };
 }
 

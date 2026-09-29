@@ -169,7 +169,7 @@ export type RouteResult = {
   modules: string[];
   specialRules: string[];
   status: "ROUTED" | "REVIEW_REQUIRED";
-  jev: { mode: string; verdict: "UNAVAILABLE" | "MOCK_MATCH"; detail: string };
+  jev: { mode: string; configured: boolean; verdict: "UNAVAILABLE" | "MOCK_MATCH"; detail: string };
 };
 
 export type CadJob = {

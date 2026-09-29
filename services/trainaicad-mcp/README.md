@@ -10,17 +10,18 @@ Implemented:
 - Runtime production-release pinning from repository `AI_ENTRYPOINT.md` + `SKILL_LISPCAD_CURRENT.md`.
 - Deterministic first-pass routing for FLAT/BEND, topology, features, acute bends and BOXMET.
 - Jev policy boundary plus disabled/mock/shadow adapter contract. V0.1 performs no Jev network call.
-- Four MCP tools: `open_cad_job`, `submit_cad_evidence`, `route_cad_parts`, `get_cad_job`.
+- Five MCP tools: `ingest_cad_file`, `open_cad_job`, `submit_cad_evidence`, `route_cad_parts`, `get_cad_job`.
 - Loopback-only Streamable HTTP endpoint at `/mcp`.
+- File ingestion (`ingest_cad_file`): inline base64 or http(s) URI, SHA256, magic-byte signature sniffing, MIME/extension/size validation, filename sanitization, SSRF-guarded download (http(s) only, private ranges blocked by default, bounded redirects/size/time), immutable content-addressed storage under `data/sources/<ROLE>/`.
+- Reference DXFs stored under `REFERENCE_DXF/`, bound to a job separately from the drawing, never a hidden ruler for `NEW_PDF_TO_DXF`.
+- Filesystem job store under `data/jobs/<jobId>.json` (write-through), so jobs survive restarts and do not depend on a chat session.
 
 Not implemented in V0.1:
-- PDF/image/DXF byte ingestion.
 - Vision/OCR.
 - Canonical manufacturing geometry.
 - Nobi/unfold calculation.
 - DXF write/read-back.
 - Production PASS.
-- Persistent database.
 - Authentication or public-network deployment.
 
 ## Safety boundaries
@@ -49,11 +50,18 @@ http://127.0.0.1:8787/mcp
 
 Use MCP Inspector against that endpoint. V0.1 intentionally binds loopback only.
 
+```bash
+npx -y @modelcontextprotocol/inspector@2.8.0 --cli \
+  --server-url http://127.0.0.1:8787/mcp --transport http --method tools/list
+```
+
 ## Environment
 
 Copy `.env.example` to `.env` when local runtime configuration is needed.
 
-`JEV_MODE` may be `disabled`, `mock`, or `shadow`. In V0.1 all modes remain non-authoritative; `shadow` is a contract placeholder until credentials/runtime are configured.
+- `TRAINAICAD_MCP_PORT` (default `8787`), `TRAINAICAD_REPO_ROOT`, `TRAINAICAD_MCP_DATA` (default `services/trainaicad-mcp/data`).
+- `TRAINAICAD_MAX_SOURCE_BYTES` (default 25 MiB), `TRAINAICAD_ALLOW_PRIVATE_URL=1` to permit loopback/private download targets during local testing.
+- `JEV_MODE` may be `disabled`, `mock`, or `shadow`. In V0.1 all modes remain non-authoritative; `shadow` is a contract placeholder until credentials/runtime are configured. Adding `TYPESAFE_API_KEY` flips the adapter's `configured` flag; V0.1 still performs no Jev network call and never blocks the MCP.
 
 ## Next milestones
 

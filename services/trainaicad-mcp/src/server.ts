@@ -10,6 +10,9 @@ import {
   publicJob,
   routeJob
 } from "./core.js";
+import { bindSourceToJob, downloadUri, storeSource } from "./ingest.js";
+
+const BASE64 = /^[A-Za-z0-9+/\s]*={0,2}$/;
 
 function json(value: unknown) {
   return {
@@ -74,6 +77,54 @@ export function buildServer(): McpServer {
       inputSchema: z.object({ jobId: z.string().min(1) })
     },
     async ({ jobId }) => json(publicJob(jobStore.get(jobId)))
+  );
+
+  server.registerTool(
+    "ingest_cad_file",
+    {
+      description:
+        "Ingest one PDF/image/DXF source file for ChatGPT/OpenAI MCP callers: inline base64 `data` or a downloadable `uri`. Signature/MIME/extension/size validation, SHA256, filename sanitization, immutable content-addressed storage. Role REFERENCE_DXF is stored separately and is never a hidden ruler for NEW_PDF_TO_DXF.",
+      inputSchema: z.object({
+        fileName: z.string().min(1),
+        role: z.enum(["DRAWING", "REFERENCE_DXF"]).default("DRAWING"),
+        data: z.string().min(1).optional(),
+        uri: z.string().min(1).optional(),
+        mimeType: z.string().min(1).optional(),
+        jobId: z.string().min(1).optional()
+      })
+    },
+    async ({ fileName, role, data, uri, mimeType, jobId }) => {
+      if (Boolean(data) === Boolean(uri)) {
+        throw new Error("PROVIDE_EXACTLY_ONE_OF_DATA_OR_URI");
+      }
+      let bytes: Buffer;
+      if (data) {
+        if (!BASE64.test(data)) throw new Error("INVALID_BASE64");
+        bytes = Buffer.from(data.replace(/\s+/g, ""), "base64");
+      } else {
+        bytes = await downloadUri(uri as string);
+      }
+
+      const stored = storeSource({ fileName, bytes, mimeType }, role);
+      let bound: Record<string, unknown> | null = null;
+      if (jobId) {
+        const job = jobStore.get(jobId); // unknown job fails closed before any binding
+        bound = bindSourceToJob(job.jobId, role, stored);
+      }
+      return json({
+        role,
+        kind: stored.kind,
+        bytes: stored.bytes,
+        source: {
+          fileName: stored.fileName,
+          sha256: stored.sha256,
+          mimeType: stored.mimeType
+        },
+        storedPath: `sources/${role}/${stored.sha256.slice(0, 2)}/${stored.sha256}${stored.fileName.match(/\.[^.]+$/)?.[0] ?? ""}`,
+        boundToJob: jobId ?? null,
+        boundSources: bound
+      });
+    }
   );
 
   return server;

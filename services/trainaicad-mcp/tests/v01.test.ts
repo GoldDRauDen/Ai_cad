@@ -1,13 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
+  allowedTransitions,
   assertTransition,
   jobStore,
   readReleasePin,
   resolveJobMode,
+  resolveRepoRoot,
   routeEvidence
 } from "../src/core.js";
 import { CadEvidenceV1 } from "../src/model.js";
+
+process.env.TRAINAICAD_MCP_DATA = mkdtempSync(join(tmpdir(), "trainaicad-mcp-v01-"));
 
 const source = {
   fileName: "sample.pdf",
@@ -58,6 +65,12 @@ test("release pin follows live CURRENT instead of hard-coding a version", () => 
   assert.match(pin.release, /^V\d+\.\d+$/);
   assert.equal(pin.entrypointSha256.length, 64);
   assert.equal(pin.currentSkillSha256.length, 64);
+  // resolved value must equal the version header of the live CURRENT file (V4.18 today)
+  const current = readFileSync(
+    join(resolveRepoRoot(), "skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"),
+    "utf8"
+  );
+  assert.equal(pin.release, current.match(/^# SKILL_LISPCAD (V\d+\.\d+) PORTABLE/m)?.[1]);
 });
 
 test("AUTO stays NEW_PDF_TO_DXF even when reference exists", () => {
@@ -74,6 +87,20 @@ test("state machine blocks direct production PASS", () => {
     () => assertTransition("SOURCE_READY", "PRODUCTION_PASS"),
     /INVALID_JOB_TRANSITION/
   );
+  // no shortcut: PRODUCTION_PASS has no incoming edge from any state
+  for (const [from, targets] of Object.entries(allowedTransitions)) {
+    assert.equal(targets.includes("PRODUCTION_PASS"), false, `shortcut from ${from}`);
+  }
+});
+
+test("job keeps the reference DXF as an audit input only", () => {
+  const reference = { fileName: "ref.dxf", sha256: "d".repeat(64) };
+  const job = jobStore.create({ fileName: "a.pdf", sha256: "e".repeat(64) }, reference, "AUTO");
+  assert.equal(job.mode, "NEW_PDF_TO_DXF");
+  assert.deepEqual(job.referenceDxf, reference);
+  const route = routeEvidence(evidence({ jobId: job.jobId }));
+  assert.equal(route.mode, "FLAT_NO_BEND"); // routes come from evidence, never from the reference
+  assert.equal(route.jev.configured, Boolean(process.env.TYPESAFE_API_KEY?.trim()));
 });
 
 test("derived number requires derivation evidence", () => {
