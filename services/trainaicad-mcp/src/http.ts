@@ -32,6 +32,6 @@ createServer((req, res) => {
   void nodeHandler(req, res);
 }).listen(port, "127.0.0.1", () => {
   console.error(
-    `[TrainAiCad MCP] V0.1 experimental; production release pin=${release.release}; http://127.0.0.1:${port}/mcp`
+    `[TrainAiCad MCP] V0.1.1 V4.20-compatible; production release pin=${release.release}; http://127.0.0.1:${port}/mcp`
   );
 });

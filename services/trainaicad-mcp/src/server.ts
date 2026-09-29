@@ -10,7 +10,7 @@ import {
   publicJob,
   routeJob
 } from "./core.js";
-import { bindSourceToJob, downloadUri, storeSource } from "./ingest.js";
+import { downloadUri, storeSource } from "./ingest.js";
 
 const BASE64 = /^[A-Za-z0-9+/\s]*={0,2}$/;
 
@@ -22,7 +22,7 @@ function json(value: unknown) {
 
 export function buildServer(): McpServer {
   const server = new McpServer(
-    { name: "TrainAiCad", version: "0.1.0" },
+    { name: "TrainAiCad", version: "0.1.1" },
     { capabilities: { tools: {} } }
   );
 
@@ -30,15 +30,18 @@ export function buildServer(): McpServer {
     "open_cad_job",
     {
       description:
-        "Open an experimental TrainAiCad job from immutable source descriptors. AUTO remains NEW_PDF_TO_DXF even when a DATA/reference DXF is present.",
+        "Open a TrainAiCad V0.1.1 job with V4.20 source classification. AUTO+generic dxf => PDF_DATA_RAW; AUTO+explicit referenceDxf => TRAIN_REFERENCE; no DXF => PDF_ONLY.",
       inputSchema: z.object({
         drawing: SourceDescriptor,
+        dxf: SourceDescriptor.optional(),
         referenceDxf: SourceDescriptor.optional(),
         mode: JobModeRequested.default("AUTO")
       })
     },
-    async ({ drawing, referenceDxf, mode }) => {
-      const job = jobStore.create(drawing, referenceDxf, mode);
+    async ({ drawing, dxf, referenceDxf, mode }) => {
+      if (dxf && referenceDxf) throw new Error("PROVIDE_ONLY_ONE_OF_DXF_OR_REFERENCEDXF");
+      const attachedDxf = dxf ?? referenceDxf;
+      const job = jobStore.create(drawing, attachedDxf, mode, Boolean(referenceDxf));
       return json(publicJob(job));
     }
   );
@@ -47,7 +50,7 @@ export function buildServer(): McpServer {
     "submit_cad_evidence",
     {
       description:
-        "Validate and store CAD_EVIDENCE_V1 produced from direct source inspection. DERIVED values require derivation provenance.",
+        "Validate and store CAD_EVIDENCE_V1 produced from source inspection. DERIVED values require derivedFrom[] and rule; bent evidence may include faceCount, bend axis and signed fold direction.",
       inputSchema: z.object({
         jobId: z.string().min(1),
         evidence: z.array(CadEvidenceV1).min(1)
@@ -63,7 +66,7 @@ export function buildServer(): McpServer {
     "route_cad_parts",
     {
       description:
-        "Run deterministic V0.1 routing first, with optional non-authoritative Jev shadow status. Does not build geometry.",
+        "Run V4.20 source/mechanical routing. Loads source classification, mechanical classifier, feature modules and FACE_GRAPH for bent/multi-face parts. Jev remains advisory.",
       inputSchema: z.object({ jobId: z.string().min(1) })
     },
     async ({ jobId }) => json(publicJob(routeJob(jobId)))
@@ -73,7 +76,7 @@ export function buildServer(): McpServer {
     "get_cad_job",
     {
       description:
-        "Read the current experimental job state, release pin, routes and flags. V0.1 never returns production PASS.",
+        "Read current experimental job state, V4.xx release pin, source policy, mechanical routes and flags. V0.1.1 never returns production PASS.",
       inputSchema: z.object({ jobId: z.string().min(1) })
     },
     async ({ jobId }) => json(publicJob(jobStore.get(jobId)))
@@ -83,10 +86,10 @@ export function buildServer(): McpServer {
     "ingest_cad_file",
     {
       description:
-        "Ingest one PDF/image/DXF source file for ChatGPT/OpenAI MCP callers: inline base64 `data` or a downloadable `uri`. Signature/MIME/extension/size validation, SHA256, filename sanitization, immutable content-addressed storage. Role REFERENCE_DXF is stored separately and is never a hidden ruler for NEW_PDF_TO_DXF.",
+        "Ingest one PDF/image/DXF source: inline base64 data or downloadable http(s) URI. Supports DRAWING, DATA_DXF, REFERENCE_DXF and AI_DXF roles with immutable content-addressed storage.",
       inputSchema: z.object({
         fileName: z.string().min(1),
-        role: z.enum(["DRAWING", "REFERENCE_DXF"]).default("DRAWING"),
+        role: z.enum(["DRAWING", "DATA_DXF", "REFERENCE_DXF", "AI_DXF"]).default("DRAWING"),
         data: z.string().min(1).optional(),
         uri: z.string().min(1).optional(),
         mimeType: z.string().min(1).optional(),
@@ -107,9 +110,11 @@ export function buildServer(): McpServer {
 
       const stored = storeSource({ fileName, bytes, mimeType }, role);
       let bound: Record<string, unknown> | null = null;
+      let jobMode: string | null = null;
       if (jobId) {
-        const job = jobStore.get(jobId); // unknown job fails closed before any binding
-        bound = bindSourceToJob(job.jobId, role, stored);
+        const result = jobStore.bindSource(jobId, role, stored); // reclassifies or rejects before writing
+        bound = result.bound;
+        jobMode = result.job.mode;
       }
       return json({
         role,
@@ -122,6 +127,7 @@ export function buildServer(): McpServer {
         },
         storedPath: `sources/${role}/${stored.sha256.slice(0, 2)}/${stored.sha256}${stored.fileName.match(/\.[^.]+$/)?.[0] ?? ""}`,
         boundToJob: jobId ?? null,
+        jobMode,
         boundSources: bound
       });
     }

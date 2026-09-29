@@ -1,4 +1,4 @@
-# TrainAiCad MCP V0.1 — EXPERIMENTAL
+# TrainAiCad MCP V0.1.1 — V4.20 compatibility hotfix
 
 This service is an experimental MCP runtime boundary for TrainAiCad. It does **not** modify or replace the current production LISPCAD skill.
 
@@ -8,12 +8,12 @@ Implemented:
 - `CAD_EVIDENCE_V1` schema with provenance on technical numbers.
 - Job state machine with fail-closed transitions.
 - Runtime production-release pinning from repository `AI_ENTRYPOINT.md` + `SKILL_LISPCAD_CURRENT.md`.
-- Deterministic first-pass routing for FLAT/BEND, topology, features, acute bends and BOXMET.
+- V4.20 source classification: `PDF_ONLY`, `PDF_DATA_RAW`, `TRAIN_REFERENCE`, `DIRECT_EXISTING_DXF_AUDIT`.\n- Mandatory mechanical classification record and V4.20 feature routing (KEGAKI, SLIT/RELIEF, RIB, curved slot, PIASU).\n- Every bent/multi-face route loads `BEND_UNFOLD` + `FACE_GRAPH_UNFOLD_PROTOCOL`; missing signed bend/face evidence is REVIEW_REQUIRED.
 - Jev policy boundary plus disabled/mock/shadow adapter contract. V0.1 performs no Jev network call.
 - Five MCP tools: `ingest_cad_file`, `open_cad_job`, `submit_cad_evidence`, `route_cad_parts`, `get_cad_job`.
 - Loopback-only Streamable HTTP endpoint at `/mcp`.
 - File ingestion (`ingest_cad_file`): inline base64 or http(s) URI, SHA256, magic-byte signature sniffing, MIME/extension/size validation, filename sanitization, SSRF-guarded download (http(s) only, private ranges blocked by default, bounded redirects/size/time), immutable content-addressed storage under `data/sources/<ROLE>/`.
-- Reference DXFs stored under `REFERENCE_DXF/`, bound to a job separately from the drawing, never a hidden ruler for `NEW_PDF_TO_DXF`.
+- DXFs are role-separated (`DATA_DXF`, `REFERENCE_DXF`, `AI_DXF`). In `PDF_DATA_RAW`, DATA is geometry authority and PDF controls semantics/dimensions/revisions/Nobi. In `TRAIN_REFERENCE`, reference DXF is audit-only.
 - Filesystem job store under `data/jobs/<jobId>.json` (write-through), so jobs survive restarts and do not depend on a chat session.
 
 Not implemented in V0.1:
@@ -26,10 +26,10 @@ Not implemented in V0.1:
 
 ## Safety boundaries
 
-- `AUTO` resolves to `NEW_PDF_TO_DXF` even when a DATA/reference DXF is present. Direct AI-DXF vs approved-reference audit must be selected explicitly.
+- `AUTO` + no DXF => `PDF_ONLY`; `AUTO` + generic DXF => `PDF_DATA_RAW`; explicit `referenceDxf` => `TRAIN_REFERENCE`; direct existing-DXF audit remains explicit.
 - Jev is advisory only and cannot author dimensions, coordinates, Nobi, geometry, DXF entities or production PASS.
 - Every job pins the production release detected in the repository. Startup/job creation fails closed with `SKILL_FRESHNESS_UNVERIFIED` if entrypoint and CURRENT disagree.
-- V0.1 cannot transition directly to `PRODUCTION_PASS`.
+- V0.1.1 cannot transition directly to `PRODUCTION_PASS`.
 
 ## Run locally
 

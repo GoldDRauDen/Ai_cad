@@ -47,6 +47,7 @@ export const Feature = z.object({
   id: z.string().min(1),
   family: z.enum([
     "SLOT",
+    "CURVED_SLOT",
     "HOLE",
     "TAP",
     "CHAMFER",
@@ -54,6 +55,8 @@ export const Feature = z.object({
     "FORMING",
     "CUTOUT",
     "PIASU",
+    "SLIT_RELIEF",
+    "RIB",
     "OTHER"
   ]),
   quantity: z.number().int().positive(),
@@ -68,10 +71,26 @@ export const Feature = z.object({
 export const Bend = z.object({
   id: z.string().min(1),
   angle: TechnicalNumber,
+  axis: z.enum(["X", "Y", "OTHER"]).optional(),
+  sign: z.enum(["POSITIVE", "NEGATIVE", "UNKNOWN"]).optional(),
   rin: TechnicalNumber.optional(),
   nobi: TechnicalNumber.optional(),
   status: z.enum(["PROVED", "UNCERTAIN"]).default("PROVED")
 });
+
+export const PartClass = z.enum([
+  "FLAT_NO_BEND",
+  "SINGLE_BEND_L",
+  "DOUBLE_BEND_U",
+  "OFFSET_Z_JOG",
+  "MULTI_FACE_ORTHOGONAL",
+  "STEPPED_BENT",
+  "BOX_4_FLANGE",
+  "INSIDE_VIEW_ASSEMBLY",
+  "MIRROR_PART",
+  "OTHER_PROVED_TOPOLOGY"
+]);
+export type PartClass = z.infer<typeof PartClass>;
 
 export const CadEvidenceV1 = z.object({
   schema: z.literal("CAD_EVIDENCE_V1"),
@@ -106,6 +125,8 @@ export const CadEvidenceV1 = z.object({
     overallX: TechnicalNumber.optional(),
     overallY: TechnicalNumber.optional()
   }),
+  faceCount: z.number().int().positive().optional(),
+  partClassHint: PartClass.optional(),
   features: z.array(Feature).default([]),
   bends: z.array(Bend).default([]),
   markings: z.array(z.object({
@@ -125,7 +146,9 @@ export type CadEvidenceV1 = z.infer<typeof CadEvidenceV1>;
 
 export const JobModeRequested = z.enum([
   "AUTO",
-  "NEW_PDF_TO_DXF",
+  "PDF_ONLY",
+  "PDF_DATA_RAW",
+  "TRAIN_REFERENCE",
   "DIRECT_EXISTING_DXF_AUDIT"
 ]);
 export type JobModeRequested = z.infer<typeof JobModeRequested>;
@@ -156,10 +179,41 @@ export const SourceDescriptor = z.object({
 });
 export type SourceDescriptor = z.infer<typeof SourceDescriptor>;
 
+export type DxfRole = "DATA_DXF" | "TRAIN_REFERENCE" | "APPROVED_REFERENCE";
+
+export type SourcePolicy = {
+  geometryAuthority:
+    | "PDF_OR_IMAGE"
+    | "DATA_DXF"
+    | "PDF_OR_IMAGE_INDEPENDENT"
+    | "AI_DXF_VS_APPROVED_REFERENCE";
+  semanticAuthority:
+    | "PDF_OR_IMAGE"
+    | "PDF_OR_IMAGE_CONTROL"
+    | "PDF_OR_IMAGE_INDEPENDENT"
+    | "AUDIT_PAIR_FIRST_THEN_SOURCE";
+  dxfUse: "NONE" | "RAW_GEOMETRY" | "AUDIT_ONLY" | "GROUND_TRUTH_AUDIT";
+};
+
 export type ReleasePin = {
   release: string;
   entrypointSha256: string;
   currentSkillSha256: string;
+};
+
+export type MechanicalClassification = {
+  sourceMode: JobMode;
+  partClass: PartClass;
+  faceCount: number | null;
+  bendAxes: Array<{ bendId: string; axis: "X" | "Y" | "OTHER" | "UNPROVED" }>;
+  bendAnglesAndSigns: Array<{
+    bendId: string;
+    angleDeg: number;
+    sign: "POSITIVE" | "NEGATIVE" | "UNKNOWN" | "UNPROVED";
+  }>;
+  featureInventory: string[];
+  evidenceStatus: "PROVED" | "REVIEW_REQUIRED";
+  loadedModules: string[];
 };
 
 export type RouteResult = {
@@ -169,16 +223,19 @@ export type RouteResult = {
   modules: string[];
   specialRules: string[];
   status: "ROUTED" | "REVIEW_REQUIRED";
+  mechanical: MechanicalClassification;
   jev: { mode: string; configured: boolean; verdict: "UNAVAILABLE" | "MOCK_MATCH"; detail: string };
 };
 
 export type CadJob = {
   jobId: string;
   mode: JobMode;
+  sourcePolicy: SourcePolicy;
   state: JobState;
   production: ReleasePin;
   source: SourceDescriptor;
-  referenceDxf?: SourceDescriptor;
+  dxf?: SourceDescriptor;
+  dxfRole?: DxfRole;
   evidence: CadEvidenceV1[];
   routes: RouteResult[];
   flags: string[];

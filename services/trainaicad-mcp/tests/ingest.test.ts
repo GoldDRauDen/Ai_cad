@@ -5,7 +5,6 @@ import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
-  bindSourceToJob,
   downloadUri,
   sanitizeFileName,
   sniffKind,
@@ -23,6 +22,24 @@ const PNG = Buffer.concat([
   Buffer.alloc(64, 1)
 ]);
 const DXF = Buffer.from("0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n");
+
+/** minimal accepted evidence for moving a job out of SOURCE_READY */
+function lockEvidence(jobId: string) {
+  return {
+    schema: "CAD_EVIDENCE_V1",
+    jobId,
+    code: "056648",
+    source: { sourceId: "f".repeat(64), page: 1 },
+    material: { printed: "SS400", thickness: { value: 3, unit: "mm", origin: "PRINTED" } },
+    views: [{ id: "A", type: "FLAT" }],
+    contour: { topology: "PLATE", status: "PROVED" },
+    features: [],
+    bends: [],
+    markings: [],
+    handwriting: [],
+    uncertainties: []
+  };
+}
 
 test("release pin fails closed when entrypoint and CURRENT disagree", () => {
   const root = mkdtempSync(join(tmpdir(), "trainaicad-root-"));
@@ -60,6 +77,7 @@ test("signature sniffing decides the kind, not the declared MIME", () => {
     /MIME_SIGNATURE_MISMATCH/
   );
   assert.throws(() => storeSource({ fileName: "drawing.dxf", bytes: PDF }, "DRAWING"), /EXTENSION_SIGNATURE_MISMATCH/);
+  assert.throws(() => storeSource({ fileName: "not-data.pdf", bytes: PDF }, "DATA_DXF"), /ROLE_KIND_MISMATCH/);
   assert.throws(() => storeSource({ fileName: "drawing.pdf", bytes: Buffer.alloc(0) }, "DRAWING"), /EMPTY_SOURCE_FILE/);
   assert.throws(() => storeSource({ fileName: "drawing.pdf", bytes: Buffer.from("nope") }, "DRAWING"), /UNKNOWN_FILE_SIGNATURE/);
 
@@ -73,27 +91,99 @@ test("signature sniffing decides the kind, not the declared MIME", () => {
   }
 });
 
-test("reference DXF binds separately from the drawing and is immutable per job", () => {
+test("binding an ingested DXF reclassifies a PDF_ONLY job and persists it", () => {
   const job = jobStore.create({ fileName: "a.pdf", sha256: "b".repeat(64) }, undefined, "AUTO");
   const drawing = storeSource({ fileName: "a.pdf", bytes: PDF }, "DRAWING");
   const reference = storeSource({ fileName: "ref.dxf", bytes: DXF }, "REFERENCE_DXF");
 
-  const bound = bindSourceToJob(job.jobId, "DRAWING", drawing);
-  bindSourceToJob(job.jobId, "REFERENCE_DXF", reference);
-  assert.equal(bound.DRAWING?.sha256, drawing.sha256);
+  const bound = jobStore.bindSource(job.jobId, "DRAWING", drawing);
+  assert.equal(bound.bound.DRAWING?.sha256, drawing.sha256);
+  assert.equal(bound.job.mode, "PDF_ONLY"); // a drawing never changes classification
   assert.notEqual(
     join(dataDir, "sources", "DRAWING", drawing.sha256.slice(0, 2), `${drawing.sha256}.pdf`),
     join(dataDir, "sources", "REFERENCE_DXF", reference.sha256.slice(0, 2), `${reference.sha256}.dxf`)
   );
 
+  // F: PDF_ONLY + REFERENCE_DXF must never coexist
+  const asReference = jobStore.bindSource(job.jobId, "REFERENCE_DXF", reference);
+  assert.equal(asReference.job.mode, "TRAIN_REFERENCE");
+  assert.equal(asReference.job.dxfRole, "TRAIN_REFERENCE");
+  assert.equal(asReference.job.sourcePolicy.dxfUse, "AUDIT_ONLY");
+  assert.equal(asReference.job.dxf?.sha256, reference.sha256);
+  const onDisk = JSON.parse(readFileSync(join(dataDir, "jobs", `${job.jobId}.json`), "utf8"));
+  assert.equal(onDisk.mode, "TRAIN_REFERENCE");
+  assert.equal(onDisk.sourcePolicy.dxfUse, "AUDIT_ONLY");
+
   assert.throws(
-    () => bindSourceToJob(job.jobId, "DRAWING", reference),
+    () => jobStore.bindSource(
+      job.jobId,
+      "DRAWING",
+      storeSource({ fileName: "other.pdf", bytes: Buffer.from("%PDF-1.7\nother\n%%EOF\n") }, "DRAWING")
+    ),
     /SOURCE_ALREADY_BOUND/
   );
   assert.throws(
-    () => bindSourceToJob("cad_0000000000000000", "DRAWING", drawing),
+    () => jobStore.bindSource("cad_0000000000000000", "DRAWING", drawing),
     /INVALID_JOB_ID|JOB_NOT_FOUND/
   );
+});
+
+test("E: binding DATA_DXF reclassifies PDF_ONLY to PDF_DATA_RAW", () => {
+  const job = jobStore.create({ fileName: "e.pdf", sha256: "e".repeat(64) }, undefined, "AUTO");
+  assert.equal(job.mode, "PDF_ONLY");
+  const data = storeSource({ fileName: "data.dxf", bytes: DXF }, "DATA_DXF");
+  const { job: after } = jobStore.bindSource(job.jobId, "DATA_DXF", data);
+  assert.equal(after.mode, "PDF_DATA_RAW");
+  assert.equal(after.dxfRole, "DATA_DXF");
+  assert.deepEqual(after.sourcePolicy, {
+    geometryAuthority: "DATA_DXF",
+    semanticAuthority: "PDF_OR_IMAGE_CONTROL",
+    dxfUse: "RAW_GEOMETRY"
+  });
+  const onDisk = JSON.parse(readFileSync(join(dataDir, "jobs", `${job.jobId}.json`), "utf8"));
+  assert.equal(onDisk.mode, "PDF_DATA_RAW");
+  assert.equal(onDisk.dxf.sha256, data.sha256);
+});
+
+test("mode locks after evidence: DXF binding is rejected and the job stays PDF_ONLY", () => {
+  const job = jobStore.create({ fileName: "lock.pdf", sha256: "f".repeat(64) }, undefined, "AUTO");
+  jobStore.submitEvidence(job.jobId, [lockEvidence(job.jobId)]);
+  assert.equal(jobStore.get(job.jobId).state, "EVIDENCE_READY");
+
+  const reference = storeSource({ fileName: "late.dxf", bytes: DXF }, "REFERENCE_DXF");
+  assert.throws(() => jobStore.bindSource(job.jobId, "REFERENCE_DXF", reference), /SOURCE_MODE_LOCKED/);
+
+  const jobFile = JSON.parse(readFileSync(join(dataDir, "jobs", `${job.jobId}.json`), "utf8"));
+  assert.equal(jobFile.mode, "PDF_ONLY");
+  assert.equal(jobFile.dxf, undefined);
+  const sourcesFile = join(dataDir, "jobs", `${job.jobId}.sources.json`);
+  const bound = existsSync(sourcesFile) ? JSON.parse(readFileSync(sourcesFile, "utf8")) : {};
+  assert.equal(bound.REFERENCE_DXF, undefined); // rejected before any write
+});
+
+test("AI_DXF is fail-closed outside DIRECT_EXISTING_DXF_AUDIT", () => {
+  const pdfJob = jobStore.create({ fileName: "ai.pdf", sha256: "9".repeat(64) }, undefined, "AUTO");
+  const aiDxf = storeSource({ fileName: "ai.dxf", bytes: DXF }, "AI_DXF");
+  assert.throws(() => jobStore.bindSource(pdfJob.jobId, "AI_DXF", aiDxf), /AI_DXF_NOT_ALLOWED_IN_PDF_ONLY/);
+
+  const audit = jobStore.create(
+    { fileName: "ai.dxf", sha256: "8".repeat(64) },
+    { fileName: "approved.dxf", sha256: "7".repeat(64) },
+    "DIRECT_EXISTING_DXF_AUDIT"
+  );
+  assert.equal(audit.mode, "DIRECT_EXISTING_DXF_AUDIT");
+  assert.equal(jobStore.bindSource(audit.jobId, "AI_DXF", aiDxf).job.mode, "DIRECT_EXISTING_DXF_AUDIT");
+});
+
+test("PDF_DATA_RAW refuses an explicitly declared reference DXF", () => {
+  const job = jobStore.create(
+    { fileName: "raw.pdf", sha256: "6".repeat(64) },
+    { fileName: "raw.dxf", sha256: "5".repeat(64) },
+    "AUTO"
+  );
+  assert.equal(job.mode, "PDF_DATA_RAW");
+  const reference = storeSource({ fileName: "ref.dxf", bytes: DXF }, "REFERENCE_DXF");
+  assert.throws(() => jobStore.bindSource(job.jobId, "REFERENCE_DXF", reference), /SOURCE_CONFLICT/);
 });
 
 test("jobs persist to the filesystem independent of the chat session", () => {
@@ -103,7 +193,7 @@ test("jobs persist to the filesystem independent of the chat session", () => {
   const onDisk = JSON.parse(readFileSync(file, "utf8"));
   assert.equal(onDisk.jobId, job.jobId);
   assert.equal(onDisk.state, "SOURCE_READY");
-  assert.equal(onDisk.mode, "NEW_PDF_TO_DXF");
+  assert.equal(onDisk.mode, "PDF_ONLY");
 });
 
 test("Jev stays advisory: missing key never blocks routing status", () => {

@@ -6,6 +6,7 @@ import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export type SourceKind = "PDF" | "IMAGE" | "DXF";
+export type SourceRole = "DRAWING" | "DATA_DXF" | "REFERENCE_DXF" | "AI_DXF";
 
 const PACKAGE_ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -94,7 +95,7 @@ export type IngestResult = {
  */
 export function storeSource(
   raw: { fileName: string; bytes: Buffer; mimeType?: string },
-  role: "DRAWING" | "REFERENCE_DXF"
+  role: SourceRole
 ): IngestResult {
   const fileName = sanitizeFileName(raw.fileName);
   if (raw.bytes.length === 0) throw new Error("EMPTY_SOURCE_FILE");
@@ -107,6 +108,9 @@ export function storeSource(
 
   const ext = extname(fileName).toLowerCase();
   if (ALLOWED_EXT[ext] !== kind) throw new Error(`EXTENSION_SIGNATURE_MISMATCH: ${ext} is not ${kind}`);
+  if (role !== "DRAWING" && kind !== "DXF") {
+    throw new Error(`ROLE_KIND_MISMATCH: ${role} requires DXF`);
+  }
 
   const declared = raw.mimeType?.split(";")[0]?.trim().toLowerCase();
   if (declared && declared !== "application/octet-stream" && !KIND_MIME[kind].includes(declared)) {
@@ -216,7 +220,7 @@ export async function downloadUri(uri: string, options: DownloadOptions = {}): P
 /** Bind an ingested source to a job, immutably, per role. */
 export function bindSourceToJob(
   jobId: string,
-  role: "DRAWING" | "REFERENCE_DXF",
+  role: SourceRole,
   source: IngestResult
 ): Record<string, IngestResult> {
   if (!/^cad_[a-f0-9]{16}$/.test(jobId)) throw new Error(`INVALID_JOB_ID: ${jobId}`);
