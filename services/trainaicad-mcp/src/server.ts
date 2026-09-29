@@ -11,6 +11,7 @@ import {
   routeJob
 } from "./core.js";
 import { downloadUri, storeSource } from "./ingest.js";
+import { GeometrySourceV1 } from "./geometry.js";
 
 const BASE64 = /^[A-Za-z0-9+/\s]*={0,2}$/;
 
@@ -22,7 +23,7 @@ function json(value: unknown) {
 
 export function buildServer(): McpServer {
   const server = new McpServer(
-    { name: "TrainAiCad", version: "0.1.1" },
+    { name: "TrainAiCad", version: "0.2.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -73,10 +74,24 @@ export function buildServer(): McpServer {
   );
 
   server.registerTool(
+    "build_canonical_geometry",
+    {
+      description:
+        "Build deterministic CANONICAL_GEOMETRY_V1 from source-authorized GEOMETRY_SOURCE_V1. V0.2 supports proved flat single-face geometry and proved constant-width linear bend chains; unsupported/missing constraints fail to REVIEW_REQUIRED.",
+      inputSchema: z.object({
+        jobId: z.string().min(1),
+        geometrySources: z.array(GeometrySourceV1).min(1)
+      })
+    },
+    async ({ jobId, geometrySources }) =>
+      json(publicJob(jobStore.buildGeometry(jobId, geometrySources)))
+  );
+
+  server.registerTool(
     "get_cad_job",
     {
       description:
-        "Read current experimental job state, V4.xx release pin, source policy, mechanical routes and flags. V0.1.1 never returns production PASS.",
+        "Read current experimental job state, release pin, source policy, routes, canonical geometry and flags. V0.2 still has no DXF/production PASS path.",
       inputSchema: z.object({ jobId: z.string().min(1) })
     },
     async ({ jobId }) => json(publicJob(jobStore.get(jobId)))

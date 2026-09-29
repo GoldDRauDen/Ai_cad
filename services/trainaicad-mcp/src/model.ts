@@ -1,4 +1,5 @@
 import * as z from "zod/v4";
+import type { CanonicalGeometryV1, GeometrySourceV1 } from "./geometry.js";
 
 export const Provenance = z.enum([
   "PRINTED",
@@ -238,6 +239,8 @@ export type CadJob = {
   dxfRole?: DxfRole;
   evidence: CadEvidenceV1[];
   routes: RouteResult[];
+  geometrySources: GeometrySourceV1[];
+  geometry: CanonicalGeometryV1[];
   flags: string[];
   createdAt: string;
   updatedAt: string;

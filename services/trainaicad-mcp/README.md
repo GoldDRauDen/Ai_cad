@@ -1,8 +1,8 @@
-# TrainAiCad MCP V0.1.1 — V4.20 compatibility hotfix
+# TrainAiCad MCP V0.2 — Canonical Geometry
 
 This service is an experimental MCP runtime boundary for TrainAiCad. It does **not** modify or replace the current production LISPCAD skill.
 
-## V0.1 scope
+## Implemented through V0.2
 
 Implemented:
 - `CAD_EVIDENCE_V1` schema with provenance on technical numbers.
@@ -10,7 +10,7 @@ Implemented:
 - Runtime production-release pinning from repository `AI_ENTRYPOINT.md` + `SKILL_LISPCAD_CURRENT.md`.
 - V4.20 source classification: `PDF_ONLY`, `PDF_DATA_RAW`, `TRAIN_REFERENCE`, `DIRECT_EXISTING_DXF_AUDIT`.\n- Mandatory mechanical classification record and V4.20 feature routing (KEGAKI, SLIT/RELIEF, RIB, curved slot, PIASU).\n- Every bent/multi-face route loads `BEND_UNFOLD` + `FACE_GRAPH_UNFOLD_PROTOCOL`; missing signed bend/face evidence is REVIEW_REQUIRED.
 - Jev policy boundary plus disabled/mock/shadow adapter contract. V0.1 performs no Jev network call.
-- Five MCP tools: `ingest_cad_file`, `open_cad_job`, `submit_cad_evidence`, `route_cad_parts`, `get_cad_job`.
+- Six MCP tools: `ingest_cad_file`, `open_cad_job`, `submit_cad_evidence`, `route_cad_parts`, `build_canonical_geometry`, `get_cad_job`.
 - Loopback-only Streamable HTTP endpoint at `/mcp`.
 - File ingestion (`ingest_cad_file`): inline base64 or http(s) URI, SHA256, magic-byte signature sniffing, MIME/extension/size validation, filename sanitization, SSRF-guarded download (http(s) only, private ranges blocked by default, bounded redirects/size/time), immutable content-addressed storage under `data/sources/<ROLE>/`.
 - DXFs are role-separated (`DATA_DXF`, `REFERENCE_DXF`, `AI_DXF`). In `PDF_DATA_RAW`, DATA is geometry authority and PDF controls semantics/dimensions/revisions/Nobi. In `TRAIN_REFERENCE`, reference DXF is audit-only.
@@ -29,7 +29,7 @@ Not implemented in V0.1:
 - `AUTO` + no DXF => `PDF_ONLY`; `AUTO` + generic DXF => `PDF_DATA_RAW`; explicit `referenceDxf` => `TRAIN_REFERENCE`; direct existing-DXF audit remains explicit.
 - Jev is advisory only and cannot author dimensions, coordinates, Nobi, geometry, DXF entities or production PASS.
 - Every job pins the production release detected in the repository. Startup/job creation fails closed with `SKILL_FRESHNESS_UNVERIFIED` if entrypoint and CURRENT disagree.
-- V0.1.1 cannot transition directly to `PRODUCTION_PASS`.
+- V0.2 cannot transition directly to `PRODUCTION_PASS`; `GEOMETRY_READY` is not manufacturing PASS.
 
 ## Run locally
 
@@ -68,3 +68,15 @@ Copy `.env.example` to `.env` when local runtime configuration is needed.
 V0.2: canonical geometry boundary and deterministic builders.
 
 V0.3: composite DXF export, re-open/read-back and independent CUT/HOLE/BEND/KEGAKI/RIB QA.
+
+
+## V0.2 canonical geometry boundary
+
+- `GEOMETRY_SOURCE_V1` is the explicit source-authorized geometry input contract.
+- `PDF_DATA_RAW` geometry must match the bound DATA DXF SHA.
+- `TRAIN_REFERENCE` construction must still use the drawing/source SHA; the reference remains audit-only.
+- Flat single-face geometry validates non-degenerate/simple contours and exact feature-instance quantity.
+- Constant-width X-axis linear bend chains build deterministic flat length and double bend zones from ordered outside lengths and Nobi after FACE_GRAPH G1–G7 proof fields are present.
+- Unsupported mixed-axis, variable-width, bent-feature-transform, relief-domain or incomplete graph cases fail to `REVIEW_REQUIRED`; V0.2 does not guess or reverse-fit.
+- `foldBack=STRUCTURAL_ONLY_V02` is explicitly not G8 production proof.
+

@@ -1,9 +1,9 @@
 {
   "name": "@trainaicad/mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Experimental TrainAiCad MCP V0.1 runtime scaffold",
+  "description": "Experimental TrainAiCad MCP V0.2 canonical geometry runtime",
   "engines": { "node": ">=22" },
   "scripts": {
     "dev": "tsx src/http.ts",

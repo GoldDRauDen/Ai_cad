@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { bindSourceToJob, dataRoot, type IngestResult, type SourceRole } from "./ingest.js";
 import { jevStatus } from "./jev.js";
+import { buildJobGeometry, GeometrySourceV1 } from "./geometry.js";
 import {
   CadEvidenceV1,
   type CadEvidenceV1 as Evidence,
@@ -58,8 +59,8 @@ export const allowedTransitions: Readonly<Record<JobState, readonly JobState[]>>
   CREATED: ["SOURCE_READY"],
   SOURCE_READY: ["EVIDENCE_READY"],
   EVIDENCE_READY: ["ROUTED", "REVIEW_REQUIRED"],
-  ROUTED: ["EVIDENCE_READY"],
-  REVIEW_REQUIRED: ["EVIDENCE_READY"],
+  ROUTED: ["EVIDENCE_READY", "GEOMETRY_READY", "REVIEW_REQUIRED"],
+  REVIEW_REQUIRED: ["EVIDENCE_READY", "GEOMETRY_READY"],
   GEOMETRY_READY: [],
   DXF_WRITTEN: [],
   DXF_READBACK: [],
@@ -203,6 +204,8 @@ class JobStore {
     }
 
     legacy.sourcePolicy = legacy.sourcePolicy ?? sourcePolicyForMode(legacy.mode as JobMode);
+    legacy.geometrySources = legacy.geometrySources ?? [];
+    legacy.geometry = legacy.geometry ?? [];
     return legacy as CadJob;
   }
 
@@ -225,6 +228,8 @@ class JobStore {
       dxfRole: dxfRoleForMode(mode),
       evidence: [],
       routes: [],
+      geometrySources: [],
+      geometry: [],
       flags: [],
       createdAt: now,
       updatedAt: now
@@ -276,6 +281,8 @@ class JobStore {
     }
     job.evidence = parsed;
     job.routes = [];
+    job.geometrySources = [];
+    job.geometry = [];
     job.flags = [];
     if (job.state === "SOURCE_READY") return this.transition(jobId, "EVIDENCE_READY");
     job.state = "EVIDENCE_READY";
@@ -290,10 +297,30 @@ class JobStore {
       throw new Error(`ROUTING_NOT_ALLOWED_IN_STATE: ${job.state}`);
     }
     job.routes = routes;
+    job.geometrySources = [];
+    job.geometry = [];
     job.flags = routes
       .filter((r) => r.status === "REVIEW_REQUIRED")
       .map((r) => `${r.code}:ROUTING_REVIEW_REQUIRED`);
     return this.transition(jobId, job.flags.length ? "REVIEW_REQUIRED" : "ROUTED");
+  }
+
+  buildGeometry(jobId: string, rawSources: unknown[]): CadJob {
+    const job = this.get(jobId);
+    const parsed = rawSources.map((raw) => GeometrySourceV1.parse(raw));
+    const built = buildJobGeometry(job, parsed);
+
+    job.geometrySources = parsed;
+    job.geometry = built.ready;
+    job.flags = built.flags;
+    job.updatedAt = new Date().toISOString();
+    this.persist(job);
+
+    if (built.flags.length) {
+      if (job.state === "REVIEW_REQUIRED") return job;
+      return this.transition(jobId, "REVIEW_REQUIRED");
+    }
+    return this.transition(jobId, "GEOMETRY_READY");
   }
 
   /**
@@ -558,7 +585,16 @@ export function routeJob(jobId: string): CadJob {
   );
 }
 
-export function publicJob(job: CadJob): Omit<CadJob, "evidence"> & { evidenceCount: number } {
-  const { evidence, ...rest } = job;
-  return { ...rest, evidenceCount: evidence.length };
+export function publicJob(
+  job: CadJob
+): Omit<CadJob, "evidence" | "geometrySources"> & {
+  evidenceCount: number;
+  geometrySourceCount: number;
+} {
+  const { evidence, geometrySources, ...rest } = job;
+  return {
+    ...rest,
+    evidenceCount: evidence.length,
+    geometrySourceCount: geometrySources.length
+  };
 }

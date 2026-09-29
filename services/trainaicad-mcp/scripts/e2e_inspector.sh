@@ -23,7 +23,7 @@ EXPECT=$(grep -o 'Current production release is \*\*V[0-9.]*\*\*' ../../AI_ENTRY
 echo "expected release pin: $EXPECT"
 
 LIST=$($INS --method tools/list 2>/dev/null)
-for t in open_cad_job submit_cad_evidence route_cad_parts get_cad_job ingest_cad_file; do
+for t in open_cad_job submit_cad_evidence route_cad_parts build_canonical_geometry get_cad_job ingest_cad_file; do
   echo "$LIST" | grep -q "\"name\": \"$t\"" && ok "tool listed: $t" || bad "tool listed: $t"
 done
 
@@ -55,6 +55,13 @@ echo "$OUT" | grep -q '"state": "EVIDENCE_READY"' && ok "submit_cad_evidence => 
 OUT=$(call route_cad_parts "jobId=$JOB")
 echo "$OUT" | grep -q '"mode": "FLAT_NO_BEND"' && ok "route => FLAT_NO_BEND" || bad "route: $OUT"
 echo "$OUT" | grep -q 'SLOTS.md' && ok "route loads SLOTS module" || bad "route modules: $OUT"
+
+# 4b. V0.2 canonical geometry through MCP
+GS='{"schema":"GEOMETRY_SOURCE_V1","jobId":"'"$JOB"'","code":"056648","sourceSha256":"'"$SHA_A"'","origin":"PDF_SOURCE","buildKind":"FLAT_SINGLE_FACE","faces":[{"faceId":"F1","sourceView":"A","contour":[{"x":0,"y":0},{"x":50,"y":0},{"x":50,"y":32},{"x":0,"y":32}]}],"faceOrder":["F1"],"bends":[],"features":[{"featureId":"S1","family":"SLOT","hostFace":"F1","geometries":[{"kind":"SLOT","center":{"x":25,"y":22},"overallLength":20,"width":10,"angleDeg":0}]}],"proofs":{}}'
+OUT=$(call build_canonical_geometry "jobId=$JOB" "geometrySources=[$GS]")
+echo "$OUT" | grep -q '"state": "GEOMETRY_READY"' && ok "V0.2 build => GEOMETRY_READY" || bad "geometry state: $OUT"
+echo "$OUT" | grep -q '"schema": "CANONICAL_GEOMETRY_V1"' && ok "canonical schema returned" || bad "geometry schema: $OUT"
+echo "$OUT" | grep -q '"instance": 1' && ok "feature instance preserved" || bad "geometry feature: $OUT"
 
 # 5. get
 OUT=$(call get_cad_job "jobId=$JOB")
