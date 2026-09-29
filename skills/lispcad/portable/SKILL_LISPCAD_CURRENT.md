@@ -1,5 +1,7 @@
-# SKILL_LISPCAD V4.18 PORTABLE: Approved 520929-18 Source-Authority / C-R / BOXMET Hardening
+# SKILL_LISPCAD V4.19 PORTABLE: Approved 520929-25 Constraint-Closed FACE_GRAPH / Fold-Back Hardening
 
+
+**V4.19 direct approval / PUSH (2026-09-29, 520929-25):** After the user declared `520929-25_SS.dxf` customer-approved ground truth, the existing AI DXF was audited directly against it before PDF root-cause diagnosis. V4.18 already required face-first reconstruction and non-commutative face order; the new nonduplicate hardening makes those rules **enforceable** through a mandatory constraint-closed signed `FACE_GRAPH`: every used dimension owns explicit witnesses/semantics; every feature owns a host face/local datum; every bend owns ordered adjacent faces, signed orientation and actual material domain; competing topologies block production; and every generated flat MUST pass `FOLD_BACK_MATCH` / source reprojection before DXF serialization. This adds no Nobi/material formula. Mandatory protocol: `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`. Approved regression: `regression/qa/520929-25_V4_19_APPROVED.md`; executable checker: `regression/tools/check_520929_25_v419.py`.
 
 **V4.18 direct approval / PUSH (2026-09-29, 520929-18):** After direct AI-DXF ↔ customer-sample DXF audit and PDF diagnosis, the user approved three deduplicated hardenings without changing Nobi/material formulas: (1) **DETAILED_SOURCE_BUNDLE** resolution for a contradictory Page-1/job-list summary when the same-code detailed barcode page independently closes explicit material/thickness + dimension-witnessed formed geometry + applicable Nobi/flat arithmetic and no higher-authority revision contradicts it; this is explicitly NOT “barcode page always wins”; (2) **C/R_SEMANTIC_LOCK** and **SOURCE_CALLOUT_CANONICAL_CHECK**, so an explicit `C` family remains a straight chamfer and cannot become an `R`/ARC merely because serialization/read-back succeeds; (3) **BOXMET_SIGNED_ORIENTATION**, preserving V4.16 parameters while locking the four local slit direction signs and trimming BEND only on actual geometric intersection, never by corner proximity. Approved regression: `regression/qa/520929-18_V4_18_APPROVED.md`; executable checker: `regression/tools/check_520929_18_v418.py`.
 
@@ -358,6 +360,24 @@ The total flat length equation may be numerically unchanged when two flange leng
 - Do not validate bend order merely because `sum(OD) - sum(Nobi)` matches the overall blank length.
 - Double bend lines MUST be positioned from the ordered sequence in Section 4.7 and MUST exist only over material regions that actually cross that bend. For U-shaped, legged, stepped, or cut-away parts, split/trim bend lines around voids; never draw a bend line continuously through empty space.
 - If two face orders remain equally plausible after explicit trace exhaustion, STOP and ask the user. Magenta is not permission to choose an arbitrary bend order.
+
+
+#### 4.2.8.1 V4.19 Mandatory Constraint-Closed FACE_GRAPH / Fold-Back Gates
+
+For **every bent or multi-face part**, load `references/FACE_GRAPH_UNFOLD_PROTOCOL.md` and complete the following hard gates before production export:
+
+1. **TOPOLOGY_LOCKED** — identify all material faces and source-proved adjacency.
+2. **DIMENSION_WITNESS_LOCKED** — every used dimension has both witness endpoints, semantic family and exactly one face/bend owner.
+3. **FEATURE_OWNERSHIP_LOCKED** — every hole/slot/notch/R/C/KEGAKI/RIB feature has a proved host face and local datum before any flat coordinate is emitted.
+4. **FACE_ORDER_LOCKED** — lock the ordered unfold path independently from the overall flat sum.
+5. **BEND_SIGN_LOCKED** — every bend carries a proved signed fold orientation / face-normal transition; unsigned angle magnitude alone is insufficient.
+6. **BEND_DOMAIN_LOCKED** — every bend pair is clipped/split to material that actually crosses its shared edge; bbox-spanning BEND through voids is FAIL.
+7. **CONSTRAINTS_CLOSED** — no active owner/transform is unresolved and no materially different face-order/sign topology satisfies the same source constraints. If alternatives remain, FLAG/ask rather than choosing by confidence.
+8. **FOLD_BACK_MATCH** — replay the unfolded geometry through the signed face graph and reproject/compare it to the source-proved formed constraints: face sizes/adjacency, bend signs, outside dimensions used, feature host/local offsets, quantities and local channel/flange topology. Matching flat bbox alone is never sufficient.
+9. **DXF_READBACK_MATCH** — only after the source-semantic gates above pass, serialize and reopen the DXF for normal manufacturing QA.
+
+Pattern labels such as U/Z/box/joggle/return flange are candidate generators only. They may never directly select topology. A deterministic signed 2.5D face graph is sufficient when it reproduces all source constraints; a full 3D B-rep is not mandatory. NEW_PDF_TO_DXF remains source-first; reference DXF may assert the result only after independent construction.
+
 
 #### 4.2.9 Mandatory Source-Origin and Axis-Direction Lock (V4.10 — approved)
 
@@ -1414,3 +1434,19 @@ Executable checks: `regression/tools/check_520801_04_v416.py`. Modular approved 
 6. **Hard negative regression:** FAIL on wrong slot width/radius despite correct outer contour; FAIL on unproved mirroring; FAIL on datum-origin/witness conversion error; FAIL when any required KEGAKI segment is missing; FAIL when resolved KEGAKI remains provisional solely due to stale AI uncertainty. Reference header metadata mismatch alone does not fail physical geometry once actual units are proved.
 
 Executable checks: `regression/tools/check_520929_10_v417.py`. Modular approved record: `regression/qa/520929-10_V4_17_APPROVED.md`.
+
+
+---
+
+## Appendix P — V4.19 approved 520929-25 constraint-closed FACE_GRAPH / fold-back regression (2026-09-29)
+
+**Approval boundary:** The user declared `520929-25_SS.dxf` the approved sample, requested direct sample-based confirmation/critique, then directly approved the general mechanism and instructed PUSH. This appendix promotes reasoning/validation gates; it does not certify a newly regenerated 520929-25 production DXF.
+
+1. **056940 control:** direct physical comparison MATCH. The new multi-face mechanism must not mutate independently proved flat-only geometry.
+2. **056942 same-total/different-order:** `150+23.2-4.4=168.8` is invariant to swapping the two face lengths, but BEND is not. Correct source/sample order places the pair at `145.6/150.0`; the old AI pair `18.8/23.2` is FACE_ORDER FAIL. Two Ø7 belong to the small/free-edge flange.
+3. **056956 local orthogonal flanges:** ordered X chain `106|222|106`, Nobi 3.8, flat X 426.4, bend pairs `102.2/106.0` and `320.4/324.2`; Y local flange pair `86.2/90.0` exists only on actual material segments. Feature families on different formed faces must keep independent host-face transforms.
+4. **057042 signed mixed-axis topology:** longitudinal `39.8|128.8|21.3`, Nobi 4.62, flat 180.66, bend pairs `35.18/39.80` and `159.36/163.98` with opposite fold signs; transverse local channel `15|35|15` gives 55.76 with pairs `10.38/15.00` and `40.76/45.38`, clipped to its local material region.
+5. **General production lesson:** mandatory FACE_GRAPH + witness/feature ownership + signed bends + material domains + unique constraint closure + fold-back/source reprojection. Job-specific coordinates above are assertions only, never construction inputs for unrelated jobs.
+6. **Negative regression:** FAIL on bbox-only validation, overall-sum face-order selection, global placement before feature ownership, unsigned U/Z collapse, BEND through voids, unresolved competing graph, reference reverse-fit, or production PASS before FOLD_BACK_MATCH.
+
+Portable protocol: `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`. Executable regression: `regression/tools/check_520929_25_v419.py`.

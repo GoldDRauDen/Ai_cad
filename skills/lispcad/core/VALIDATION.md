@@ -1,5 +1,12 @@
 # LISPCAD Core — Validation
 
+## V4.19 FOLD_BACK_SOURCE_REPROJECTION — mandatory for bent/multi-face production
+
+After canonical unfold but **before** production DXF serialization, replay the flat through the signed FACE_GRAPH and compare/reproject against the source-proved formed constraints. PASS requires the used face dimensions/adjacency, bend signs, outside dimensions, feature host faces/local offsets, quantities and local material topology to reproduce the source. A correct flat bbox, entity count or saved-DXF read-back cannot compensate for a failed fold-back.
+
+Also require `CONSTRAINTS_CLOSED`: no unresolved semantic owner, face transform, bend sign/domain or materially different competing topology may remain. If ambiguity remains, route to FLAG/PREVIEW/VIEWS_ONLY under existing policy.
+
+
 ## V4.13 approved 520315-18 independent checks
 
 - Before comparing a reference DXF, reconcile $INSUNITS metadata with independently established PDF/user-confirmed actual numeric units. If contradictory and unresolved, FLAG SOURCE_UNIT_CONFLICT; do not automatically scale by 25.4. Output DXF remains mm, $INSUNITS=4.

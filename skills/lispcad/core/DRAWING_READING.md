@@ -1,5 +1,12 @@
 # LISPCAD Core — Drawing Reading & Execution Contract
 
+## V4.19 FACE_GRAPH_CAPTURE — mandatory source representation for bent/multi-face parts
+
+Before Nobi arithmetic or global-flat coordinates, create an evidence-equivalent FACE_GRAPH as defined in `../../../references/FACE_GRAPH_UNFOLD_PROTOCOL.md`. Every used dimension must record both physical witness endpoints, semantic family and owner face/bend; every feature must record its host face/local datum; every bend must record both adjacent faces, shared edge, signed orientation and material domain. Shape labels (U/Z/box/etc.) may propose a graph but never prove it.
+
+Do not proceed to production unfold while an ownership field is unresolved or while two materially different graphs satisfy the same source evidence.
+
+
 
 ## V4.18 approved 520929-18 — detailed-source bundle authority hardening
 

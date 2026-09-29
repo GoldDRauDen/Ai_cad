@@ -4,6 +4,14 @@ Source: approved V4.3 production baseline.
 
 Load shared Nobi values from `../../../references/NOBI_TABLES.md`.
 
+
+## V4.19 — Mandatory constraint-closed FACE_GRAPH before unfold
+
+For **every bent/multi-face part**, load `../../../references/FACE_GRAPH_UNFOLD_PROTOCOL.md` before calculating production flat coordinates. The source-first graph must lock dimension witnesses/owners, feature host faces/local datums, ordered adjacency, signed bend orientation and actual material domains. `sum(OD)-sum(Nobi)` or a matching flat bbox is not a substitute for graph closure.
+
+Production unfold is blocked until `TOPOLOGY_LOCKED`, `DIMENSION_WITNESS_LOCKED`, `FEATURE_OWNERSHIP_LOCKED`, `FACE_ORDER_LOCKED`, `BEND_SIGN_LOCKED`, `BEND_DOMAIN_LOCKED` and `CONSTRAINTS_CLOSED` pass. After unfold, `FOLD_BACK_MATCH` against source-proved formed constraints is mandatory before DXF serialization. If competing face graphs remain, use existing FLAG/VIEWS_ONLY policy rather than selecting by confidence.
+
+
 ## V4.13 520315-18 — only nonduplicate approved additions
 
 **INSIDE_VIEW assembled before proved reflection:** When source views prove they show inner faces, identify each face's datum, view direction and fold order. Apply the existing ID→OD, handwritten/table Nobi and local-face-to-flat rules, assemble the complete proved inside-face flat, and ONLY THEN reflect the assembled geometry when the intended target blank requires the proved axis. Compare hole center, actual M/Ø family and count IN THE SAME final frame; a left/right appearance in unmatched frames is not a hole error. Never mirror every bent part by default. User-approved 018297 is the regression for a false M3/Ø7 swap conclusion.
