@@ -1,4 +1,16 @@
-# SKILL_LISPCAD V4.21 PORTABLE: Customer DATA Geometry Preservation Hard Gate / V4.20 Full Base Retained
+# SKILL_LISPCAD V4.22 PORTABLE: Source Exhaustion + Feature Completeness Hardening / V4.21 Full Base Retained
+
+**V4.22 direct approval / PUSH (2026-09-30):** User approved the 520930-10 source-exhaustion and source-feature-completeness hardening after reviewing the customer DATA, customer-question PDF and supplied SS reference. This release adds no Nobi/material formula and does not replace V4.21 geometry preservation. It closes an execution gap: an AI may not route a PDF+DATA code to `VIEWS_ONLY` before exhausting all available DATA faces/views/entities and attempting constraint closure; and saved-DXF self-consistency cannot substitute for source completeness. Every manufacturing family detected in source evidence (CUT, HOLE/SLOT, BEND, KEGAKI, PIASU/PIERCING, SLIT/RELIEF, RIB, R/C/chamfer and other forming features) must have an explicit canonical/output status before export. Missing an active source family is a hard FAIL. Semantic recognition such as "slot" never authorizes refitting real customer DATA curves into a simpler stadium/single-arc construction; unchanged source geometry must preserve its physical curve chain/provenance and inverse-reproject to DATA. Approved regression: `regression/qa/520930-10_V4_22_APPROVED.md`; executable: `regression/tools/check_520930_10_v422.py`.
+
+### V4.22 hard routing — source exhaustion + feature completeness
+1. In `PDF_DATA_RAW`, build a complete source-entity/view/face census before deciding that an unfold is unsupported.
+2. Classify every retained manufacturing family independently and load all applicable feature modules before canonical geometry.
+3. `VIEWS_ONLY` is permitted only after all available relevant DATA has been harvested/classified and all source-supported FACE_GRAPH candidates have been attempted; difficulty or an unresolved first attempt is not evidence of impossibility.
+4. Before export, compare source-family inventory -> canonical model -> serialized DXF. Any active source family missing from canonical/output is FAIL, even if the DXF reopens cleanly.
+5. Run both QA loops: DATA/source -> canonical -> inverse reprojection, and canonical -> DXF -> read-back. Passing only the second loop is insufficient.
+6. For unchanged DATA slots/curves, preserve the source physical curve chain. Cleanup may remove helpers/duplicates, but may not replace a real multi-arc chain with a simpler analytic slot unless an explicit canonicalization rule controls that parameter and the replacement is recorded.
+7. 520930-10 pending/red customer-confirmation dimensions remain pending and are not promoted into production truth by this release.
+
 
 **V4.21 direct approval / PUSH (2026-09-30):** User approved the universal PDF + customer DXF DATA geometry-preservation rule. This hardens V4.20's existing DATA-source rule without changing Nobi/material formulas. For every PDF + customer DXF DATA job, DATA is geometry authority and PDF is semantic/control authority. Existing DATA geometry must be harvested, cleaned and preserved; assemble/unfold by proved transforms instead of redrawing from printed dimensions. Only explicit manufacturing/PDF canonicalization may replace a DATA parameter, and each replacement must be recorded. Before PASS, non-canonicalized geometry must inverse-reproject to extracted DATA within CAD serialization/numerical precision; customer DATA<->PDF thresholds are not redraw tolerances. Job family **646** is DATA-required by default: missing customer DATA => `DATA_REQUIRED_MISSING`, ask for DATA, and do not silently proceed PDF_ONLY. Mandatory contract: `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md`. Approved regression: `regression/qa/520930-03_V4_21_APPROVED.md`.
 
@@ -1501,3 +1513,47 @@ Mandatory records:
 - `regression/tools/check_v420_source_mech.py`
 
 V4.19 FACE_GRAPH/FOLD_BACK and all earlier approved Nobi/material/output rules remain unchanged except for the separate V4.20 source/feature mechanisms explicitly stated above.
+
+---
+
+## Appendix R — V4.22 approved 520930-10 source-exhaustion / feature-completeness regression (2026-09-30)
+
+**Approval boundary:** The user supplied `520930-10_SS.dxf` as the reference for understanding the completed geometry and supplied `520930-10→質問.pdf` to show customer-confirmation questions. The user explicitly stated that dimensions highlighted red are still being confirmed. This approval promotes execution/QA gates and regression assertions only; red/pending values are not production ground truth and this approval does not itself certify a regenerated 520930-10 production DXF.
+
+### FACT
+The earlier AI output failed even though the repository already contained V4.20/V4.21 source/mechanical rules:
+- codes 057111 / 057112 / 057115 / 057116 / 057117 were routed to `VIEWS_ONLY` before the available DATA had been fully exhausted into a constraint-closed interpretation;
+- 057119 omitted two active SLIT/RELIEF features;
+- 057119 slot geometry was simplified/refit instead of preserving the customer DATA multi-arc curve chain;
+- DXF read-back passed because it verified the AI's own incomplete canonical model rather than verifying source completeness.
+
+### ROOT_CAUSE
+The failure was an execution-order/QA gap, not a missing Nobi or slit formula:
+1. incomplete source harvesting and mechanical-family inventory;
+2. premature `VIEWS_ONLY` selection;
+3. semantic feature recognition ("slot") incorrectly triggering geometric simplification;
+4. self-consistency QA (`canonical -> DXF -> read-back`) without the required upstream source-completeness/reprojection QA.
+
+### APPROVED GENERAL LESSONS
+1. **SOURCE_EXHAUSTED_BEFORE_VIEWS_ONLY:** In PDF+DATA jobs, `VIEWS_ONLY` is legal only after all available relevant DATA faces/views/primitives have been harvested and classified, all active feature families have an ownership/status, and source-supported FACE_GRAPH candidates have been attempted to closure. "Hard to unfold" or failure of the first candidate is not evidence for `VIEWS_ONLY`.
+2. **SOURCE_FEATURE_COMPLETENESS:** Before export, diff the active source-family inventory against the canonical model and final serialized DXF. Missing an active CUT/HOLE-SLOT/BEND/KEGAKI/PIERCING/SLIT-RELIEF/RIB/R-C family is a hard FAIL unless the source explicitly cancels it.
+3. **NO SEMANTIC REFIT:** A semantic label such as straight slot or curved slot does not authorize replacing real DATA geometry with a simpler idealized construction. Remove helpers/duplicates only; preserve unchanged physical curve chains and require inverse reprojection to source.
+4. **DUAL QA LOOP:** Production eligibility requires both `SOURCE/DATA -> canonical -> inverse source reprojection` and `canonical -> DXF -> read-back`. The downstream loop cannot prove source completeness.
+
+### 520930-10 case assertions
+- **057119 SLIT/RELIEF:** reference/source interpretation contains **two** active slit/relief features. Omitting either is FAIL. Their source-proved connectivity must be preserved; do not infer a generic slit merely from color.
+- **057119 slot:** the source/reference slot is represented by a straight/arc chain with many source arcs at the ends. Replacing that chain with a simple two-line/two-semicircle stadium or a single smooth arc without explicit canonicalization is FAIL even when the bbox or nominal width/length looks plausible.
+- **057111 / 057112 / 057115 / 057116 / 057117:** do not route to `VIEWS_ONLY` until the complete available DATA has passed source exhaustion and FACE_GRAPH/ownership attempts. The earlier premature `VIEWS_ONLY` behavior is a negative regression.
+- **Pending customer confirmation:** dimensions highlighted red in the supplied question/reference material remain `PENDING_CUSTOMER_CONFIRMATION`. In particular, the 057116/057117 thickness-related/tolerance questions and the 057119 PDF-vs-DATA small-hole diameter family must not be converted into fixed production truth by this regression.
+
+### NEGATIVE ASSERTIONS
+FAIL if:
+- a code is marked `VIEWS_ONLY` while relevant unharvested DATA faces/views/entities remain;
+- any source-active manufacturing family disappears from the canonical/output inventory;
+- a 057119 output has zero/one slit relief instead of the source-supported two;
+- a real customer multi-arc slot is refit into a simpler analytic slot without recorded canonicalization;
+- bbox/entity-existence/read-back checks are used as a substitute for source-family completeness or source reprojection;
+- red/pending dimensions are treated as customer-confirmed values.
+
+Executable guard: `regression/tools/check_520930_10_v422.py`.
+
