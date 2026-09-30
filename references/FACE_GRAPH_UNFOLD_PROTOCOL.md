@@ -92,6 +92,19 @@ The chosen graph must be uniquely determined by source evidence. Required checks
 
 If two materially different graphs remain possible after source exhaustion, production is blocked and the unresolved choice must be FLAGGED/asked. Confidence is not evidence.
 
+### G7A — SOURCE_EXHAUSTED_BEFORE_VIEWS_ONLY
+
+For `PDF_DATA_RAW`, `VIEWS_ONLY` is a production-blocking fallback only after **source exhaustion**, not a shortcut when unfolding is difficult.
+
+Before `VIEWS_ONLY` may be selected:
+- harvest every available relevant DATA view/face/primitive for that code;
+- classify retained physical geometry versus drawing-only helpers/duplicates;
+- complete the active manufacturing-family inventory and assign each detected family a host/status;
+- attempt every source-supported FACE_GRAPH candidate through G1–G7 using the complete evidence set;
+- record the specific unresolved degree of freedom, competing topology or missing evidence that remains after exhaustion.
+
+Hard FAIL if `VIEWS_ONLY` is selected while relevant DATA remains unharvested/unclassified, because the first graph attempt failed, or merely because the unfold is complex. A later approved/reference DXF may diagnose a prior premature `VIEWS_ONLY`, but in NEW construction it still cannot supply hidden source dimensions.
+
 ### G8 — FOLD_BACK_MATCH
 After unfold, replay/fold the flat back through the signed graph (a deterministic 2.5D face graph is sufficient; a full B-rep is not required) and reproject/compare against the source-proved formed constraints.
 
@@ -127,7 +140,7 @@ For DIRECT_EXISTING_DXF_AUDIT, compare AI DXF ↔ approved sample first as requi
 
 ## 7. Production blocker policy
 
-- G1–G7 unresolved but independently proved source views exist → `VIEWS_ONLY` / REVIEW ONLY.
+- G1–G7 unresolved **after G7A source exhaustion** but independently proved source views exist → `VIEWS_ONLY` / REVIEW ONLY. If relevant DATA has not been fully harvested/classified and closure attempts are incomplete, `VIEWS_ONLY` is not yet allowed.
 - A unique graph exists but a local feature remains uncertain → preserve proved flat, Magenta/FLAG only the unresolved feature under existing V4.11 rules.
 - Any G8 failure → production FAIL; fix the graph/transform, do not tune coordinates to the reference.
 - G1–G9 PASS → eligible for normal production status, subject to all other material/Nobi/R/C/relief rules.

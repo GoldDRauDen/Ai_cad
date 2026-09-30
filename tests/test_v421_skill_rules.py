@@ -6,12 +6,14 @@ CURRENT=ROOT/"skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"
 RELEASE=ROOT/"skills/lispcad/versions/V4.21/SKILL_LISPCAD_V4_21_PORTABLE.md"
 BASE=ROOT/"skills/lispcad/versions/V4.20/SKILL_LISPCAD_V4_20_PORTABLE.md"
 
-def test_v421_current_release_and_inheritance():
+def test_v421_historical_release_and_inheritance():
     entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
-    assert "Current production release is **V4.21**" in entry
-    assert CURRENT.read_bytes()==RELEASE.read_bytes()
-    assert skill.startswith("# SKILL_LISPCAD V4.21 PORTABLE")
+    release=RELEASE.read_text(encoding="utf-8")
+    assert release.startswith("# SKILL_LISPCAD V4.21 PORTABLE")
+    assert skill.startswith("# SKILL_LISPCAD V4.22 PORTABLE")
+    assert "V4.21 direct approval / PUSH" in skill
+    assert "Current production release is **V4.22**" in entry
     assert BASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.20 PORTABLE")
     for token in [
         "PDF_DATA_RAW_GEOMETRY_PRESERVATION.md",
