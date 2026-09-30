@@ -1,6 +1,8 @@
-# SOURCE_DATA_CLASSIFICATION — V4.20 approved source routing
+# SOURCE_DATA_CLASSIFICATION — V4.21 approved source routing
 
-**Status:** USER APPROVED 2026-09-29.
+**Status:** USER APPROVED V4.20 2026-09-29; V4.21 geometry-preservation hardening approved 2026-09-30.
+
+**V4.21 hard gate:** for every PDF + customer DXF DATA job, existing DATA geometry must be harvested/preserved and assembled by proved transforms; do not redraw the same geometry from PDF dimensions. Load `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md`. Job family `646` is DATA-required by default: if its customer DATA is absent, report `DATA_REQUIRED_MISSING` and ask for it instead of silently using PDF_ONLY.
 
 ## 1. Four source relationships
 
@@ -17,7 +19,9 @@ Authority split:
 Pipeline:
 `PDF semantic lock -> DATA geometry extraction -> classify views/faces -> remove text/dimension/hidden/construction/thickness duplicates -> map feature ownership -> assemble/unfold -> canonicalize explicitly PDF-controlled parameters -> QA DATA<->PDF -> export/read-back`.
 
-Do not redraw the whole part from picture approximation when the same physical geometry exists in customer DATA.
+Do not redraw the whole part, face contour, radius/relief, hole/slot center, or other existing physical geometry from PDF dimensions/picture approximation when that geometry exists in customer DATA. Harvest it, clean it and preserve it. Use proved transforms to assemble/unfold. Nobi changes placement between preserved faces; it is not permission to recreate those faces.
+
+Before PASS, inverse-transform/reproject every non-canonicalized unfolded face/feature to its extracted DATA source. Any measurable redraw drift beyond CAD serialization/numerical precision is FAIL. The DATA<->PDF numeric gate below is not a redraw tolerance.
 
 ### TRAIN_REFERENCE
 User explicitly declares the DXF as sample, clean/extracted drawing, approved/ground-truth CAD or training comparison artifact. It is audit/calibration evidence, not raw DATA for direct extraction. For NEW construction, interpret source independently first.
@@ -43,3 +47,7 @@ Numeric allowance never waives topology, feature family/count, bend order, revis
 
 ## 3. Canonicalization
 When a parameter is explicitly controlled by PDF and DATA differs within the applicable threshold, retain DATA as geometry/topology provenance but canonicalize that production parameter to the exact PDF value without FLAG. At or above threshold, report both values and FLAG instead of silently forcing agreement. For geometry not explicitly dimension-controlled by PDF, retain cleaned DATA geometry rather than inventing rounded values.
+
+
+## 4. V4.21 646 DATA-required routing
+For production job family `646`, corresponding customer DATA is expected by default. If it is absent: status `DATA_REQUIRED_MISSING`; ask for DATA; do not silently downgrade to `PDF_ONLY`; do not generate production geometry until resolved. Once DATA is present, the same universal PDF_DATA_RAW geometry-preservation rules apply as for every other job.

@@ -1,4 +1,16 @@
-# SKILL_LISPCAD V4.20 PORTABLE: Approved Source/Data Classification + Mechanical Feature Routing / KEGAKI-SLIT-RIB Hardening
+# SKILL_LISPCAD V4.21 PORTABLE: Customer DATA Geometry Preservation Hard Gate / V4.20 Full Base Retained
+
+**V4.21 direct approval / PUSH (2026-09-30):** User approved the universal PDF + customer DXF DATA geometry-preservation rule. This hardens V4.20's existing DATA-source rule without changing Nobi/material formulas. For every PDF + customer DXF DATA job, DATA is geometry authority and PDF is semantic/control authority. Existing DATA geometry must be harvested, cleaned and preserved; assemble/unfold by proved transforms instead of redrawing from printed dimensions. Only explicit manufacturing/PDF canonicalization may replace a DATA parameter, and each replacement must be recorded. Before PASS, non-canonicalized geometry must inverse-reproject to extracted DATA within CAD serialization/numerical precision; customer DATA<->PDF thresholds are not redraw tolerances. Job family **646** is DATA-required by default: missing customer DATA => `DATA_REQUIRED_MISSING`, ask for DATA, and do not silently proceed PDF_ONLY. Mandatory contract: `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md`. Approved regression: `regression/qa/520930-03_V4_21_APPROVED.md`.
+
+### V4.21 hard routing — PDF + customer DATA
+1. Classify as `PDF_DATA_RAW` unless the user explicitly declares the DXF to be sample/approved/reference.
+2. Read PDF to lock code/page, physical scale, view/face semantics, witnesses/datums, revisions, Nobi and feature meaning.
+3. Extract and clean actual customer DATA primitives for each required face/view. Do not reconstruct existing DATA contour/features from PDF arithmetic.
+4. Preserve face-local geometry. Join/unfold with source-proved translation/rotation/reflection/scale and active bend/Nobi placement.
+5. Canonicalize only an explicitly controlled manufacturing parameter while preserving provenance.
+6. Run source reprojection for every unchanged face/feature before production serialization. Bbox agreement alone is not proof.
+7. If job family 646 lacks DATA, stop with `DATA_REQUIRED_MISSING` and ask for DATA.
+
 
 
 **V4.20 direct approval / PUSH (2026-09-29):** User approved source/data classification plus mechanical-feature routing. Source modes: PDF_ONLY, PDF_DATA_RAW, TRAIN_REFERENCE, DIRECT_EXISTING_DXF_AUDIT. In PDF_DATA_RAW, DATA supplies geometry 100% and PDF controls semantics/dimensions/revisions/Nobi. General DATA<->PDF boundary is strict: Delta<0.1 mm no FLAG; Delta>=0.1 mm FLAG. KH433 keeps its explicit <1.0/>=1.0 customer exception when topology/identity is unchanged. Mechanical classification is mandatory before geometry; CUT/HOLE-SLOT/BEND/KEGAKI/PIASU/SLIT-RIB/RIB are independent QA families. New modules define curved-slot one-contour cleanup, functional KEGAKI including PL1/PL2 and RIB footprints, Green as supporting rather than decisive evidence, independent RIB routing, 90° slit depth t+0.2, and >90° slit depth D=t*sin(theta) for 90<theta<180.
