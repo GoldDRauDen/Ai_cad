@@ -33,8 +33,8 @@ face_graph = read("references/FACE_GRAPH_UNFOLD_PROTOCOL.md")
 validation = read("skills/lispcad/core/VALIDATION.md")
 qa = read("regression/qa/520930-10_V4_22_APPROVED.md")
 
-assert current == v422, "CURRENT must equal immutable V4.22 release"
-assert current.startswith("# SKILL_LISPCAD V4.22 PORTABLE:")
+assert current.startswith("# SKILL_LISPCAD V4.23 PORTABLE:"), "CURRENT must be active V4.23"
+assert v422.startswith("# SKILL_LISPCAD V4.22 PORTABLE:"), "V4.22 immutable snapshot missing"
 assert "V4.22 direct approval / PUSH (2026-09-30)" in current
 assert "V4.23 direct approval" not in v422, "V4.22 immutable snapshot was mutated"
 assert "V4.22 direct approval" not in v421, "V4.21 immutable snapshot was mutated"
