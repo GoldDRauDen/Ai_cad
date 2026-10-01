@@ -1,0 +1,135 @@
+schema_version: 1
+release: V4.23
+purpose: ROUTING_COVERAGE_AUDIT
+
+# This file proves where approved release families live after modular routing.
+# It is an audit map, not an instruction to load every file for every job.
+release_coverage:
+  V4.23:
+    active:
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/521001-03_V4_23_APPROVED.md
+      - regression/tools/check_521001_03_v423.py
+  V4.22:
+    active:
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520930-10_V4_22_APPROVED.md
+      - regression/tools/check_520930_10_v422.py
+  V4.21:
+    active:
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520930-03_V4_21_APPROVED.md
+  V4.20:
+    active:
+      - references/SOURCE_DATA_CLASSIFICATION.md
+      - references/MECHANICAL_CLASSIFIER.md
+      - skills/lispcad/features/KEGAKI.md
+      - skills/lispcad/features/SLIT_RELIEF.md
+      - skills/lispcad/features/RIB.md
+      - skills/lispcad/features/CURVED_SLOT.md
+    regression:
+      - regression/qa/520928-20_V4_20_APPROVED.md
+      - regression/qa/HD4_V4_20_APPROVED.md
+      - regression/qa/SILT_GT90_V4_20_APPROVED.md
+      - regression/tools/check_v420_source_mech.py
+  V4.19:
+    active:
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+    regression:
+      - regression/qa/520929-25_V4_19_APPROVED.md
+      - regression/tools/check_520929_25_v419.py
+  V4.18:
+    active:
+      - references/BOXMET_SLIT_RELIEF.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520929-18_V4_18_APPROVED.md
+      - regression/tools/check_520929_18_v418.py
+  V4.17:
+    active:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/features/KEGAKI.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520929-10_V4_17_APPROVED.md
+      - regression/tools/check_520929_10_v417.py
+  V4.16:
+    active:
+      - references/BOXMET_SLIT_RELIEF.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+    regression:
+      - regression/qa/520801-04_V4_16_APPROVED.md
+      - regression/tools/check_520801_04_v416.py
+  V4.15:
+    active:
+      - references/ACUTE_BEND_LT85_METHOD.md
+      - references/ACUTE_BEND_LT85_FROM_SOURCE.md
+    regression:
+      - regression/qa/ACUTE_BEND_LT85_APPROVED.md
+      - regression/tools/check_acute_bend_lt85.py
+  V4.14:
+    active:
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520217-26_V4_14_APPROVED.md
+  V4.13:
+    active:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+    regression:
+      - regression/qa/520315-18_V4_13_APPROVED.md
+  V4.12:
+    active:
+      - references/MATERIAL_RULES.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520217-27_V4_12_APPROVED.md
+  V4.11:
+    active:
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520625-15_V4_11_APPROVED.md
+  V4.10:
+    active:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+    regression:
+      - regression/datum/520728-06_043793_TOP_LEFT_APPROVED.md
+  V4.9:
+    active:
+      - skills/lispcad/core/CAD_OUTPUT.md
+    regression:
+      - regression/export/DXF_SINGLE_COMPOSITE.md
+  V4.8:
+    active:
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/datum/520709-07_APPROVED.md
+  BASELINE_V4_3_TO_V4_7:
+    active:
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/core/VALIDATION.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/modes/FLAT_NO_BEND.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/MATERIAL_RULES.md
+      - references/NOBI_TABLES.md
+      - references/THREAD_PILOT_TABLE.md
+
+audit_only_snapshots:
+  - skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md
+  - skills/lispcad/versions/
+  - docs/history/

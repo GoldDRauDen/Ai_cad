@@ -1,0 +1,135 @@
+schema_version: 1
+release: V4.23
+authority: ROUTING_ONLY
+production_mode: repo_direct
+unknown_policy: LOAD_ROUTE
+
+# These are small, always-on rules needed to classify the source safely.
+default_load:
+  - skills/lispcad/core/DRAWING_READING.md
+  - skills/lispcad/core/DATUM_DIMENSION.md
+  - skills/lispcad/core/VALIDATION.md
+  - skills/lispcad/core/CAD_OUTPUT.md
+  - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+  - references/SOURCE_DATA_CLASSIFICATION.md
+  - references/MECHANICAL_CLASSIFIER.md
+  - skills/lispcad/router/FEATURE_CENSUS.md
+
+source_routes:
+  PDF_ONLY:
+    load: []
+  PDF_DATA_RAW:
+    load:
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+  TRAIN_REFERENCE:
+    load: []
+  DIRECT_EXISTING_DXF_AUDIT:
+    load: []
+
+mode_routes:
+  FLAT_NO_BEND:
+    load:
+      - skills/lispcad/modes/FLAT_NO_BEND.md
+  BEND:
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+  MULTI_FACE:
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+  UNKNOWN:
+    load:
+      - skills/lispcad/modes/FLAT_NO_BEND.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+
+feature_routes:
+  HOLE:
+    load:
+      - skills/lispcad/features/HOLES_TAPS.md
+      - references/MATERIAL_RULES.md
+  TAP:
+    depends_on: [HOLE]
+    load:
+      - skills/lispcad/features/HOLES_TAPS.md
+      - references/THREAD_PILOT_TABLE.md
+      - references/MATERIAL_RULES.md
+  SLOT_STRAIGHT:
+    load:
+      - skills/lispcad/features/SLOTS.md
+  CURVED_SLOT:
+    load:
+      - skills/lispcad/features/CURVED_SLOT.md
+  KEGAKI:
+    load:
+      - skills/lispcad/features/KEGAKI.md
+  PIASU:
+    load:
+      - skills/lispcad/features/HOLES_TAPS.md
+      - references/MATERIAL_RULES.md
+  SLIT_RELIEF:
+    load:
+      - skills/lispcad/features/SLIT_RELIEF.md
+  RIB:
+    load:
+      - skills/lispcad/features/RIB.md
+  CHAMFER_FILLET:
+    load:
+      - skills/lispcad/features/CHAMFER_RADIUS.md
+      - references/MATERIAL_RULES.md
+  HEMMING:
+    depends_on: [BEND]
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+  Z_BEND:
+    depends_on: [BEND]
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+  ACUTE_BEND_LT85:
+    depends_on: [BEND]
+    load:
+      - references/ACUTE_BEND_LT85_METHOD.md
+      - references/ACUTE_BEND_LT85_FROM_SOURCE.md
+  BOXMET:
+    depends_on: [BEND, SLIT_RELIEF]
+    load:
+      - references/BOXMET_SLIT_RELIEF.md
+  MATERIAL_RULES:
+    load:
+      - references/MATERIAL_RULES.md
+  NOBI:
+    depends_on: [BEND]
+    load:
+      - references/NOBI_TABLES.md
+  REVISION_CANCELLATION:
+    load:
+      - regression/datum/520709-07_APPROVED.md
+
+dependency_aliases:
+  BEND:
+    route_group: mode_routes
+    route_id: BEND
+
+post_route_checks:
+  - source_feature_completeness
+  - dependency_closure
+  - cross_feature_validation
+  - canonical_geometry_validation
+  - source_reprojection_when_applicable
+  - saved_dxf_readback
+
+history_policy:
+  excluded_from_normal_production_retrieval:
+    - skills/lispcad/versions/
+    - docs/history/
+  never_select_highest_version_filename: true
+
+portable_compatibility:
+  path: skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md
+  runtime_default: false
+  purpose: complete compatibility/audit snapshot
+  on_route_gap: STOP_WITH_ROUTING_COVERAGE_GAP
+  may_read_for_gap_diagnosis: true
+  may_silently_continue_production_after_gap: false
