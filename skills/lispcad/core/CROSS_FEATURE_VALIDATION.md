@@ -15,6 +15,8 @@ Always run after feature routing and before production DXF export. This module a
 - **REVISION/CANCELLATION ↔ every family:** cancellation is scoped to the actual callout/leader/family. Never delete neighboring families by proximity.
 - **RIB ↔ KEGAKI:** RIB-part CUT/HOLE and main-part locating KEGAKI are independent families; cancellation of one does not imply cancellation of the other.
 - **DATA provenance ↔ all features:** semantic cleanup/canonicalization must not silently redraw unchanged customer DATA geometry.
+- **DATA provenance ↔ MATERIAL auto-R:** a sharp DATA corner does not suppress a required material-table R. For otherwise uncalled eligible outside corners <=90 degrees, preserve source-corner provenance, apply the active R as recorded `DATA_AUTO_R_CANONICALIZATION`, and retain explicit source R/C precedence.
+- **DATA TAP representation ↔ THREAD_PILOT:** for every proved M*, distinguish `THREAD_NOMINAL_REFERENCE` from `THREAD_PREHOLE_SOURCE`; apply the nominal DATA<->PDF delta gate only to the nominal reference, then serialize exactly one controlled pilot CUT. Never output nominal-reference + pilot as two cuts.
 
 ## Closure
 

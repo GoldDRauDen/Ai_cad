@@ -1,5 +1,11 @@
 # SOURCE_DATA_CLASSIFICATION — V4.21 approved source routing
 
+## V4.24 manufacturing-canonicalization clarification
+
+The existing `PDF_DATA_RAW` authority split remains: DATA supplies source geometry/provenance and PDF supplies semantics/control. After source extraction, an active manufacturing rule may intentionally replace/add the production representation of a proved source feature. Examples are material-table automatic Laser R and `M*` thread-pilot conversion. Record such changes as explicit manufacturing canonicalizations; they are not permission to redraw unrelated DATA geometry.
+
+The numeric DATA<->PDF gate compares the **same physical parameter**. For a proved `M<n>` tap, compare an identifiable DATA **nominal thread reference** diameter against nominal `n`; do not compare the raw pre-hole/pilot diameter against nominal `n`. The final laser CUT may then be canonicalized to the approved thread-pilot diameter under `HOLES_TAPS.md` / `THREAD_PILOT_TABLE.md`.
+
 **Status:** USER APPROVED V4.20 2026-09-29; V4.21 geometry-preservation hardening approved 2026-09-30.
 
 **V4.21 hard gate:** for every PDF + customer DXF DATA job, existing DATA geometry must be harvested/preserved and assembled by proved transforms; do not redraw the same geometry from PDF dimensions. Load `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md`. Job family `646` is DATA-required by default: if its customer DATA is absent, report `DATA_REQUIRED_MISSING` and ask for it instead of silently using PDF_ONLY.

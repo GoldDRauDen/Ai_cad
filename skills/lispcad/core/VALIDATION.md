@@ -1,5 +1,15 @@
 # LISPCAD Core — Validation
 
+## V4.24 — DATA_MANUFACTURING_CANONICALIZATION hard gates
+
+For every `PDF_DATA_RAW` production part, run these checks in addition to V4.23 bidirectional closure:
+
+- **DATA_AUTO_R_CANONICALIZATION_CHECK:** enumerate otherwise uncalled eligible outside corners `<=90°`, resolve the active material/thickness row, and prove each required automatic R exists in canonical and serialized geometry. A sharp raw DATA vertex is not a pass condition. Every added/replaced R must retain source-corner provenance and an explicit material-rule canonicalization record. Explicit source R/C overrides the automatic rule at that corner.
+- **DATA_TAP_NOMINAL_VALIDATION_CHECK:** for every proved `M<n>`, if DATA provides an identifiable nominal thread reference, compare that nominal diameter with `n`; `Delta >= 0.1 mm` is `DATA_PDF_DIM_DIFF`. Do not apply this nominal comparison to the raw pre-hole/pilot. Prove the nominal-reference entity is non-cut, the final effective CUT matches the approved thread-pilot table or explicit PDF override, and exactly one manufactured pilot representation exists per tap.
+- **CANONICALIZATION_LEDGER_CHECK:** every manufacturing entity that differs from raw DATA because of auto-R, thread-pilot conversion or another approved rule must name its source members and controlling rule. Unchanged neighboring DATA geometry still requires source reprojection; an unrecorded extra arc/circle is FAIL.
+
+Saved-DXF read-back must re-confirm the resulting R geometry, effective pilot diameter/count, Layer-0 semantics and absence of nominal-reference duplicate CUT. Read-back cannot waive a failed nominal delta or missing canonicalization ledger.
+
 ## V4.23 — BIDIRECTIONAL_SOURCE_CANONICAL_QA hard gate
 
 For every `PDF_DATA_RAW` part, saved-DXF validation is downstream of: complete semantic DATA entity census; physical-family inventory and drawing-only exclusion; `SOURCE_PHYSICAL_TO_CANONICAL` completeness; `CANONICAL_TO_SOURCE_PHYSICAL` no-extra-manufacturing closure; per-family quantity/value/host closure; `PER_BEND_WITNESS_LEDGER` with `THICKNESS_SINGLE_USE`; material-domain BEND clipping; and fold-back/source reprojection.

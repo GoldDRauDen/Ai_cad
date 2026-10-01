@@ -1,7 +1,27 @@
-# DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA — V4.23
+# DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA — V4.24
 
 **Status:** USER APPROVED 2026-10-01 from 521001-03 direct audit.
 **Scope:** every `PDF_DATA_RAW` job. This reference adds no Nobi/material formula.
+
+
+## V4.24 manufacturing-canonicalization ledger
+
+For `PDF_DATA_RAW`, extend source-role classification with these roles when proved:
+- `THREAD_NOMINAL_REFERENCE`: a nominal-diameter circle/ring that identifies the M* thread size; semantic evidence, not a production cut.
+- `THREAD_PREHOLE_SOURCE`: the inner/raw pre-hole geometry associated with the same tap feature.
+- `MANUFACTURING_CANONICALIZED`: canonical geometry intentionally produced by an active rule from proved source provenance, such as an automatic material Laser R or a standard thread pilot.
+
+For every canonicalized member retain `source_members, host_face, controlling_rule, source_value_or_geometry, canonical_value_or_geometry, serialized_members`.
+
+### DATA_TAP_NOMINAL_VALIDATION
+Applies to **every proved `M<n>`**. When the corresponding DATA contains an identifiable nominal-reference diameter, compare `abs(D_DATA_NOMINAL - n)` using the general customer threshold: `Delta < 0.1 mm` passes; `Delta >= 0.1 mm` => `DATA_PDF_DIM_DIFF`. Exactly 0.1 mm flags. Do not use the raw pre-hole/pilot diameter for this nominal-identity comparison.
+
+After identity is locked, the nominal-reference geometry remains non-cut. The raw pre-hole stays as provenance, while the final production hole is the approved M* pilot from `THREAD_PILOT_TABLE.md` unless the PDF explicitly specifies another effective hole diameter. Example only: M6 + nominal DATA Ø6 + inner DATA Ø5.1 -> one production Ø5.0 pilot.
+
+### DATA_AUTO_R_CANONICALIZATION
+A sharp DATA vertex does not suppress an active material-table auto-R. If `MATERIAL_RULES.md` requires R at an otherwise uncalled eligible outside corner `<=90°`, canonicalize that local corner to the required tangent R and record the controlling material/thickness row. Explicit source R/C takes precedence. Surrounding unchanged DATA geometry remains subject to exact source reprojection.
+
+These recorded manufacturing canonicalizations satisfy `CANONICAL_TO_SOURCE_PHYSICAL` through explicit rule provenance; unrecorded extra arcs/holes remain FAIL.
 
 ## 1. Complete DATA entity census
 Before canonical geometry, harvest every relevant DATA primitive/view/face and assign a semantic role: `PHYSICAL_CUT_OR_FACE_EDGE`, `PHYSICAL_HOLE_SLOT_OR_FEATURE`, `BEND_SUPPORT`, `THICKNESS_REPRESENTATION`, `HIDDEN_OR_PROJECTION_ONLY`, `DIMENSION_HELPER_OR_CONSTRUCTION`, `DUPLICATE_COINCIDENT`, or another explicitly documented role. Presence in customer DXF proves provenance, not manufacturing meaning.

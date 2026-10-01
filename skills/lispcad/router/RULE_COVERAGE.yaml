@@ -1,10 +1,22 @@
 schema_version: 1
-release: V4.23
+release: V4.24
 purpose: ROUTING_COVERAGE_AUDIT
 
 # This file proves where approved release families live after modular routing.
 # It is an audit map, not an instruction to load every file for every job.
 release_coverage:
+  V4.24:
+    active:
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - references/SOURCE_DATA_CLASSIFICATION.md
+      - references/MATERIAL_RULES.md
+      - skills/lispcad/features/HOLES_TAPS.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/521001-13_V4_24_APPROVED.md
+      - regression/tools/check_521001_13_v424.py
   V4.23:
     active:
       - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md

@@ -1,5 +1,9 @@
 # Production reference — Laser corner R, hole capacity, White Piercing
 
+## V4.24 PDF_DATA_RAW automatic-R execution hardening
+
+No workbook value changes. In `PDF_DATA_RAW`, a customer DATA corner being sharp is **not** evidence to omit an automatic Laser R required by this table. After the DATA corner identity/topology is proved, every otherwise uncalled eligible outside corner `<=90°` receives the active material/thickness R as a recorded `DATA_AUTO_R_CANONICALIZATION`. Preserve the surrounding DATA geometry and build the true tangent replacement locally. An explicit PDF/source R or C at that corner retains precedence, and this rule never authorizes smoothing arbitrary internal notches or unrelated curve chains.
+
 **Approved from user-supplied** `Rule_Bo_R&Hole.xlsx`, worksheet `Bo_R_Hole`, dated `2026.07.30`; calibration `520924-19`, approved 2026-09-25. This complete transcription is portable: do not require the original spreadsheet or past chat.
 
 ## V4.12 approved sheet-material prefix classification (2026-09-27)

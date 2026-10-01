@@ -1,5 +1,17 @@
 # LISPCAD Feature — Holes / Taps / Piercing
 
+## V4.24 — universal DATA M* nominal-reference / pilot canonicalization
+
+This applies to **every proved `M*` tap**, not only M6.
+
+1. Lock the PDF/source thread identity `M<n>`, quantity, leader scope, host face and DATA feature cluster before converting geometry.
+2. If that DATA cluster contains an independently identifiable concentric nominal thread reference circle/ring, classify it `THREAD_NOMINAL_REFERENCE` and compare its diameter against nominal `n` using the normal DATA<->PDF same-parameter gate: `Delta < 0.1 mm` passes; `Delta >= 0.1 mm` => `DATA_PDF_DIM_DIFF`. Exactly 0.1 mm flags.
+3. A `THREAD_NOMINAL_REFERENCE` is semantic/reference geometry and **must not** become a second laser CUT. Do not compare the raw inner pre-hole/pilot diameter against nominal `n`; those are different physical parameters.
+4. Preserve the DATA center, quantity, host-face ownership and raw pre-hole provenance. Unless the PDF explicitly specifies another effective cut diameter, serialize exactly one production hole using `THREAD_PILOT_TABLE.md` for the proved `M*`.
+5. Example only: PDF M6 + DATA outer nominal Ø6 + inner/raw Ø5.1 => identity M6 is consistent and final production CUT is one Ø5.0 pilot. M4/M5/M8/etc. follow the same mechanism with their own table values.
+6. If a DATA circle's nominal-reference role is ambiguous, FLAG that semantic assignment instead of choosing by proximity/size. If DATA has no proved nominal-reference entity, do not invent one merely to run the delta check.
+7. Production QA fails if both nominal-reference and pilot circles survive as CUT, if raw pre-hole diameter is retained where the table controls the pilot, or if a nominal-reference `Delta >= 0.1 mm` is silently accepted.
+
 Approved calibration 520924-19, 2026-09-25. Uses `../../../references/MATERIAL_RULES.md` (transcribed approved workbook) and `../../../references/THREAD_PILOT_TABLE.md`.
 
 ## 3.1 Cutting features

@@ -20,11 +20,11 @@ geom=read("references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md"); mech=read("refere
 face=read("references/FACE_GRAPH_UNFOLD_PROTOCOL.md"); val=read("skills/lispcad/core/VALIDATION.md")
 bend=read("skills/lispcad/modes/BEND_UNFOLD.md"); qa=read("regression/qa/521001-03_V4_23_APPROVED.md")
 wf=read(".github/workflows/dxf-export-tests.yml")
-assert current==v423
-assert current.startswith("# SKILL_LISPCAD V4.23 PORTABLE:")
+assert current.startswith("# SKILL_LISPCAD V4.24 PORTABLE:")
 assert "V4.23 direct approval / PUSH (2026-10-01)" in current
 assert "V4.23 direct approval" not in v422
-assert "Current production release is **V4.23**" in entry
+assert "V4.24 direct approval" not in v423
+assert "Current production release is **V4.24**" in entry
 assert "check_521001_03_v423.py" in entry and "DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md" in entry
 assert "SOURCE_PHYSICAL_TO_CANONICAL" in physical and "CANONICAL_TO_SOURCE_PHYSICAL" in physical
 assert "THICKNESS_REPRESENTATION" in geom and "source_entity_census" in mech

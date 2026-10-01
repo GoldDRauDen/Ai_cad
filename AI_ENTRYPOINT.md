@@ -1,6 +1,6 @@
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.23**.
+Current production release is **V4.24**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
@@ -48,6 +48,7 @@ For every bent or multi-face part, the router loads `skills/lispcad/modes/BEND_U
 
 ## 4. Release wiring index — backward-compatible regression contract
 
+- **V4.24:** `DATA_MANUFACTURING_CANONICALIZATION`, `DATA_AUTO_R_CANONICALIZATION`, `DATA_TAP_NOMINAL_VALIDATION`; regression `regression/qa/521001-13_V4_24_APPROVED.md`; executable `regression/tools/check_521001_13_v424.py`. No numeric Nobi/thread/material table is changed.
 This compact index preserves the machine-readable release wiring required by existing regression tests. It is **not** an instruction to load every listed regression on every job.
 
 - **V4.23:** `SOURCE_PHYSICAL_TO_CANONICAL`, `CANONICAL_TO_SOURCE_PHYSICAL`, `PER_BEND_WITNESS_LEDGER`, `THICKNESS_SINGLE_USE`, `THICKNESS_REPRESENTATION`; regression `regression/qa/521001-03_V4_23_APPROVED.md`; executable `regression/tools/check_521001_03_v423.py`.

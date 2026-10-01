@@ -1,4 +1,14 @@
-# PDF_DATA_RAW_GEOMETRY_PRESERVATION — V4.23 physical-census/bidirectional hardening over V4.21
+# PDF_DATA_RAW_GEOMETRY_PRESERVATION — V4.24 manufacturing-canonicalization hardening over V4.23
+
+
+## V4.24 manufacturing canonicalization after 100% DATA harvest
+
+Customer DATA remains the source geometry/provenance authority, but `100% DATA` is a source-harvest rule, not a blanket instruction to serialize every raw DATA parameter unchanged. After source roles, host faces and feature identity are locked, apply every active manufacturing rule that explicitly controls production geometry.
+
+- **Automatic Laser R:** an otherwise uncalled eligible outside corner `<=90°` must receive the active material/thickness Laser R from `MATERIAL_RULES.md` even when the harvested DATA corner is sharp. Record the local sharp-vertex -> tangent-R replacement as `DATA_AUTO_R_CANONICALIZATION`. Explicit source R/C still wins at its own corner.
+- **Tapped M* holes:** preserve DATA center, quantity, host face and source role. Nominal-reference geometry and raw pre-hole geometry are evidence, not automatically final CUT geometry. Final pilot representation follows `HOLES_TAPS.md` + `THREAD_PILOT_TABLE.md` unless the PDF explicitly controls another effective hole diameter.
+- A canonicalized R/pilot is allowed in `CANONICAL_TO_SOURCE_PHYSICAL` only with an explicit rule/provenance record. Every unchanged neighboring DATA segment/feature still must inverse-reproject to source within CAD numerical/serialization precision.
+- FAIL if an implementation cites `DATA 100%` as the reason to omit required automatic R, preserve a raw tap pre-hole instead of the controlled pilot, or serialize a tap nominal-reference circle as an extra production cut.
 
 ## V4.23 physical DATA census and bidirectional closure
 
