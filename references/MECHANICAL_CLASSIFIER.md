@@ -1,4 +1,12 @@
-# MECHANICAL_CLASSIFIER — V4.20 mandatory pre-geometry routing
+# MECHANICAL_CLASSIFIER — V4.23 source-census hardening over V4.20
+
+## V4.23 required source-census fields
+
+Extend the preliminary mechanical record with:
+`source_entity_census, source_physical_inventory, drawing_only_inventory, canonicalized_inventory, bidirectional_diff_status, per_bend_witness_ledger_status`.
+
+Every relevant DATA primitive must receive a semantic role before it is eligible for manufacturing canonical geometry. `THICKNESS_REPRESENTATION`, hidden/projection-only, dimension-helper/construction and duplicate/coincident entities do not become CUT by default. Every active physical family must still receive its normal manufacturing-family classification and host/status.
+
 
 **Status:** USER APPROVED 2026-09-29.
 

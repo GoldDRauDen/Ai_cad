@@ -1,5 +1,14 @@
 # LISPCAD Core — Validation
 
+## V4.23 — BIDIRECTIONAL_SOURCE_CANONICAL_QA hard gate
+
+For every `PDF_DATA_RAW` part, saved-DXF validation is downstream of: complete semantic DATA entity census; physical-family inventory and drawing-only exclusion; `SOURCE_PHYSICAL_TO_CANONICAL` completeness; `CANONICAL_TO_SOURCE_PHYSICAL` no-extra-manufacturing closure; per-family quantity/value/host closure; `PER_BEND_WITNESS_LEDGER` with `THICKNESS_SINGLE_USE`; material-domain BEND clipping; and fold-back/source reprojection.
+
+Do not emit `SOURCE_REPROJECTION_PASS` merely because the primitives selected by the AI map back to DATA. That claim requires census completeness and both directions of the source/canonical diff. Bbox/read-back/entity existence cannot repair an upstream missing family, extra manufacturing edge or bend-witness mismatch.
+
+When a user-approved sample contains exact coincident duplicates, normalize them for physical comparison and report `REFERENCE_ANOMALY`; never promote duplicate entity count into physical feature quantity.
+
+
 ## V4.22 SOURCE_FEATURE_COMPLETENESS — mandatory upstream QA
 
 Before any export, compare the complete active source manufacturing-family inventory against the canonical model and the final serialized DXF. Every source-active family (CUT, HOLE/SLOT, BEND, KEGAKI, PIASU/PIERCING, SLIT/RELIEF, RIB, R/C/chamfer or other forming feature) must have an explicit canonical/output status. A family that disappears without an explicit source cancellation is **FAIL**, even when the outer contour, bbox and DXF read-back are otherwise clean.

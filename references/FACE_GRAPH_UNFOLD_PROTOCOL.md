@@ -1,4 +1,19 @@
-# FACE_GRAPH_UNFOLD_PROTOCOL — V4.19 mandatory multi-face reasoning contract
+# FACE_GRAPH_UNFOLD_PROTOCOL — V4.23 bidirectional/per-bend hardening over V4.19
+
+## V4.23 — PER_BEND_WITNESS_LEDGER and THICKNESS_SINGLE_USE
+
+Before a bend may contribute final flat coordinates, retain an evidence-equivalent `PER_BEND_WITNESS_LEDGER` containing bend id, ordered adjacent faces, both controlling physical source witnesses, dimension semantics, each thickness term/offset and exactly where it is consumed, Nobi evidence/value, bend sign/orientation, material domain, derived double-line coordinates, and fold-back/source checks.
+
+`THICKNESS_SINGLE_USE` is mandatory: a thickness term already consumed by ID→OD conversion, a proved outside-face extent, or another owned face-transition equation must not be added/subtracted again for the same bend placement. A bend-pair residual numerically equal to `+t` or `-t` is diagnostic evidence to re-trace witnesses/ownership; it is never a universal auto-fix.
+
+A correct total flat length, outer bbox, or matching CUT contour cannot pass a bend with an unclosed ledger.
+
+### G7B — BIDIRECTIONAL_SOURCE_CANONICAL_CLOSURE
+For `PDF_DATA_RAW`, after source census and before FOLD_BACK_MATCH:
+- `SOURCE_PHYSICAL_TO_CANONICAL`: every active physical source curve/family is represented or explicitly canonicalized/canceled;
+- `CANONICAL_TO_SOURCE_PHYSICAL`: every manufacturing canonical curve has physical source provenance or a recorded canonicalization rule.
+Missing source physical geometry or extra manufacturing geometry is FAIL even when selected geometry inverse-reprojects perfectly.
+
 
 **Approved:** 2026-09-29, calibration job 520929-25.  
 **Scope:** every bent or multi-face sheet-metal part. This protocol adds no material, Nobi, thread, laser-R or acute-bend formula. It hardens how existing source evidence is converted into a unique formed model and then into a flat.

@@ -1,5 +1,12 @@
 # LISPCAD Mode — Bend / Unfold
 
+## V4.23 — mandatory per-bend witness ledger
+
+In addition to the V4.19 FACE_GRAPH, every bend must close a `PER_BEND_WITNESS_LEDGER` before its double lines are accepted. Record ordered faces, controlling source witnesses, ID/OD semantics, every thickness term and where it is consumed, Nobi, sign, material domain and final pair coordinates. Enforce `THICKNESS_SINGLE_USE`: no thickness contribution may be silently consumed twice for the same transition.
+
+Do not place a bend from total-flat closure alone. If a candidate bend pair differs from source/reference diagnosis by exactly ±t, treat that only as evidence of a possible thickness/datum ownership error and re-trace the ledger; do not auto-shift by t as a generic formula.
+
+
 Source: approved V4.3 production baseline.
 
 Load shared Nobi values from `../../../references/NOBI_TABLES.md`.

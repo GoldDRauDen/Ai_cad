@@ -1,4 +1,21 @@
-# PDF_DATA_RAW_GEOMETRY_PRESERVATION — V4.21 approved implementation contract
+# PDF_DATA_RAW_GEOMETRY_PRESERVATION — V4.23 physical-census/bidirectional hardening over V4.21
+
+## V4.23 physical DATA census and bidirectional closure
+
+Before canonical geometry, classify every relevant harvested DATA primitive as one of:
+- `PHYSICAL_CUT_OR_FACE_EDGE`
+- `PHYSICAL_HOLE_SLOT_OR_FEATURE`
+- `BEND_SUPPORT`
+- `THICKNESS_REPRESENTATION`
+- `HIDDEN_OR_PROJECTION_ONLY`
+- `DIMENSION_HELPER_OR_CONSTRUCTION`
+- `DUPLICATE_COINCIDENT`
+- another explicitly proved physical/nonphysical role.
+
+A DATA primitive is not automatically manufacturing geometry merely because it is present in customer CAD. Paired edges shown only to represent sheet thickness in Side/Section views remain `THICKNESS_REPRESENTATION` unless source semantics independently prove that edge is an actual cut boundary.
+
+After unfold/canonicalization, run both `SOURCE_PHYSICAL_TO_CANONICAL` and `CANONICAL_TO_SOURCE_PHYSICAL`. Passing inverse reprojection for only the subset selected by the AI is insufficient. Missing physical source geometry and extra manufacturing geometry are both production FAIL. Load `DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md`.
+
 
 **Status:** USER APPROVED 2026-09-30.
 
