@@ -36,8 +36,9 @@ qa = read("regression/qa/520930-10_V4_22_APPROVED.md")
 assert current == v422, "CURRENT must equal immutable V4.22 release"
 assert current.startswith("# SKILL_LISPCAD V4.22 PORTABLE:")
 assert "V4.22 direct approval / PUSH (2026-09-30)" in current
+assert "V4.23 direct approval" not in v422, "V4.22 immutable snapshot was mutated"
 assert "V4.22 direct approval" not in v421, "V4.21 immutable snapshot was mutated"
-assert "Current production release is **V4.22**" in entry
+assert "Current production release is **V4.23**" in entry
 assert "check_520930_10_v422.py" in entry
 assert "SOURCE_EXHAUSTED_BEFORE_VIEWS_ONLY" in face_graph
 assert "SOURCE_FEATURE_COMPLETENESS" in validation
