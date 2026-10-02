@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.24
+release: V4.25
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -22,6 +22,7 @@ source_routes:
     load:
       - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
       - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md
   TRAIN_REFERENCE:
     load: []
   DIRECT_EXISTING_DXF_AUDIT:
@@ -116,7 +117,11 @@ post_route_checks:
   - source_feature_completeness
   - dependency_closure
   - cross_feature_validation
+  - raw_data_snapshot_freeze
+  - same_parameter_gate_before_canonicalization
+  - manufacturing_change_ledger
   - canonical_geometry_validation
+  - untouched_data_invariance
   - source_reprojection_when_applicable
   - saved_dxf_readback
 

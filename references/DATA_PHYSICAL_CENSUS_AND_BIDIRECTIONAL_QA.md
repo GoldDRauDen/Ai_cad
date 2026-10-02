@@ -1,8 +1,34 @@
-# DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA — V4.24
+# DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA — V4.25
 
-**Status:** USER APPROVED 2026-10-01 from 521001-03 direct audit.
+**Status:** USER APPROVED 2026-10-01 from 521001-03 direct audit; V4.25 sequencing/invariance hardening approved 2026-10-02 from 521001-20 direct audit.
 **Scope:** every `PDF_DATA_RAW` job. This reference adds no Nobi/material formula.
 
+## V4.25 RAW baseline + manufacturing-scope QA
+
+Before any production canonicalization, freeze/account the complete relevant customer DATA as `RAW_DATA_SNAPSHOT`, then classify `PHYSICAL_DATA_BASELINE`. Load `DATA_RAW_TO_MANUFACTURING_CONTRACT.md`.
+
+### RAW_DATA_SNAPSHOT_COMPLETE
+Every relevant DATA primitive/view/face must be harvested before manufacturing adjustment and assigned a semantic role. Drawing-only exclusion is allowed only after role classification; it must not be used to hide unaccounted physical geometry.
+
+### PHYSICAL_DATA_BASELINE_COMPLETE
+Build the physical manufacturing baseline from the source-supported CUT/face edges, holes/slots/features, bend support and other proved physical families. Keep source coordinates/curves/provenance before any tolerance, tap-pilot, R/C, Nobi or other manufacturing change.
+
+### SAME_PARAMETER_GATE
+Run DATA<->PDF delta checks only on the same physical parameter after code/view/feature/datum/unit mapping. A passing low-delta comparison does not authorize snapping DATA to the PDF nominal. At/above the applicable threshold, FLAG `DATA_PDF_DIM_DIFF` and do not automatically canonicalize that conflicting parameter.
+
+### MANUFACTURING_CHANGE_LEDGER
+Extend the V4.24 canonicalization ledger. Every physical member that differs between `PHYSICAL_DATA_BASELINE` and manufacturing canonical geometry must retain:
+
+`source_members, host_face, source_geometry_or_value, same_parameter_gate_status, controlling_rule, changed_scope, canonical_geometry_or_value, serialized_members`.
+
+A rule applies only within its proved `changed_scope`; unchanged neighboring DATA geometry remains independently auditable.
+
+### UNTOUCHED_DATA_INVARIANCE_CHECK
+For every physical DATA member outside all approved changed scopes, compare the source physical curve with canonical and saved-DXF read-back geometry after reversing only proved layout/source transforms. PASS requires identical physical geometry within CAD numerical/serialization precision. The DATA<->PDF customer threshold is not an allowed redraw tolerance.
+
+Equivalent representation is permitted: LINE/ARC/CIRCLE versus an exact LWPOLYLINE/bulge encoding is physically acceptable when endpoints, centers/radii/sweeps and topology represent the same curves. Raw entity count and AutoCAD `OVERKILL` are not physical-geometry QA.
+
+521001-20 regression: `855 -> 854.75`, `600 -> 599.75`, and M5 raw pre-hole `Ø4.134 -> Ø4.2` are approved rule-scoped manufacturing changes. An otherwise uncontrolled source height `60.000709679` must remain unchanged; snapping it to PDF nominal `60` is `UNTOUCHED_DATA_INVARIANCE_FAIL`.
 
 ## V4.24 manufacturing-canonicalization ledger
 
@@ -51,4 +77,4 @@ Every thickness contribution has exactly one owned use. A residual exactly equal
 In reference/direct-audit mode, exact coincident/reversed duplicate curves are normalized before physical quantity comparison and reported as `REFERENCE_ANOMALY`. Do not teach duplicate entity count as manufacturing quantity and do not mutate the sample.
 
 ## 7. PASS boundary
-Production eligibility requires `SOURCE CENSUS -> ROLE CLASSIFICATION -> FAMILY INVENTORY -> FACE_GRAPH -> PER_BEND_WITNESS_LEDGER -> UNFOLD -> SOURCE_PHYSICAL_TO_CANONICAL -> CANONICAL_TO_SOURCE_PHYSICAL -> FAMILY/BEND DOMAIN QA -> FOLD_BACK/REPROJECTION -> DXF SAVE -> READ-BACK`. Downstream read-back cannot override an upstream census/semantic failure.
+Production eligibility requires `RAW_DATA_SNAPSHOT -> PHYSICAL_DATA_BASELINE -> SOURCE CENSUS -> ROLE CLASSIFICATION -> FAMILY INVENTORY -> FACE_GRAPH -> PER_BEND_WITNESS_LEDGER -> SAME_PARAMETER_GATE -> MANUFACTURING_CHANGE_LEDGER -> UNFOLD/CANONICALIZATION -> UNTOUCHED_DATA_INVARIANCE_CHECK -> SOURCE_PHYSICAL_TO_CANONICAL -> CANONICAL_TO_SOURCE_PHYSICAL -> FAMILY/BEND DOMAIN QA -> FOLD_BACK/REPROJECTION -> DXF SAVE -> READ-BACK`. Downstream read-back cannot override an upstream census/semantic/invariance failure.

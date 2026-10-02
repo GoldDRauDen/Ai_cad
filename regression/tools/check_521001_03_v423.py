@@ -24,7 +24,7 @@ assert current.startswith("# SKILL_LISPCAD V4.24 PORTABLE:")
 assert "V4.23 direct approval / PUSH (2026-10-01)" in current
 assert "V4.23 direct approval" not in v422
 assert "V4.24 direct approval" not in v423
-assert "Current production release is **V4.24**" in entry
+assert "- **V4.23:**" in entry
 assert "check_521001_03_v423.py" in entry and "DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md" in entry
 assert "SOURCE_PHYSICAL_TO_CANONICAL" in physical and "CANONICAL_TO_SOURCE_PHYSICAL" in physical
 assert "THICKNESS_REPRESENTATION" in geom and "source_entity_census" in mech

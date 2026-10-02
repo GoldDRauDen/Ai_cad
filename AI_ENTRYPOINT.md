@@ -1,6 +1,6 @@
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.24**.
+Current production release is **V4.25**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
@@ -42,12 +42,13 @@ Classify exactly one source relationship using `references/SOURCE_DATA_CLASSIFIC
 - `TRAIN_REFERENCE`
 - `DIRECT_EXISTING_DXF_AUDIT`
 
-For `PDF_DATA_RAW`, the router loads `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md` and `references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md`. Customer DATA supplies physical geometry; PDF controls semantics, dimensions, revisions and manufacturing meaning under the approved rules.
+For `PDF_DATA_RAW`, the router loads `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md`, `references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md` and `references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md`. Customer DATA supplies physical geometry; PDF controls semantics, dimensions, revisions and manufacturing meaning under the approved rules. V4.25 requires the complete DATA geometry to be frozen/accounted before manufacturing canonicalization, every intentional change to be rule-scoped in `MANUFACTURING_CHANGE_LEDGER`, and all untouched DATA geometry to pass physical invariance/reprojection.
 
 For every bent or multi-face part, the router loads `skills/lispcad/modes/BEND_UNFOLD.md` and `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`.
 
 ## 4. Release wiring index — backward-compatible regression contract
 
+- **V4.25:** `RAW_DATA_SNAPSHOT`, `PHYSICAL_DATA_BASELINE`, `SAME_PARAMETER_GATE`, `MANUFACTURING_CHANGE_LEDGER`, `UNTOUCHED_DATA_INVARIANCE_CHECK`, representation-equivalent physical geometry; reference `references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md`; regression `regression/qa/521001-20_V4_25_APPROVED.md`; executable `regression/tools/check_521001_20_v425.py`. No numeric Nobi/thread/material/tolerance table or DATA<->PDF threshold is changed.
 - **V4.24:** `DATA_MANUFACTURING_CANONICALIZATION`, `DATA_AUTO_R_CANONICALIZATION`, `DATA_TAP_NOMINAL_VALIDATION`; regression `regression/qa/521001-13_V4_24_APPROVED.md`; executable `regression/tools/check_521001_13_v424.py`. No numeric Nobi/thread/material table is changed.
 This compact index preserves the machine-readable release wiring required by existing regression tests. It is **not** an instruction to load every listed regression on every job.
 
@@ -81,7 +82,7 @@ If a source-supported feature has no route, stop with `ROUTING_COVERAGE_GAP`. Do
 
 ## 6. Portable and history policy
 
-`skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md` is retained as the complete V4.23 compatibility/audit snapshot so no approved rule text is destroyed by this migration. It is **NOT part of the normal repo-direct load path**.
+`skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md` is retained as a complete compatibility/audit snapshot (currently V4.24) so approved historical rule text is not destroyed by repo-direct modular releases. It is **NOT part of the normal repo-direct load path** and is not required to be version-equal to the current repo-direct production release.
 
 It may be read only to diagnose a `ROUTING_COVERAGE_GAP`, audit historical coverage, or perform an explicitly requested portability check. After a gap is found, do not silently continue production from the portable file; fix/approve the missing route first.
 

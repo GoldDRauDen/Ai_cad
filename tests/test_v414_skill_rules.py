@@ -10,21 +10,19 @@ OLDER = ROOT / "skills/lispcad/versions/V4.13/SKILL_LISPCAD_V4_13_PORTABLE.md"
 QA = ROOT / "regression/qa/520217-26_V4_14_APPROVED.md"
 
 
-def test_current_matches_declared_approved_release_and_preserves_v414():
-    """Current follows the approved entrypoint; historical V4.14 is immutable."""
+def test_repo_direct_release_and_preserves_v414_portable_history():
+    """Repo-direct production may advance beyond the audit-only portable snapshot."""
     entrypoint = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     match = re.search(r"Current production release is [*][*](V[0-9]+[.][0-9]+)[*][*]", entrypoint)
-    assert match, "Entrypoint must declare the currently approved production release"
+    assert match, "Entrypoint must declare the currently approved repo-direct production release"
     active_version = match.group(1)
     major, minor = map(int, active_version[1:].split("."))
     assert (major, minor) >= (4, 14)
-    active_file = (ROOT / "skills/lispcad/versions" / active_version
-                   / f"SKILL_LISPCAD_{active_version.replace('.', '_')}_PORTABLE.md")
-    assert active_file.is_file(), "Active production snapshot must exist"
-    assert CURRENT.read_bytes() == active_file.read_bytes()
-    assert CURRENT.read_text(encoding="utf-8").startswith(
-        f"# SKILL_LISPCAD {active_version} PORTABLE"
-    )
+    router = (ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8")
+    assert f"release: {active_version}" in router
+    assert "runtime_default: false" in router
+    assert CURRENT.is_file(), "Audit/compatibility portable snapshot must remain available"
+    assert CURRENT.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.24 PORTABLE")
     historical_v414 = RELEASE.read_text(encoding="utf-8")
     assert historical_v414.startswith("# SKILL_LISPCAD V4.14 PORTABLE")
     assert "## Appendix L — V4.14" in historical_v414

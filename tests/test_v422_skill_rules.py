@@ -9,7 +9,7 @@ PREV=ROOT/"skills/lispcad/versions/V4.21/SKILL_LISPCAD_V4_21_PORTABLE.md"
 def test_v422_historical_release_and_v424_inheritance():
     entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
-    assert "Current production release is **V4.24**" in entry
+    assert "- **V4.22:**" in entry
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.22 PORTABLE")
     assert skill.startswith("# SKILL_LISPCAD V4.24 PORTABLE")
     assert "V4.22 direct approval / PUSH" in skill
