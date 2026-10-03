@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.25
+release: V4.26
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -12,6 +12,7 @@ default_load:
   - skills/lispcad/core/CAD_OUTPUT.md
   - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
   - references/SOURCE_DATA_CLASSIFICATION.md
+  - references/DXF_PHYSICAL_CURVE_DECODING.md
   - references/MECHANICAL_CLASSIFIER.md
   - skills/lispcad/router/FEATURE_CENSUS.md
 
@@ -114,6 +115,7 @@ dependency_aliases:
     route_id: BEND
 
 post_route_checks:
+  - physical_curve_decode_before_feature_census
   - source_feature_completeness
   - dependency_closure
   - cross_feature_validation

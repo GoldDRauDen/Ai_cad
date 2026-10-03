@@ -55,8 +55,11 @@ current = read("skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md")
 v424 = read("skills/lispcad/versions/V4.24/SKILL_LISPCAD_V4_24_PORTABLE.md")
 v423 = read("skills/lispcad/versions/V4.23/SKILL_LISPCAD_V4_23_PORTABLE.md")
 
-assert "Current production release is **V4.25**" in entry
-assert "release: V4.25" in router and "release: V4.25" in coverage
+# V4.25 must remain wired after later repo-direct releases are promoted.
+assert "- **V4.25:**" in entry
+assert "V4.25:" in coverage
+assert "references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md" in coverage
+assert "references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md" in router
 assert current == v424
 assert current.startswith("# SKILL_LISPCAD V4.24 PORTABLE:")
 assert v423.startswith("# SKILL_LISPCAD V4.23 PORTABLE:")

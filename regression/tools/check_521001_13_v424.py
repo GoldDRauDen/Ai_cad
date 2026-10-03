@@ -46,7 +46,9 @@ assert current.startswith("# SKILL_LISPCAD V4.24 PORTABLE:")
 assert v423.startswith("# SKILL_LISPCAD V4.23 PORTABLE:")
 assert "V4.24 direct approval" not in v423
 assert "- **V4.24:**" in entry
-assert "release: V4.25" in router and "release: V4.25" in coverage
+assert "V4.24:" in coverage
+assert "regression/qa/521001-13_V4_24_APPROVED.md" in coverage
+assert "references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md" in router
 for token in [
     "DATA_MANUFACTURING_CANONICALIZATION", "DATA_AUTO_R_CANONICALIZATION",
     "DATA_TAP_NOMINAL_VALIDATION", "THREAD_NOMINAL_REFERENCE",

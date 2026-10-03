@@ -12,9 +12,9 @@ def test_v425_release_wiring_and_portable_compatibility():
     entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
-    assert "Current production release is **V4.25**" in entry
-    assert router["release"] == "V4.25"
-    assert coverage["release"] == "V4.25"
+    assert "- **V4.25:**" in entry
+    assert "V4.25" in coverage["release_coverage"]
+    assert "references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md" in coverage["release_coverage"]["V4.25"]["active"]
     assert CURRENT.read_bytes() == V424.read_bytes()
     assert CURRENT.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.24 PORTABLE")
     assert router["portable_compatibility"]["runtime_default"] is False
