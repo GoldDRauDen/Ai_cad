@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.26
+release: V4.27
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE

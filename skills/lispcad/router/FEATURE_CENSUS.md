@@ -26,13 +26,23 @@ Do not mark a family NO merely because a keyword was not found. Check, as applic
 - dimension witnesses, leaders and symbols;
 - Japanese/English notes and handwritten/red revisions;
 - section/detail/development views;
-- barcode/code/material/thickness blocks;
+- barcode/code/material/thickness blocks, including process symbols immediately associated with a barcode;
 - crossed-out/cancelled callouts;
 - customer DATA entities, layers, views and physical duplicates;
 - decoded physical curve type for DXF `POLYLINE`/`LWPOLYLINE` segments, including nonzero bulge ARC geometry rather than endpoint chords;
 - source-view host face and formed/unfolded relationships.
 
 Color, linetype, proximity, symmetry, code adjacency, endpoint/chord appearance, or model confidence alone never proves a feature family. In particular, equal X/Y offsets between two polyline vertices do not prove a chamfer when the source segment has nonzero bulge.
+
+## V4.27 weld-cue gate before KEGAKI = NO
+
+When a reversed-e mark is proved immediately above a barcode, record the scoped process evidence as `REVERSED_E_ABOVE_BARCODE -> WELD_REQUIRED_CUE` for that barcode's code/detail cluster only.
+
+- `WELD_REQUIRED_CUE` is process evidence, not a new routable feature family and not geometric KEGAKI by itself.
+- If the scoped cluster contains a RIB / gusset / support or other welded child that cannot self-locate, `KEGAKI` must be `YES` when the locating marks are source-proved, otherwise at least `UNKNOWN` until locating/contact function, host face, datum and quantity have been checked. It must not be prematurely classified `NO`.
+- A specific KEGAKI instruction independently makes `KEGAKI = YES` even when the reversed-e barcode cue is absent.
+- If neither the reversed-e barcode cue nor a specific KEGAKI instruction exists for the scoped code/cluster, do not infer welding or create KEGAKI solely because a secondary RIB / gusset / support exists.
+- Do not copy the cue across adjacent barcodes/codes, and do not copy a full child contour into KEGAKI without proved locating/contact evidence.
 
 ## Census schema
 

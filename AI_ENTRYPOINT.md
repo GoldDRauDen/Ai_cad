@@ -1,6 +1,6 @@
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.26**.
+Current production release is **V4.27**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
@@ -33,7 +33,9 @@ Inspect the actual source before selecting specialized modules. Build the prelim
 
 **UNKNOWN != NO.** Every `YES` and `UNKNOWN` family loads its route. After routed modules are loaded, re-check the source and close the final census.
 
-Do not mark a feature absent merely because OCR did not find its keyword. Inspect geometry, leaders, witnesses, notes, revisions, sections/details and supplied customer DATA as applicable.
+Do not mark a feature absent merely because OCR did not find its keyword. Inspect geometry, leaders, witnesses, notes, revisions, sections/details, barcode/process cues and supplied customer DATA as applicable.
+
+V4.27 weld-cue gate: a proved reversed-e mark immediately above a barcode is `REVERSED_E_ABOVE_BARCODE -> WELD_REQUIRED_CUE` for that barcode's code/detail cluster only. The cue proves a welding-process expectation, not KEGAKI geometry. If a scoped welded RIB/gusset/support cannot self-locate, KEGAKI must be source-proved or retained as `UNKNOWN`/FLAG until locating/contact evidence is exhausted. A specific KEGAKI instruction independently requires KEGAKI. If neither cue nor specific KEGAKI instruction exists, do not infer welding/KEGAKI solely from a secondary RIB/support. Use `skills/lispcad/features/KEGAKI.md`.
 
 V4.26 hard gate: whenever DXF geometry participates as customer DATA, reference, or direct-audit evidence, decode its physical curves before Feature Census. For `POLYLINE`/`LWPOLYLINE`, nonzero bulge means ARC, not the endpoint chord; closed final->first segments are included. Use `references/DXF_PHYSICAL_CURVE_DECODING.md`.
 
@@ -51,6 +53,7 @@ For every bent or multi-face part, the router loads `skills/lispcad/modes/BEND_U
 
 ## 4. Release wiring index — backward-compatible regression contract
 
+- **V4.27:** `REVERSED_E_ABOVE_BARCODE`, `WELD_REQUIRED_CUE`, barcode/code scope, welded non-self-locating RIB/support -> KEGAKI `YES|UNKNOWN` gate, and no-RIB-only weld inference; active modules `skills/lispcad/router/FEATURE_CENSUS.md`, `skills/lispcad/features/KEGAKI.md`, `skills/lispcad/core/CROSS_FEATURE_VALIDATION.md`; regression `regression/qa/521005-01_V4_27_APPROVED.md`; executable `regression/tools/check_521005_01_v427.py`. Existing slot, datum, Nobi, thread, material and DATA<->PDF numeric rules are unchanged.
 - **V4.26:** `DXF_PHYSICAL_CURVE_DECODE_BEFORE_CENSUS`, `PHYSICAL_CURVE_CENSUS`, `POLYLINE_BULGE_IS_ARC`, `BULGE_ARC_NOT_CHORD`, closed final->first segment coverage and physical-curve reprojection; reference `references/DXF_PHYSICAL_CURVE_DECODING.md`; regression `regression/qa/521001-19_V4_26_APPROVED.md`; executable `regression/tools/check_521001_19_v426.py`. No numeric Nobi/thread/material/tolerance table or DATA<->PDF threshold is changed.
 - **V4.25:** `RAW_DATA_SNAPSHOT`, `PHYSICAL_DATA_BASELINE`, `SAME_PARAMETER_GATE`, `MANUFACTURING_CHANGE_LEDGER`, `UNTOUCHED_DATA_INVARIANCE_CHECK`, representation-equivalent physical geometry; reference `references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md`; regression `regression/qa/521001-20_V4_25_APPROVED.md`; executable `regression/tools/check_521001_20_v425.py`. No numeric Nobi/thread/material/tolerance table or DATA<->PDF threshold is changed.
 - **V4.24:** `DATA_MANUFACTURING_CANONICALIZATION`, `DATA_AUTO_R_CANONICALIZATION`, `DATA_TAP_NOMINAL_VALIDATION`; regression `regression/qa/521001-13_V4_24_APPROVED.md`; executable `regression/tools/check_521001_13_v424.py`. No numeric Nobi/thread/material table is changed.

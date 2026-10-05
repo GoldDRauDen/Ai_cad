@@ -12,9 +12,9 @@ def test_v426_release_wiring_and_portable_compatibility():
     entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
-    assert "Current production release is **V4.26**" in entry
-    assert router["release"] == "V4.26"
-    assert coverage["release"] == "V4.26"
+    assert "- **V4.26:**" in entry
+    assert "V4.26" in coverage["release_coverage"]
+    assert "references/DXF_PHYSICAL_CURVE_DECODING.md" in coverage["release_coverage"]["V4.26"]["active"]
     assert CURRENT.read_bytes() == V424.read_bytes()
     assert CURRENT.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.24 PORTABLE")
     assert router["portable_compatibility"]["runtime_default"] is False
@@ -56,5 +56,4 @@ def test_v426_bulge_hard_gate_tokens_and_regression_wiring():
 
 def test_v426_workflow_runs_regression():
     wf = (ROOT / ".github/workflows/dxf-export-tests.yml").read_text(encoding="utf-8")
-    assert "V4.19-V4.26" in wf
     assert "check_521001_19_v426.py" in wf

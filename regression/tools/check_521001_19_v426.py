@@ -33,8 +33,11 @@ workflow = read(".github/workflows/dxf-export-tests.yml")
 current = read("skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md")
 v424 = read("skills/lispcad/versions/V4.24/SKILL_LISPCAD_V4_24_PORTABLE.md")
 
-assert "Current production release is **V4.26**" in entry
-assert "release: V4.26" in router and "release: V4.26" in coverage
+# V4.26 is an immutable historical regression. A later active release may be current,
+# so assert retained release wiring rather than pinning the repository head to V4.26.
+assert "- **V4.26:**" in entry
+assert "V4.26:" in coverage
+assert "references/DXF_PHYSICAL_CURVE_DECODING.md" in coverage
 assert current == v424
 assert current.startswith("# SKILL_LISPCAD V4.24 PORTABLE:")
 assert "references/DXF_PHYSICAL_CURVE_DECODING.md" in router
