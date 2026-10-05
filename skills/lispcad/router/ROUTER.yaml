@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.27
+release: V4.28
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -37,15 +37,18 @@ mode_routes:
     load:
       - skills/lispcad/modes/BEND_UNFOLD.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/FACE_CREATION_BEND_EVIDENCE.md
   MULTI_FACE:
     load:
       - skills/lispcad/modes/BEND_UNFOLD.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/FACE_CREATION_BEND_EVIDENCE.md
   UNKNOWN:
     load:
       - skills/lispcad/modes/FLAT_NO_BEND.md
       - skills/lispcad/modes/BEND_UNFOLD.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/FACE_CREATION_BEND_EVIDENCE.md
 
 feature_routes:
   HOLE:
