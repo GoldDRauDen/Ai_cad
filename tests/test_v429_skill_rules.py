@@ -14,7 +14,6 @@ def test_v429_release_wiring():
     entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
-    assert "Current production release is **V4.29**" in entry
     assert "- **V4.29:**" in entry
     assert _release_number(router["release"]) >= 29
     assert _release_number(coverage["release"]) >= 29
@@ -60,5 +59,5 @@ def test_v429_custom_slit_is_instruction_driven_not_hardcoded():
 def test_v429_regression_asset_and_workflow():
     assert (ROOT / "regression/assets/521005-13/SLIT_FIXTURE.dxf").is_file()
     wf = (ROOT / ".github/workflows/dxf-export-tests.yml").read_text(encoding="utf-8")
-    assert "V4.19-V4.29" in wf
+    assert "V4.19-V4.30" in wf
     assert "check_521005_13_v429.py" in wf
