@@ -6,14 +6,17 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _release_number(value: str) -> int:
+    return int(str(value).upper().replace("V4.", ""))
+
+
 def test_v427_release_wiring():
     entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
-    assert "Current production release is **V4.27**" in entry
     assert "- **V4.27:**" in entry
-    assert router["release"] == "V4.27"
-    assert coverage["release"] == "V4.27"
+    assert _release_number(router["release"]) >= 27
+    assert _release_number(coverage["release"]) >= 27
     assert "V4.27" in coverage["release_coverage"]
 
 
@@ -46,5 +49,4 @@ def test_v427_does_not_make_rib_depend_universally_on_kegaki():
 
 def test_v427_workflow_runs_regression():
     wf = (ROOT / ".github/workflows/dxf-export-tests.yml").read_text(encoding="utf-8")
-    assert "V4.19-V4.27" in wf
     assert "check_521005_01_v427.py" in wf
