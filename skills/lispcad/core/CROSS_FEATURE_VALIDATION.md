@@ -6,9 +6,10 @@ Always run after feature routing and before production DXF export. This module a
 
 ## Mandatory interactions
 
+- **SOURCE MANUFACTURING NOTE ↔ feature family (V4.29):** every production-affecting printed/handwritten instruction must retain a resolved family/output status under `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`. A source-active instruction may not disappear between preliminary census, routed modules, canonical geometry and serialized output.
 - **HOLE/TAP ↔ BEND:** preserve host-face ownership and the proved local-face -> flat transform. Do not move printed geometry merely to satisfy a generic shop-distance advisory.
 - **KEGAKI ↔ BEND/MULTI_FACE:** transform each mark with its owning face and verify fold-back locating function, count and segmentation.
-- **SLIT/RELIEF ↔ BEND:** verify the slit/relief mechanism, direction, connectivity and actual BEND interaction. BOXMET rules apply only when BOXMET topology is proved.
+- **SLIT/RELIEF ↔ BEND:** verify the slit/relief mechanism, source scope, quantity/value when specified, direction, connectivity, host edge/face and actual BEND interaction. For a V4.29 custom source-instructed slit, do not infer size or position from BEND geometry: relation to a bend center/domain must be source-proved. BOXMET rules apply only when BOXMET topology is proved.
 - **CHAMFER/FILLET ↔ MATERIAL auto-R:** explicit source R/C semantics and quantities take precedence over automatic material corner treatment.
 - **TAP ↔ HOLE:** thread-to-pilot conversion changes the manufactured diameter representation, not source family quantity or datum ownership.
 - **PIASU ↔ HOLE/MATERIAL:** apply the active point/circle and material-capacity rules without changing source quantity or identity.
@@ -24,11 +25,12 @@ Always run after feature routing and before production DXF export. This module a
 For every final family record, confirm:
 
 1. source identity and quantity;
-2. host face / datum ownership;
-3. routed rule modules;
-4. canonical geometry representation;
-5. interactions with other active families;
-6. serialized DXF representation;
-7. applicable source-reprojection and saved-DXF read-back.
+2. applicable source manufacturing-note provenance/resolution;
+3. host face / datum ownership;
+4. routed rule modules;
+5. canonical geometry representation;
+6. interactions with other active families;
+7. serialized DXF representation;
+8. applicable source-reprojection and saved-DXF read-back.
 
-Any unexplained family loss, duplication, ownership conflict, or cross-feature contradiction is production FAIL/FLAG under the active validation rules.
+Any unexplained source-note loss, family loss, duplication, ownership conflict, or cross-feature contradiction is production FAIL/FLAG under the active validation rules.

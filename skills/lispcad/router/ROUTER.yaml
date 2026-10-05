@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.28
+release: V4.29
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -14,6 +14,7 @@ default_load:
   - references/SOURCE_DATA_CLASSIFICATION.md
   - references/DXF_PHYSICAL_CURVE_DECODING.md
   - references/MECHANICAL_CLASSIFIER.md
+  - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
   - skills/lispcad/router/FEATURE_CENSUS.md
 
 source_routes:
@@ -119,6 +120,7 @@ dependency_aliases:
 
 post_route_checks:
   - physical_curve_decode_before_feature_census
+  - source_manufacturing_note_census
   - source_feature_completeness
   - dependency_closure
   - cross_feature_validation

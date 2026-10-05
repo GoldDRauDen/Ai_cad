@@ -32,7 +32,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements.txt
       - run: python -m pytest tests/ -q
-      - name: Production rule regressions V4.19-V4.28
+      - name: Production rule regressions V4.19-V4.29
         run: |
           python regression/tools/check_520929_25_v419.py
           python regression/tools/check_v420_source_mech.py
@@ -43,3 +43,4 @@ jobs:
           python regression/tools/check_521001_19_v426.py
           python regression/tools/check_521005_01_v427.py
           python regression/tools/check_521005_02_v428.py
+          python regression/tools/check_521005_13_v429.py

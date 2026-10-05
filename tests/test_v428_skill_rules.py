@@ -6,14 +6,17 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _release_number(value: str) -> int:
+    return int(str(value).upper().replace("V4.", ""))
+
+
 def test_v428_release_wiring():
     entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
-    assert "Current production release is **V4.28**" in entry
     assert "- **V4.28:**" in entry
-    assert router["release"] == "V4.28"
-    assert coverage["release"] == "V4.28"
+    assert _release_number(router["release"]) >= 28
+    assert _release_number(coverage["release"]) >= 28
     assert "V4.28" in coverage["release_coverage"]
 
 
@@ -45,5 +48,4 @@ def test_v428_rule_tokens_and_regression_assets():
 
 def test_v428_workflow_runs_regression():
     wf = (ROOT / ".github/workflows/dxf-export-tests.yml").read_text(encoding="utf-8")
-    assert "V4.19-V4.28" in wf
     assert "check_521005_02_v428.py" in wf

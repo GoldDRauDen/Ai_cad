@@ -3,6 +3,12 @@
 from math import isclose
 from pathlib import Path
 
+import yaml
+
+
+def _release_number(value: str) -> int:
+    return int(str(value).upper().replace("V4.", ""))
+
 
 def bend_pair_spacing(a, b):
     return abs(float(a) - float(b))
@@ -38,15 +44,18 @@ def test_rule_wiring():
     ]:
         assert token in module
 
-    router = (root / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8")
+    router_data = yaml.safe_load((root / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     entry = (root / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
-    coverage = (root / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8")
-    assert "release: V4.28" in router
-    assert router.count("references/FACE_CREATION_BEND_EVIDENCE.md") >= 3
-    assert "Current production release is **V4.28**" in entry
+    coverage_data = yaml.safe_load((root / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
+    assert _release_number(router_data["release"]) >= 28
+    assert sum(
+        "references/FACE_CREATION_BEND_EVIDENCE.md" in route.get("load", [])
+        for route in router_data["mode_routes"].values()
+    ) >= 3
+    assert "- **V4.28:**" in entry
     assert "521005-02_V4_28_APPROVED.md" in entry
-    assert "V4.28:" in coverage
-    assert "check_521005_02_v428.py" in coverage
+    assert "V4.28" in coverage_data["release_coverage"]
+    assert "check_521005_02_v428.py" in "\n".join(coverage_data["release_coverage"]["V4.28"]["regression"])
 
 
 def main():

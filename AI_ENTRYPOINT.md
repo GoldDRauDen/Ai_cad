@@ -1,6 +1,6 @@
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.28**.
+Current production release is **V4.29**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
@@ -11,6 +11,7 @@ SOURCE
   -> always-on CORE
   -> SOURCE CLASSIFICATION
   -> DXF PHYSICAL-CURVE DECODE when DXF source/reference exists
+  -> SOURCE MANUFACTURING NOTE CENSUS
   -> FEATURE CENSUS
   -> ROUTER
   -> selected mode / feature / reference modules
@@ -35,6 +36,8 @@ Inspect the actual source before selecting specialized modules. Build the prelim
 
 Do not mark a feature absent merely because OCR did not find its keyword. Inspect geometry, leaders, witnesses, notes, revisions, sections/details, barcode/process cues and supplied customer DATA as applicable.
 
+V4.29 source-manufacturing-note gate: load `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md` as always-on source parsing before final preliminary Feature Census. Every production-affecting printed/handwritten/revision instruction must retain a scoped note->family resolution. A source instruction that proves a family routes it `YES`; a plausible manufacturing instruction with unresolved scope/quantity/host/value/location/direction keeps the relevant family at least `UNKNOWN`, never premature `NO`. `スリット`/`SLIT` may define a custom source-instructed slit: create that custom branch only when explicitly instructed, preserve any drawing-specific explicit value, and derive quantity/location/direction only from source evidence. Do not hardcode slit size or bend-center placement from `521005-13` or any other reference. Existing separately-triggered relief mechanisms remain independent.
+
 V4.28 topology gate: for `BEND`, `MULTI_FACE`, or `UNKNOWN` mode candidates, load `references/FACE_CREATION_BEND_EVIDENCE.md` before final FACE_GRAPH closure. A contour direction change, slope, step, recess, protrusion, R/C or silhouette break does not by itself prove a bend/new face. Run `SAME_FACE_FIRST`, require positive bend evidence for each created FACE boundary, and lock the actual local bend material domain before unfold. When an R/C trims a source-proved theoretical sharp overall, compare theoretical-sharp closure separately from the physical bbox.
 
 V4.27 weld-cue gate: a proved reversed-e mark immediately above a barcode is `REVERSED_E_ABOVE_BARCODE -> WELD_REQUIRED_CUE` for that barcode's code/detail cluster only. The cue proves a welding-process expectation, not KEGAKI geometry. If a scoped welded RIB/gusset/support cannot self-locate, KEGAKI must be source-proved or retained as `UNKNOWN`/FLAG until locating/contact evidence is exhausted. A specific KEGAKI instruction independently requires KEGAKI. If neither cue nor specific KEGAKI instruction exists, do not infer welding/KEGAKI solely from a secondary RIB/support. Use `skills/lispcad/features/KEGAKI.md`.
@@ -55,6 +58,7 @@ For every bent or multi-face part, the router loads `skills/lispcad/modes/BEND_U
 
 ## 4. Release wiring index — backward-compatible regression contract
 
+- **V4.29:** `SOURCE_MANUFACTURING_NOTE_CENSUS`, `SOURCE_NOTE_TO_FAMILY`, `SOURCE_NOTE_FEATURE_COMPLETENESS`, and custom source-instructed `スリット/SLIT` routing; active reference `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`; active modules `skills/lispcad/router/FEATURE_CENSUS.md`, `skills/lispcad/features/SLIT_RELIEF.md`, `skills/lispcad/core/CROSS_FEATURE_VALIDATION.md`; regression `regression/qa/521005-13_V4_29_APPROVED.md`; executable `regression/tools/check_521005_13_v429.py`; physical read-back fixture `regression/assets/521005-13/SLIT_FIXTURE.dxf`. Custom slit size/position is always source-specific; no numeric Nobi/material/thread/tolerance/DATA<->PDF table change.
 - **V4.28:** `FACE_CREATION_REQUIRES_BEND_EVIDENCE`, `SAME_FACE_FIRST`, `LOCAL_BEND_DOMAIN_BEFORE_UNFOLD`, `THEORETICAL_SHARP_CLOSURE_FOR_R_CONTOURS`; active reference `references/FACE_CREATION_BEND_EVIDENCE.md`; regression `regression/qa/521005-02_V4_28_APPROVED.md`; executable `regression/tools/check_521005_02_v428.py`. No numeric Nobi/thread/material/tolerance/DATA<->PDF rule changes.
 - **V4.27:** `REVERSED_E_ABOVE_BARCODE`, `WELD_REQUIRED_CUE`, barcode/code scope, welded non-self-locating RIB/support -> KEGAKI `YES|UNKNOWN` gate, and no-RIB-only weld inference; active modules `skills/lispcad/router/FEATURE_CENSUS.md`, `skills/lispcad/features/KEGAKI.md`, `skills/lispcad/core/CROSS_FEATURE_VALIDATION.md`; regression `regression/qa/521005-01_V4_27_APPROVED.md`; executable `regression/tools/check_521005_01_v427.py`. Existing slot, datum, Nobi, thread, material and DATA<->PDF numeric rules are unchanged.
 - **V4.26:** `DXF_PHYSICAL_CURVE_DECODE_BEFORE_CENSUS`, `PHYSICAL_CURVE_CENSUS`, `POLYLINE_BULGE_IS_ARC`, `BULGE_ARC_NOT_CHORD`, closed final->first segment coverage and physical-curve reprojection; reference `references/DXF_PHYSICAL_CURVE_DECODING.md`; regression `regression/qa/521001-19_V4_26_APPROVED.md`; executable `regression/tools/check_521001_19_v426.py`. No numeric Nobi/thread/material/tolerance table or DATA<->PDF threshold is changed.
@@ -79,14 +83,15 @@ This compact index preserves the machine-readable release wiring required by exi
 Before production PASS, close:
 
 ```text
-SOURCE ACTIVE FAMILIES
+SOURCE MANUFACTURING NOTES
+  -> SOURCE ACTIVE FAMILIES
   -> FINAL FEATURE CENSUS
   -> LOADED ROUTES
   -> CANONICAL GEOMETRY
   -> SERIALIZED OUTPUT
 ```
 
-Then run the active validation and output contract. A correct bbox, entity count, syntactically valid DXF or successful read-back cannot compensate for a missing source manufacturing family or a bulged source ARC flattened to its chord.
+Then run the active validation and output contract. A correct bbox, entity count, syntactically valid DXF or successful read-back cannot compensate for a missing source manufacturing instruction, missing source manufacturing family, or a bulged source ARC flattened to its chord.
 
 If a source-supported feature has no route, stop with `ROUTING_COVERAGE_GAP`. Do not silently map it to generic CUT.
 
