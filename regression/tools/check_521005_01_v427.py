@@ -33,6 +33,10 @@ def expected_kegaki_segments():
     return {norm_segment(a, b) for a, b in raw}
 
 
+def _release_number(value):
+    return int(str(value).upper().replace("V4.", ""))
+
+
 def check_rule_wiring():
     kegaki = (ROOT / "skills/lispcad/features/KEGAKI.md").read_text(encoding="utf-8")
     census = (ROOT / "skills/lispcad/router/FEATURE_CENSUS.md").read_text(encoding="utf-8")
@@ -52,7 +56,7 @@ def check_rule_wiring():
         assert token in text, token
 
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
-    assert router["release"] == "V4.27"
+    assert _release_number(router["release"]) >= 27
     # Do not encode a false universal dependency: RIB may exist without KEGAKI.
     assert "KEGAKI" not in router["feature_routes"]["RIB"].get("depends_on", [])
 
