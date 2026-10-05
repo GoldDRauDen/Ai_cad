@@ -1,10 +1,19 @@
 schema_version: 1
-release: V4.27
+release: V4.28
 purpose: ROUTING_COVERAGE_AUDIT
 
 # This file proves where approved release families live after modular routing.
 # It is an audit map, not an instruction to load every file for every job.
 release_coverage:
+  V4.28:
+    active:
+      - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-02_V4_28_APPROVED.md
+      - regression/tools/check_521005_02_v428.py
   V4.27:
     active:
       - skills/lispcad/router/FEATURE_CENSUS.md
