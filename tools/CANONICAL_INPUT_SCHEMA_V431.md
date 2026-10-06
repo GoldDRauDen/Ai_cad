@@ -1,0 +1,102 @@
+# TrainAiCad Canonical Input Schema — V4.31
+
+Normal production/review serialization uses `tools/export_canonical_dxf.py` and requires:
+
+```json
+{
+  "canonical_contract": "TrainAiCad-CANONICAL-V4.31",
+  "job_id": "JOB",
+  "parts": [ ... ]
+}
+```
+
+Each part retains the existing `tools/DXF_INPUT_SCHEMA.md` fields (`code`, `material`, `thickness_mm`, `status`, `checks`, `flags`, `entities`) and adds mandatory member provenance.
+
+## Source groups
+
+```json
+"source_groups": [
+  {
+    "group_id": "G_HOLE_LEFT",
+    "family": "HOLE",
+    "status": "PROVED",
+    "source_quantity": 2,
+    "evidence": "2-Ø9 leader, left group",
+    "members": [
+      {"member_id": "G_HOLE_LEFT_1", "status": "PROVED"},
+      {"member_id": "G_HOLE_LEFT_2", "status": "PROVED"}
+    ]
+  }
+]
+```
+
+Allowed source/member status: `PROVED`, `FLAGGED`, `CANCELED`.
+
+`source_quantity` is an integer only when proved. If quantity is unresolved, use null and retain the group as FLAGGED. Do not manufacture a count from symmetry/sample.
+
+## Canonical members
+
+Source-backed:
+
+```json
+"canonical_members": [
+  {
+    "canonical_member_id": "CM_G_HOLE_LEFT_1",
+    "origin": "SOURCE",
+    "source_member_id": "G_HOLE_LEFT_1",
+    "group_id": "G_HOLE_LEFT",
+    "status": "PROVED",
+    "entity_ids": ["E_HOLE_LEFT_1"]
+  }
+]
+```
+
+For a FLAGGED source member use `PREVIEW`, `SOURCE_VIEW`, or `FLAGGED_NO_GEOMETRY`. `FLAGGED_NO_GEOMETRY` has an empty `entity_ids` list; this is how uncertainty stays local without fabricating geometry.
+
+Rule-derived member:
+
+```json
+{
+  "canonical_member_id": "CM_AUTO_R_1",
+  "origin": "DERIVED_RULE",
+  "status": "PROVED",
+  "controlling_rule": "MATERIAL_AUTO_R",
+  "source_member_ids": ["OUTER_1"],
+  "entity_ids": ["E_OUTER"]
+}
+```
+
+A semantic member may reference multiple physical entities and multiple members may reference one shared contour entity. Manufacturing quantity is not raw entity count.
+
+## Entities
+
+Every input entity has a globally unique stable `entity_id` in addition to the existing V4.9 geometry fields:
+
+```json
+{"entity_id":"E_HOLE_LEFT_1","type":"CIRCLE","role":"hole","center":[10,20],"radius":4.5}
+```
+
+All Layer-0 manufacturing entities must be owned by at least one canonical member. Adjacent Magenta `estimated_note` TEXT is annotation and may be unowned.
+
+## Hard gates
+
+`tools/canonical_contract.py` enforces:
+
+- `GROUP_COUNT_CLOSURE`;
+- no duplicate group/member/entity IDs;
+- every active enumerable source member persists in canonical ledger;
+- every PROVED source member is a PROVED source-backed canonical member;
+- canceled source members are absent from canonical;
+- all referenced entity IDs exist;
+- no orphan manufacturing entity;
+- derived-rule entities name their controlling rule and source members.
+
+`tools/export_canonical_dxf.py` then delegates geometric packaging to `tools/export_dxf.py`, stamps `TRAINAICAD` XDATA `ENTITY_ID` into every saved Layer-0 entity, saves again, reopens the exact DXF and proves:
+
+`CANONICAL_ENTITY_IDS == SAVED_DXF_LAYER0_ENTITY_IDS`.
+
+A failure blocks delivery even for REVIEW_ONLY output. REVIEW_ONLY controls cut authorization; it does not permit silently missing PROVED members.
+
+## Normal path vs lower-level serializer
+
+`tools/export_dxf.py` remains a lower-level geometric packaging/round-trip component for backward-compatible tests and explicit tooling. It does not by itself prove source/member completeness. New normal CAD jobs must not call it directly.

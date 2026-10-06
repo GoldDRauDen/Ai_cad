@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.30
+release: V4.31
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -17,6 +17,7 @@ default_load:
   - references/MECHANICAL_CLASSIFIER.md
   - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
   - references/SOURCE_FEATURE_GROUP_CLOSURE.md
+  - references/CANONICAL_MEMBER_COMPLETENESS.md
   - skills/lispcad/router/FEATURE_CENSUS.md
 
 source_routes:
@@ -128,6 +129,7 @@ post_route_checks:
   - physical_curve_decode_before_feature_census
   - source_manufacturing_note_census
   - source_feature_group_closure
+  - source_group_member_ledger
   - same_physical_parameter_before_reference_conflict
   - source_feature_completeness
   - dependency_closure
@@ -138,8 +140,10 @@ post_route_checks:
   - same_parameter_gate_before_canonicalization
   - manufacturing_change_ledger
   - canonical_geometry_validation
+  - proved_source_to_canonical_member_equality
   - untouched_data_invariance
   - source_reprojection_when_applicable
+  - canonical_to_saved_dxf_entity_id_equality
   - saved_dxf_readback
 
 history_policy:

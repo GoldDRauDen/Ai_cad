@@ -1,10 +1,22 @@
 schema_version: 1
-release: V4.30
+release: V4.31
 purpose: ROUTING_COVERAGE_AUDIT
 
 # This file proves where approved release families live after modular routing.
 # It is an audit map, not an instruction to load every file for every job.
 release_coverage:
+  V4.31:
+    active:
+      - AI_ENTRYPOINT.md
+      - references/CANONICAL_MEMBER_COMPLETENESS.md
+      - tools/CANONICAL_INPUT_SCHEMA_V431.md
+      - tools/canonical_contract.py
+      - tools/export_canonical_dxf.py
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-05_V4_31_APPROVED.md
+      - regression/tools/check_521005_05_v431.py
+      - tests/test_v431_skill_rules.py
   V4.30:
     active:
       - AI_ENTRYPOINT.md

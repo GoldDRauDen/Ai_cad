@@ -1,6 +1,6 @@
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.30**.
+Current production release is **V4.31**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
@@ -19,8 +19,13 @@ SOURCE
   -> selected mode / feature / reference modules
   -> BEND-EDGE / 90-DEG BEND-END RELIEF GATE when applicable
   -> CROSS-FEATURE VALIDATION
-  -> canonical geometry
-  -> DXF
+  -> SOURCE GROUP + MEMBER LEDGER
+  -> DIMENSION/WITNESS GRAPH
+  -> CANONICAL MEMBER MODEL
+  -> PROVED SOURCE MEMBERS == PROVED CANONICAL MEMBERS
+  -> CANONICAL ENTITIES
+  -> tools/export_canonical_dxf.py
+  -> SAVED DXF ENTITY IDs == CANONICAL ENTITY IDs
   -> saved-DXF read-back / applicable source reprojection
 ```
 
@@ -31,7 +36,29 @@ Mandatory router files:
 
 Always-on core/source-parsing references are declared in `ROUTER.yaml`. Do not invent a different core set from memory.
 
-## 2. V4.30 runtime-authority hardening
+## 2. V4.31 E2E canonical completeness hard gate
+
+Load `references/CANONICAL_MEMBER_COMPLETENESS.md` before final Feature Census and use `tools/CANONICAL_INPUT_SCHEMA_V431.md` when constructing output state.
+
+**NO_DIRECT_DXF_FROM_INTERPRETATION:** normal production/review jobs must not write a hand-picked subset directly from source interpretation into `ezdxf.modelspace()` and call `saveas()`. First persist source groups/members, dimension/witness ownership and canonical members/entities. Then serialize through `tools/export_canonical_dxf.py`.
+
+The lower-level `tools/export_dxf.py` remains a packaging component and backward-compatible tool; it is not independently sufficient evidence of source-member completeness.
+
+Before serialization, hard-fail unless:
+
+`PROVED SOURCE MEMBERS == PROVED SOURCE-BACKED CANONICAL MEMBERS`.
+
+FLAGGED source members remain represented as PREVIEW/SOURCE_VIEW/FLAGGED_NO_GEOMETRY; uncertainty is local and never authorizes deletion of independently proved members. CANCELED source members must not appear in canonical manufacturing geometry.
+
+Every canonical Layer-0 entity has a stable `entity_id`. The V4.31 serializer writes the composite, stamps `TRAINAICAD` XDATA IDs, saves again, reopens the exact file and hard-fails unless:
+
+`SAVED DXF ENTITY IDs == CANONICAL ENTITY IDs`.
+
+A syntactically valid/readable DXF, clean bbox, selected count check or generic READBACK PASS cannot override `SOURCE_FEATURE_COMPLETENESS_FAIL` or `CANONICAL_SERIALIZATION_COMPLETENESS_FAIL`.
+
+Regression `521005-05_V4_31_APPROVED` specifically prevents the demonstrated V4.30 failure where 057862/057864/057873 families were recognized in prose/family census but proved members were omitted before serialization.
+
+## 3. V4.30 runtime-authority hardening
 
 Load `references/RUNTIME_AUTHORITY_GUARD.md` before inherited core text. Repo-direct authority is:
 
@@ -41,7 +68,7 @@ Inherited compatibility prose inside an active module that says the portable ski
 
 Portable CURRENT remains compatibility/audit only. A route gap is `ROUTING_COVERAGE_GAP`; do not silently continue from portable/history.
 
-## 3. Census before specialized rules
+## 4. Census before specialized rules
 
 Inspect the actual source before selecting specialized modules. Build the preliminary census with only `YES`, `NO`, or `UNKNOWN`.
 
@@ -80,7 +107,7 @@ A proved reversed-e mark immediately above a barcode is `REVERSED_E_ABOVE_BARCOD
 
 Whenever DXF geometry participates as customer DATA, reference, or direct-audit evidence, decode physical curves before Feature Census. For `POLYLINE`/`LWPOLYLINE`, nonzero bulge means ARC, not the endpoint chord; closed final->first segments are included. Use `references/DXF_PHYSICAL_CURVE_DECODING.md`.
 
-## 4. Bent / multi-face parts — V4.30 bend-edge and relief gate
+## 5. Bent / multi-face parts — V4.30 bend-edge and relief gate
 
 Every bent or multi-face part loads `skills/lispcad/modes/BEND_UNFOLD.md`, `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`, `references/FACE_CREATION_BEND_EVIDENCE.md`, and `references/BEND_EDGE_RELIEF_90.md`.
 
@@ -97,7 +124,7 @@ Before production unfold/output:
 5. explicit source custom slit, BOXMET, opposite-fold `R=t`, and non-90-degree relief mechanisms remain separately routed and take precedence when their own triggers are proved;
 6. do not create duplicate reliefs for one physical junction.
 
-## 5. Source and mode routing
+## 6. Source and mode routing
 
 Classify exactly one source relationship using `references/SOURCE_DATA_CLASSIFICATION.md`:
 - `PDF_ONLY`
@@ -111,8 +138,9 @@ V4.25 requires `RAW_DATA_SNAPSHOT`, `PHYSICAL_DATA_BASELINE`, `SAME_PARAMETER_GA
 
 For reference/sample audits, compare physical geometry, but do not reverse-fit a new source interpretation from sample coordinates. V4.30 additionally requires same-physical-parameter identity before a numeric source/reference conflict is declared.
 
-## 6. Release wiring index — backward-compatible regression contract
+## 7. Release wiring index — backward-compatible regression contract
 
+- **V4.31:** `CANONICAL_MEMBER_COMPLETENESS`, `NO_DIRECT_DXF_FROM_INTERPRETATION`, `PROVED_SOURCE_MEMBERS_EQ_CANONICAL`, `CANONICAL_ENTITY_IDS_EQ_SAVED_DXF_ENTITY_IDS`; active reference `references/CANONICAL_MEMBER_COMPLETENESS.md`; executable production path `tools/canonical_contract.py` + `tools/export_canonical_dxf.py`; schema `tools/CANONICAL_INPUT_SCHEMA_V431.md`; regression `regression/qa/521005-05_V4_31_APPROVED.md`; executable `regression/tools/check_521005_05_v431.py`.
 - **V4.30:** `RUNTIME_AUTHORITY_GUARD`, `SOURCE_FEATURE_GROUP`, `GROUP_COUNT_CLOSURE`, `SAME_PHYSICAL_PARAMETER_BEFORE_REFERENCE_CONFLICT`, `BEND_EDGE_LENGTH_LOCK`, `BEND_END_OFFSET_90`; active references `references/RUNTIME_AUTHORITY_GUARD.md`, `references/SOURCE_FEATURE_GROUP_CLOSURE.md`, `references/BEND_EDGE_RELIEF_90.md`; regression `regression/qa/521005-05_V4_30_APPROVED.md`; executable `regression/tools/check_521005_05_v430.py`. The 90-degree rule is `S>0 -> NO SLIT`, `S=0 -> T+0.2`, `S<0 -> T+0.2 from actual recessed edge / |S|+T+0.2 from zero reference`.
 - **V4.29:** `SOURCE_MANUFACTURING_NOTE_CENSUS`, `SOURCE_NOTE_TO_FAMILY`, `SOURCE_NOTE_FEATURE_COMPLETENESS`, and custom source-instructed `スリット/SLIT`; active reference `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`; regression `regression/qa/521005-13_V4_29_APPROVED.md`; executable `regression/tools/check_521005_13_v429.py`; physical read-back fixture `regression/assets/521005-13/SLIT_FIXTURE.dxf`. Custom slit size/position is source-specific.
 - **V4.28:** `FACE_CREATION_REQUIRES_BEND_EVIDENCE`, `SAME_FACE_FIRST`, `LOCAL_BEND_DOMAIN_BEFORE_UNFOLD`, `THEORETICAL_SHARP_CLOSURE_FOR_R_CONTOURS`; active reference `references/FACE_CREATION_BEND_EVIDENCE.md`; regression `regression/qa/521005-02_V4_28_APPROVED.md`; executable `regression/tools/check_521005_02_v428.py`.
@@ -140,27 +168,31 @@ For reference/sample audits, compare physical geometry, but do not reverse-fit a
 
 The compact index preserves machine-readable/testable release wiring. It is not an instruction to load every listed regression on every job.
 
-## 7. Production completeness
+## 8. Production completeness
 
-Before production PASS, close:
+Before production PASS or REVIEW_ONLY delivery, close:
 
 ```text
 SOURCE MANUFACTURING NOTES
   -> SOURCE FEATURE GROUPS
+  -> SOURCE MEMBERS
   -> SOURCE ACTIVE FAMILIES
   -> FINAL FEATURE CENSUS
   -> LOADED ROUTES
-  -> CANONICAL GEOMETRY
+  -> DIMENSION/WITNESS GRAPH
+  -> CANONICAL MEMBERS
+  -> CANONICAL ENTITIES
   -> SERIALIZED OUTPUT
+  -> SAVED ENTITY-ID READ-BACK
 ```
 
 For bent parts also close FACE_GRAPH, per-bend witness ledger, bend-edge material domain and any applicable 90-degree bend-end relief decision before serialization.
 
-A correct bbox, entity count, syntactically valid DXF or successful read-back cannot compensate for a missing source note, missing source group/family, false parameter comparison, wrong bend domain, or missing/extra relief.
+A correct bbox, raw entity count, syntactically valid DXF or successful generic read-back cannot compensate for a missing source note/group/member/family, false parameter comparison, wrong bend domain, or missing/extra relief.
 
 If a source-supported family has no route, stop with `ROUTING_COVERAGE_GAP`. Do not silently map it to generic CUT.
 
-## 8. Portable and history policy
+## 9. Portable and history policy
 
 `skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md` is retained as a complete compatibility/audit snapshot (currently V4.24). It is **NOT part of the normal repo-direct load path** and is not required to be version-equal to the current repo-direct release.
 
@@ -172,12 +204,12 @@ Normal production retrieval excludes:
 
 Historical snapshots never override active modular rules.
 
-## 9. Regression and output
+## 10. Regression and output
 
 Load only regressions relevant to the routed rule/family or an explicit audit. Regression geometry is evidence/tests, not a source of missing dimensions for a new drawing.
 
-Use current `VALIDATION.md` and `CAD_OUTPUT.md`. Read back the actual saved DXF before calling production complete. For DXF-bearing sources, source/reprojection QA compares decoded physical curves, not only vertices, bbox or raw entity count.
+Use current `VALIDATION.md` and `CAD_OUTPUT.md`. For normal new CAD jobs, build the V4.31 canonical contract and call `tools/export_canonical_dxf.py`; then read back the actual saved DXF before calling production complete. For DXF-bearing sources, source/reprojection QA compares decoded physical curves, not only vertices, bbox or raw entity count.
 
-## 10. MCP boundary
+## 11. MCP boundary
 
 **MCP is research-only and is NOT part of the production CAD pipeline.** Default CAD behavior remains repo-direct. Do not route through MCP for ordinary CAD production. Experimental code under `services/trainaicad-mcp/` has no production authority unless the user explicitly asks to work on MCP.

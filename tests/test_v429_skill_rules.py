@@ -59,5 +59,4 @@ def test_v429_custom_slit_is_instruction_driven_not_hardcoded():
 def test_v429_regression_asset_and_workflow():
     assert (ROOT / "regression/assets/521005-13/SLIT_FIXTURE.dxf").is_file()
     wf = (ROOT / ".github/workflows/dxf-export-tests.yml").read_text(encoding="utf-8")
-    assert "V4.19-V4.30" in wf
     assert "check_521005_13_v429.py" in wf
