@@ -1,77 +1,49 @@
-# AGENTS.md — TrainAiCad / Codex execution instructions
+# AGENTS.md — TrainAiCad execution/orchestration policy
 
-> Scope: Put this file at the **root of the locally checked-out TrainAiCad repository** so Codex reads it when working in that repository. This is an **execution/orchestration policy**, not a CAD production skill, a new engineering lesson, or permission to publish changes. It deliberately contains **no pinned skill version**.
+This root file is for agents that automatically read repository instructions (for example local/Codex-style execution). It is **not** a second CAD skill and contains no engineering formulas or pinned production release.
 
-## 1. First action for every NEW job: resolve the current modular production snapshot
+## 1. Bootstrap
 
-1. Discover the working-tree root with `git rev-parse --show-toplevel`; do not assume a drive letter, absolute folder, branch name, or skill version. Confirm that this is the intended TrainAiCad checkout and that its upstream remote points to the intended production repository.
-2. **Before a new job**, check whether the repository is up to date with its configured upstream approved/default branch. Fetch remote metadata, and if the working tree and current branch permit it, fast-forward safely (`git pull --ff-only`). Never discard local changes, force-reset, overwrite user files, or silently switch branches. If the checkout cannot be synchronized because of dirty files, detached HEAD, divergent history, missing remote, authentication, or unavailable network, report `SKILL_SYNC_BLOCKED` / `SKILL_FRESHNESS_UNVERIFIED` with the precise reason. Do **not** claim to be using the latest remote skill or silently fall back to an older release. An explicitly user-approved offline/pinned run is the only exception; label it as offline/pinned.
-3. Read **`AI_ENTRYPOINT.md` in the synchronized repository in full**. It is the repository's authoritative *routing and load-order entrypoint*. Follow its current links and release-selection instructions rather than treating a historical version label in this `AGENTS.md` or an old conversation as authoritative.
-4. Read `skills/lispcad/router/FEATURE_CENSUS.md` and `skills/lispcad/router/ROUTER.yaml`. Load the router-declared always-on core/source files. **Do not read the complete portable skill by default.** The portable file remains a compatibility/audit snapshot only.
-5. Inspect the actual source and create the preliminary feature census using only `YES`, `NO`, or `UNKNOWN`. Load every mode/feature/reference route whose state is `YES` or `UNKNOWN`, close declared dependencies, then re-check the source and finalize the census. Load relevant approved regressions as tests/evidence only. If a source-supported family has no route, record `ROUTING_COVERAGE_GAP` and stop production rather than silently falling back to generic CUT or historical rules.
-6. At job start, record `repo_root`, remote/upstream, branch, fetched/current commit SHA, entrypoint + router/census/coverage hashes, declared active release, final census, and every loaded module/reference path + hash in the job manifest. Record the portable hash only when it is explicitly used for coverage diagnosis/audit. **Pin this snapshot for the entire job**. Refresh for the next job, or restart the current job from an explicit user-requested new snapshot; do not change engineering rules halfway through an unfinished DXF without revalidating every affected part.
+For every new CAD job:
 
-**Authority:** The user's explicit task plus the current `AI_ENTRYPOINT.md`, router-selected approved modules/references, and active core control engineering interpretation, output and QA. `AGENTS.md` controls execution efficiency only and must never loosen or replace the active skill's safety/accuracy requirements. The repository is a store of **user-approved production rules and regression cases**, not an automatic training environment. Never promote a new lesson, alter existing production skills, or push to GitHub without the user's separate, direct approval.
+1. Read `AI_BOOTSTRAP.md`.
+2. Resolve the current repository snapshot/freshness using the environment available to the agent.
+3. Read the current `AI_ENTRYPOINT.md` and mandatory routing files: `skills/lispcad/router/FEATURE_CENSUS.md`, `skills/lispcad/router/ROUTER.yaml`, and `skills/lispcad/router/RULE_COVERAGE.yaml`, then load the current Router-declared modules/references.
+4. Pin that repository/routing snapshot for the job; do not silently change engineering authority halfway through an unfinished DXF.
+5. Execute the current repo-direct E2E workflow on the supplied source.
 
-## 2. Classify the source relationship before inspecting geometry
+If freshness/access cannot be established, report the precise blocker. Never claim that the current TrainAiCad repo was used when it was not actually read.
 
-Load `references/SOURCE_DATA_CLASSIFICATION.md` and select exactly one:
-- **PDF_ONLY:** PDF/image source; in explicit training/calibration do not stop merely to ask if an unprovided DATA DXF exists.
-- **PDF_DATA_RAW:** customer CAD DATA belongs to same PDF/page. Extract DATA geometry 100%; PDF controls semantics/dimensions/revisions/Nobi. PDF+DXF together defaults here unless user declares sample/clean/reference. Boxed DATA stamp indicates page CAD exists.
-- **TRAIN_REFERENCE:** user-declared clean/sample/approved/training DXF; audit/calibration evidence, not raw geometry extraction.
-- **DIRECT_EXISTING_DXF_AUDIT:** compare existing AI DXF vs approved reference first, then diagnose via PDF.
+## 2. Authority boundary
 
-General V4.20 raw-DATA boundary: Delta<0.1 mm no FLAG; Delta>=0.1 mm FLAG. KH433 has its separately approved customer-specific boundary.
+Engineering interpretation, source classification, feature rules, FACE_GRAPH/BEND behavior, canonical contracts, output semantics and QA are controlled only by the current `AI_ENTRYPOINT.md`, Router and routed modules/references/tools.
 
-## 3. Source receipt: actually SEE each drawing; cache without losing evidence
+Do not duplicate or override them from this file, conversation memory, historical releases, portable snapshots, regression coordinates or general pattern recognition.
 
-- Verify the source PDF exists and is accessible; enumerate actual pages, document hash and the code-to-page map. Verify the vision-capable model/tool actually **receives each relevant page image**. A pathname, OCR text, page count, or script-written `coverage` sentence is NOT evidence of visual inspection. If the PDF or required visual input is unavailable, report `SOURCE_UNAVAILABLE`; never fabricate source views from handwritten code constants, historical regressions or bounding boxes.
-- Extract any useful real PDF text/vector information once, without assuming that an image-only PDF has a text layer. Render page overviews once, store their image hashes, orientation and DPI. Cache question-targeted crops using source hash + page + region + DPI + rotation. Reuse cached bytes and evidence; do not rerender the same crop unnecessarily.
-- **Observe all relevant source views and geometry-changing notes before committing CAD interpretation**: main view, alternate/section/detail/development views, dimension chains and witness endpoints, revision/handwriting/Nobi, barcode, material and thickness. Administrative title-block content unrelated to manufacturing need not consume reasoning budget.
-- Every crop must contain enough surrounding context to resolve BOTH dimension witnesses, their target physical geometry and the associated callout/leader. If an endpoint or bend mapping requires another view, inspect that view too. **Never impose a hard maximum on necessary crops or cross-view checks.** Ask for another image only when a specific unresolved geometry question explains its value; do not resend all pages by default.
-- Store per-code/per-feature evidence, including: page/view, source image/crop hash and region, exact printed text, start/end witness identities, dimension class, source physical origin and +X/+Y, datum path, any applicable handwritten/revision priority, and the status `PROVED`, `DERIVED`, `ESTIMATED_PREVIEW`, or `UNRESOLVED`. Model confidence is not evidence.
+`AGENTS.md` controls orchestration only.
 
-## 4. Geometry-first, one drawing code end-to-end
+## 3. Source/tool execution
 
-For every code, use the **mandatory reading and manufacturing sequence specified by the pinned core plus router-selected modules/references**; the following gates ensure that the model's interpretation actually becomes CAD:
+Actually inspect the supplied PDF/image/DXF source with the available vision/file/CAD tools. A filename, OCR fragment, bbox or entity count is not proof that the drawing was visually/semantically inspected.
 
-**G0 — Mechanical classification.** Create the `references/MECHANICAL_CLASSIFIER.md` record: source mode, part class, face count, bend axes/angles/signs, independent feature inventory and loaded modules. Labels route work but never replace source evidence or V4.19 FACE_GRAPH closure.
+Use deterministic code/tools for arithmetic, geometry checks, canonical export and DXF read-back where the current repo requires them. Use model reasoning for source semantics, witness/leader scope, topology, ownership and ambiguity analysis.
 
-**G1 — Real view topology.** Trace each source view's *actual ordered edges*, steps, tabs, notches, contour cutouts, holes, slots, R/C arcs and feature quantities. Overall dimensions are bounding metadata, not proof of a rectangle. A rectangular source-view entity is allowed ONLY if its four actual edges and intervening topology are independently established. `VIEWS_ONLY` must reproduce independently verified source-view geometry, not four-point bounding-box placeholders.
+If the current repo requires source exhaustion, holistic challenge, source-view fallback, fold-back/reprojection or saved-DXF read-back, execute those stages rather than replacing them with prose.
 
-**G2 — Connected dimension graph.** Before numeric geometry, store actual dimension records with printed values, classes (baseline/chain/local/overall/ordinate), the true start/end witness endpoints, physical source frame, local face, datum and derived expression. No blank `dimension_graph` followed by a generic `DATUM_LOCKED_OR_FLAGGED` success for a dimensioned part. Exhaust the source evidence before declaring a dimension genuinely unresolved.
+## 4. No-progress behavior
 
-**G3 — Typed feature geometry.** Preserve the source quantity of each active/canceled Ø/M/slot/cutout/R/C family independently. Construct coordinates, sizes and actual canonical CAD primitives for every **proved** feature; isolate an uncertain member with an exact local FLAG. Do not erase all independently known holes because one hole or one datum is unresolved. Follow the active routed material, pilot, POINT/CIRCLE, radius, relief and overlap/union rules.
+If the pipeline is producing placeholders, empty ledgers, representative rectangles, or otherwise making no real geometry progress, do not scale that failure to more codes. Identify the failing stage, preserve proved work, follow current repo fallback/FLAG behavior, and continue any unaffected executable work.
 
-**G4 — Unfold/transform.** Prove the ordered formed-face and bend sequence, source-to-CAD axis mapping and independent face-local-to-flat transforms. Apply written Nobi and the currently approved ID→OD rounding and material rules. If a defensible full flat is proven, **build the actual flat and bend-line geometry**, not merely note a calculated flat bounding size. If a full flat is genuinely unproved after source-trace exhaustion, retain the actual separately reconstructed source views as `VIEWS_ONLY` and FLAG the exact missing relationship. Never guess a production face order or manufacture a flat from an overall bbox.
+Never solve a no-progress condition by inventing dimensions, topology, source members or PASS status.
 
-**G5 — Per-code semantic QA.** Actually run every applicable validation required by the **currently loaded routed module set** (real contour topology, printed numeric fidelity, datum graph, quantities and cancellations, material/feature rules, Nobi and bend order, closure, containment, bend-line material clipping, view transforms and output semantics). Treat `PASS_STRUCTURAL_ONLY` or a closed rectangle as file-format evidence **only**, not manufacturing PASS.
+## 5. Reference/calibration boundary
 
-Persist a genuine `canonical/<code>.json` after each successfully completed gate. It must contain the **actual** proved geometric entities and source provenance, not just prose inventories and placeholders. Complete one representative code through geometry + QA + DXF read-back before multiplying the same workflow across the entire job. When suitable **user-approved** regression/reference data are available, use one representative previously verified code as a canary **after independent source interpretation**. Never hardcode a particular regression job/code, numeric coordinate, version or reference result into this orchestration policy.
+Follow the current repo reference/sample contract. Preserve source-only state before reference exposure where required, do not reverse-fit source geometry from a sample, and do not promote sample-pending/FLAG geometry into production authority without source/user confirmation.
 
-## 5. No-progress guard: stop useless token consumption, not real drawing analysis
+## 6. Repository-change boundary
 
-If a batch contains only Magenta rectangular view envelopes, empty dimension graphs, no typed cut features and no actual contour/bend geometry, report **`PIPELINE_NO_GEOMETRY_PROGRESS`**. Do not present its 12 or 20 syntactically valid entities as a completed drawing deliverable. Stop expanding to additional codes and identify the failing stage: image receipt, source interpretation, witness/datum extraction, face transform, canonical geometry generation or DXF serialization. Preserve all caches, evidence and partially proved geometry. Never 'fix' this guard by fabricating dimensions or marking placeholders as PASS.
+A normal E2E request does not authorize repository changes.
 
-`PREVIEW` and `VIEWS_ONLY` are **valid only after the source-specific effort required by the active routed rules**, not automatic responses to any hard drawing. Keep independently proven geometry exact, and apply Magenta + specific FLAG only within the authorized uncertain scope. A mixed-confidence composite remains REVIEW ONLY / NO CUT under the active output contract.
+Only modify/push production rules after explicit user approval such as `DUYỆT` or `PUSH`. Apply the current repo calibration/update discipline, add relevant executable regression/tests, run required QA, and merge only after all required checks pass.
 
-## 6. Cost and latency optimization that CANNOT weaken reading quality
-
-- Load the pinned always-on core plus the router-selected modules/references at job start; do **not** load the complete portable snapshot unless diagnosing a routing-coverage gap. For later model requests, carry forward the routed authoritative state and **only the relevant source evidence/canonical records**. If context is compacted/lost, re-read the pinned entrypoint/router/module set from disk; never rely on vague recollection.
-- Use the vision model for what requires visual semantics: real contours, dimension witnesses/leader scope, cross-view identities, handwritten edits, datum and bend orientation. Use deterministic Python/CAD code for arithmetic, validated transforms, R/C and slot construction, Boolean union where proved, QA geometry tests and DXF serialization. Do not call the LLM to repeat ordinary arithmetic or emit one entity at a time.
-- Every new look at a region should answer a **specific** unresolved question or supply new evidence. Maintain a small `question -> image(s) -> verified answer or exact remaining ambiguity` ledger. Never loop on the same crop and same unresolved hypothesis without new information. **Do not cap legitimate inspection solely to lower tokens.**
-- Log real request metadata when exposed: job/code/gate/question, model/reasoning mode, relevant image hashes, input/cached/output/reasoning tokens, elapsed time, retries and price-based cost. Mark unavailable usage as `USAGE_UNAVAILABLE`, not zero. Use real checkpoint timestamps **when each stage completes**, not a single timestamp copied to every stage.
-- Respect any user-configured soft/hard cost budget. On soft-budget alert, checkpoint and avoid redundant work; on a hard cap, stop API calls, preserve all independent findings and report the unfinished codes without inventing a successful DXF. Never skip source interpretation or semantic QA merely to satisfy a benchmark.
-
-## 7. DXF delivery and acceptance
-
-- Serialize **one canonical part-local geometry model per code**, then package and label according to the active routed `CAD_OUTPUT.md` contract, not a hardcoded historical release rule. Use the repository's current DXF schema/exporter if appropriate; do not assume that an exporter alone validates PDF interpretation.
-- Read back the **actual saved** DXF. Separately prove file structure/layout and source-derived manufacturing geometry. For every code, report its honest status, actual geometry coverage, remaining local FLAGs and the precise missing evidence where any gate cannot pass.
-- Follow the active routed `CAD_OUTPUT.md` contract for composite/review output. If a later **approved** release changes that contract, follow the updated entrypoint/router without hardcoding the old behavior in this `AGENTS.md`.
-- Before calling a job successful, verify that its output includes real contour and typed features wherever the source proved them; compare against declared reference geometry only in the permitted job mode. A job with only dimension inventories, bboxes and an otherwise valid DXF remains **incomplete**.
-
-## 8. Change and approval boundaries
-
-- Corrections supplied during calibration may be proposed as general lessons or regression tests, but **no lesson enters any production skill until the user directly approves it**. Do not use GitHub as self-training storage or promote case-specific coordinates to universal rules.
-- Do not alter immutable historical releases, fabricate benchmark/token savings, silently resolve customer-unknown dimensions, or push new skills/AGENTS changes without explicit user instruction.
-- When a later approved production release is published, **new jobs automatically resolve it through the repository entrypoint and router manifest** after a safe sync. This file must remain release-independent.
+Do not edit portable/history as a shortcut around modular production authority.

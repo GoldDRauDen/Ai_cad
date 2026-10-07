@@ -4,6 +4,12 @@ Current production release is **V4.33**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
+## Invocation contract
+
+When the user supplies CAD source and says `E2E`, `read TrainAiCad and do E2E`, or equivalent, treat that as an instruction to execute the complete current repo-direct production flow below to its executable limit. Do not require the user to restate census, routing, canonical, export, read-back or QA steps already defined by this repository.
+
+`AI_BOOTSTRAP.md` is the release-independent discovery/bootstrap layer; this file remains the production engineering authority.
+
 ## 1. Normal production flow
 
 ```text
