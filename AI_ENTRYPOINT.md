@@ -1,6 +1,6 @@
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.31**.
+Current production release is **V4.32**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
@@ -17,6 +17,8 @@ SOURCE
   -> FEATURE CENSUS
   -> ROUTER
   -> selected mode / feature / reference modules
+  -> BEND ATTACHMENT EDGE LOCK when applicable
+  -> FORMED-PROFILE OD MEASUREMENT when applicable
   -> BEND-EDGE / 90-DEG BEND-END RELIEF GATE when applicable
   -> CROSS-FEATURE VALIDATION
   -> SOURCE GROUP + MEMBER LEDGER
@@ -36,7 +38,31 @@ Mandatory router files:
 
 Always-on core/source-parsing references are declared in `ROUTER.yaml`. Do not invent a different core set from memory.
 
-## 2. V4.31 E2E canonical completeness hard gate
+## 2. V4.32 bend attachment-edge / formed-profile OD hard gate
+
+For every `BEND`, `MULTI_FACE`, or unresolved bend candidate, load:
+
+- `references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md`;
+- `references/FORMED_PROFILE_OD_MEASUREMENT.md` when outside face length must be established from formed/profile geometry;
+- existing `skills/lispcad/modes/BEND_UNFOLD.md`, `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`, `references/FACE_CREATION_BEND_EVIDENCE.md`, and applicable relief/Nobi rules.
+
+Before unfold, `BEND_ATTACHMENT_EDGE_LOCKED` must prove the exact physical material edge on both adjacent faces:
+
+`FACE_A.edge_i <-> physical BEND <-> FACE_B.edge_j`.
+
+Face adjacency or correct face order alone is insufficient. `NEAREST_VIEW_EDGE`, paper proximity, page-side assumptions and visual symmetry are not attachment evidence. Thickness/hidden-line evidence is optional; formed/profile/side/section topology, view correspondence, dimension/witness connectivity, bend notation and other explicit source cues may prove the edge relationship.
+
+A formed/profile view used to prove topology or measure actual outside length is a `MEASUREMENT_CONSTRUCTION_VIEW`, not manufacturing CUT geometry merely because it appears on Layer 0 or beside the flat in a reference.
+
+When applicable, construct the source-supported formed profile, establish the outside envelope and retain `OD_actual` plus thickness/offset ownership before applying Nobi. `THICKNESS_SINGLE_USE` remains mandatory.
+
+Bent-face features retain physical datum-edge identity such as `BEND_EDGE` or `FREE_EDGE` through local-face -> flat transforms. Fold-back must reproduce the same attachment edge identities, not merely the same total length/bbox/silhouette.
+
+Regression `521006-18_V4_32_APPROVED` covers the demonstrated 058648 reversed attachment, 058653/058655 outside-length ownership, 058649/058650 R3 depth endpoint semantics, 058652 180-degree equivalence control, and 058654 unresolved-reference boundary. Job-specific directions/numbers remain regression evidence only.
+
+V4.32 does **not** change the canonical serialization schema. Continue using `TrainAiCad-CANONICAL-V4.31` and `tools/export_canonical_dxf.py` until a separately approved canonical schema change exists.
+
+## 2A. V4.31 E2E canonical completeness hard gate
 
 Load `references/CANONICAL_MEMBER_COMPLETENESS.md` before final Feature Census and use `tools/CANONICAL_INPUT_SCHEMA_V431.md` when constructing output state.
 
@@ -107,22 +133,25 @@ A proved reversed-e mark immediately above a barcode is `REVERSED_E_ABOVE_BARCOD
 
 Whenever DXF geometry participates as customer DATA, reference, or direct-audit evidence, decode physical curves before Feature Census. For `POLYLINE`/`LWPOLYLINE`, nonzero bulge means ARC, not the endpoint chord; closed final->first segments are included. Use `references/DXF_PHYSICAL_CURVE_DECODING.md`.
 
-## 5. Bent / multi-face parts — V4.30 bend-edge and relief gate
+## 5. Bent / multi-face parts — V4.32 attachment / OD / bend-edge / relief gate
 
-Every bent or multi-face part loads `skills/lispcad/modes/BEND_UNFOLD.md`, `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`, `references/FACE_CREATION_BEND_EVIDENCE.md`, and `references/BEND_EDGE_RELIEF_90.md`.
+Every bent or multi-face part loads `skills/lispcad/modes/BEND_UNFOLD.md`, `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`, `references/FACE_CREATION_BEND_EVIDENCE.md`, `references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md`, `references/FORMED_PROFILE_OD_MEASUREMENT.md`, and `references/BEND_EDGE_RELIEF_90.md`.
 
 Before production unfold/output:
 
 1. close FACE_GRAPH topology, witnesses, host faces, order, bend sign and material domain;
-2. lock each **chiều dài cạnh uốn / bend-edge length** from the actual shared material edge, never from bbox;
-3. for a scoped 90-degree bend-end relief candidate, prove signed bend-end offset `S`;
-4. apply `BEND_END_OFFSET_90` only within its approved scope:
+2. prove `BEND_ATTACHMENT_EDGE_LOCKED` for the exact physical edge on both adjacent faces; never choose by nearest graphical edge;
+3. when applicable, reconstruct formed/profile outside geometry, close `OD_actual` ownership and `THICKNESS_SINGLE_USE`;
+4. lock each **chiều dài cạnh uốn / bend-edge length** from the actual shared material edge, never from bbox;
+5. for a scoped 90-degree bend-end relief candidate, prove signed bend-end offset `S`;
+6. apply `BEND_END_OFFSET_90` only within its approved scope:
    - `S > 0` -> NO SLIT from this mechanism;
    - `S = 0` -> slit `T + 0.2` from the actual edge;
    - `S < 0` -> slit `T + 0.2` from the actual recessed edge; the endpoint distance from the zero/outside reference is `|S| + T + 0.2`;
    - there is no active `T/2` threshold/FLAG branch;
-5. explicit source custom slit, BOXMET, opposite-fold `R=t`, and non-90-degree relief mechanisms remain separately routed and take precedence when their own triggers are proved;
-6. do not create duplicate reliefs for one physical junction.
+7. explicit source custom slit, BOXMET, opposite-fold `R=t`, and non-90-degree relief mechanisms remain separately routed and take precedence when their own triggers are proved;
+8. do not create duplicate reliefs for one physical junction;
+9. fold-back must verify attachment-edge identity and bent-face datum ownership.
 
 ## 6. Source and mode routing
 
@@ -140,6 +169,7 @@ For reference/sample audits, compare physical geometry, but do not reverse-fit a
 
 ## 7. Release wiring index — backward-compatible regression contract
 
+- **V4.32:** `BEND_ATTACHMENT_EDGE_LOCKED`, physical `FACE_A.edge_i <-> BEND <-> FACE_B.edge_j`, `MEASUREMENT_CONSTRUCTION_VIEW`, `OD_actual` ownership and bent-face physical edge datum propagation; active references `references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md`, `references/FORMED_PROFILE_OD_MEASUREMENT.md`, `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`; regression `regression/qa/521006-18_V4_32_APPROVED.md`; executable `regression/tools/check_521006_18_v432.py`.
 - **V4.31:** `CANONICAL_MEMBER_COMPLETENESS`, `NO_DIRECT_DXF_FROM_INTERPRETATION`, `PROVED_SOURCE_MEMBERS_EQ_CANONICAL`, `CANONICAL_ENTITY_IDS_EQ_SAVED_DXF_ENTITY_IDS`; active reference `references/CANONICAL_MEMBER_COMPLETENESS.md`; executable production path `tools/canonical_contract.py` + `tools/export_canonical_dxf.py`; schema `tools/CANONICAL_INPUT_SCHEMA_V431.md`; regression `regression/qa/521005-05_V4_31_APPROVED.md`; executable `regression/tools/check_521005_05_v431.py`.
 - **V4.30:** `RUNTIME_AUTHORITY_GUARD`, `SOURCE_FEATURE_GROUP`, `GROUP_COUNT_CLOSURE`, `SAME_PHYSICAL_PARAMETER_BEFORE_REFERENCE_CONFLICT`, `BEND_EDGE_LENGTH_LOCK`, `BEND_END_OFFSET_90`; active references `references/RUNTIME_AUTHORITY_GUARD.md`, `references/SOURCE_FEATURE_GROUP_CLOSURE.md`, `references/BEND_EDGE_RELIEF_90.md`; regression `regression/qa/521005-05_V4_30_APPROVED.md`; executable `regression/tools/check_521005_05_v430.py`. The 90-degree rule is `S>0 -> NO SLIT`, `S=0 -> T+0.2`, `S<0 -> T+0.2 from actual recessed edge / |S|+T+0.2 from zero reference`.
 - **V4.29:** `SOURCE_MANUFACTURING_NOTE_CENSUS`, `SOURCE_NOTE_TO_FAMILY`, `SOURCE_NOTE_FEATURE_COMPLETENESS`, and custom source-instructed `スリット/SLIT`; active reference `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`; regression `regression/qa/521005-13_V4_29_APPROVED.md`; executable `regression/tools/check_521005_13_v429.py`; physical read-back fixture `regression/assets/521005-13/SLIT_FIXTURE.dxf`. Custom slit size/position is source-specific.
@@ -186,9 +216,9 @@ SOURCE MANUFACTURING NOTES
   -> SAVED ENTITY-ID READ-BACK
 ```
 
-For bent parts also close FACE_GRAPH, per-bend witness ledger, bend-edge material domain and any applicable 90-degree bend-end relief decision before serialization.
+For bent parts also close FACE_GRAPH, `BEND_ATTACHMENT_EDGE_LOCKED`, applicable formed-profile `OD_actual` ownership, per-bend witness ledger, bend-edge material domain and any applicable 90-degree bend-end relief decision before serialization.
 
-A correct bbox, raw entity count, syntactically valid DXF or successful generic read-back cannot compensate for a missing source note/group/member/family, false parameter comparison, wrong bend domain, or missing/extra relief.
+A correct bbox, raw entity count, syntactically valid DXF or successful generic read-back cannot compensate for a missing source note/group/member/family, false parameter comparison, wrong attachment edge, wrong bend domain, or missing/extra relief.
 
 If a source-supported family has no route, stop with `ROUTING_COVERAGE_GAP`. Do not silently map it to generic CUT.
 
@@ -208,7 +238,7 @@ Historical snapshots never override active modular rules.
 
 Load only regressions relevant to the routed rule/family or an explicit audit. Regression geometry is evidence/tests, not a source of missing dimensions for a new drawing.
 
-Use current `VALIDATION.md` and `CAD_OUTPUT.md`. For normal new CAD jobs, build the V4.31 canonical contract and call `tools/export_canonical_dxf.py`; then read back the actual saved DXF before calling production complete. For DXF-bearing sources, source/reprojection QA compares decoded physical curves, not only vertices, bbox or raw entity count.
+Use current `VALIDATION.md` and `CAD_OUTPUT.md`. For normal new CAD jobs, V4.32 still builds the V4.31 canonical contract and calls `tools/export_canonical_dxf.py`; then read back the actual saved DXF before calling production complete. For DXF-bearing sources, source/reprojection QA compares decoded physical curves, not only vertices, bbox or raw entity count.
 
 ## 11. MCP boundary
 

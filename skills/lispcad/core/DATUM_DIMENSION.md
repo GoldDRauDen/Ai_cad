@@ -61,6 +61,15 @@ Every dimension endpoint/witness line must be tagged by the **actual geometry it
 - Example pattern: if vertical dimensions `389` and `404` terminate respectively at a hole center and a step ledge, they define two different Y nodes; they are not interchangeable.
 - Record the endpoint identity in the datum trace whenever a crowded drawing contains multiple nearby extension lines.
 
+#### 4.2.4.1 V4.32 Radius/notch depth endpoint semantics
+
+For an edge-open notch or recess containing an arc/radius, classify whether a printed dimension terminates on the **physical deepest contour point**, the arc center, a tangent point, or another explicit witness node before converting it to geometry.
+
+- `OVERALL_DEPTH` to the physical deepest point is not `CENTER_SETBACK`.
+- If source proves radius `R` and overall depth `D` measured to the deepest arc point, then a same-axis center setback may be derived as `D - R`; do not copy `D` directly to the arc center.
+- Conversely, if the witness proves the center location, do not silently reinterpret that center dimension as physical overall depth.
+- Regression 521006-18 058649/058650: `R3` with source overall depth `8` gives center setback `5`; treating center setback as `8` creates wrong physical depth `11`. These values are regression evidence only.
+
 #### 4.2.5 Contour Topology First — Dimensions Assign Coordinates, They Do Not Invent the Shape
 Before solving numerical coordinates, trace the visible manufacturing boundary as an ordered topology: outer corners, protrusions, recesses, steps, notches, vertical/horizontal segments, chamfers, and radii.
 
@@ -89,6 +98,16 @@ Features dimensioned on a bent flange/face MUST be transformed from the **local 
 5. Record `face_id`, `local datum`, `local equation`, and `global flat equation` in the datum trace for holes/slots/notches that cross a bend mapping.
 
 This rule applies independently on both axes. Projection alignment may identify which face a feature belongs to, but may not replace the required unfold transform.
+
+#### 4.2.7.1 V4.32 Physical edge identity survives the transform
+
+For any edge-based datum on a bent face, record the physical edge identity before unfold, for example `FACE_2.BEND_EDGE`, `FACE_2.FREE_EDGE`, `FACE_2.LEFT_EDGE`, or `FACE_2.RIGHT_EDGE`.
+
+- The identity comes from the source-supported face graph and `BEND_ATTACHMENT_EDGE_LOCKED`, not from page direction or nearest-view proximity.
+- Rotation/reflection/local-axis reversal may change the coordinate equation but must not silently swap `BEND_EDGE` with `FREE_EDGE`.
+- Every feature positioned from such an edge must retain `face_id | physical datum edge id | local equation | attachment transform | global flat equation`.
+- If the same local numeric coordinate can be obtained from two different edge identities, numeric equality does not close the ambiguity. The physical owner must still be proved.
+- Fold-back must reproduce both the feature offset and the owning physical edge identity.
 
 #### 4.2.7.2 V4.14 approved symmetry/explicit-edge-dimension precedence
 
@@ -131,7 +150,7 @@ $$X_{\text{mid}} = X_{\text{nominal}} + \frac{\text{Tolerance}_{\text{upper}} + 
 
 ### 4.4 Ambiguous, Unclear, or Missing Dimension Handling
 - **Flag only after explicit-trace exhaustion**: A crowded/overlapping print is not automatically ambiguous. Before flagging, zoom/re-read the witness lines and test all explicit dimension paths, endpoint identities, feature diameters, feature counts, projection relationships, and overall closure. If the PDF contains a unique trace, use it; do not use Magenta as an escape from difficult dimension parsing.
-- **Magenta is not permission to invent topology**: Use estimated/Magenta geometry only when the entity identity and contour/feature topology are already certain but a numeric dimension remains unreadable/ambiguous. If multiple topologies, feature types, or bend orders are possible, STOP and ask the user rather than fabricating a bounding rectangle, generic slot, or arbitrary flange order.
+- **Magenta is not permission to invent topology**: Use estimated/Magenta geometry only when the entity identity and contour/feature topology are already certain but a numeric dimension remains unreadable/ambiguous. If multiple topologies, feature types, bend orders, or physical attachment edges are possible, STOP and ask the user rather than fabricating a bounding rectangle, generic slot, or arbitrary flange order/edge.
 - **Integer Value Enforcement applies only to estimated/assumed values**: Any truly estimated dimension MUST be rounded to the nearest integer (e.g., `256` or `258`, never `256.4`). Explicit dimensions and deterministic formula results (for example `182.70`, `159.26`, or a Nobi-derived bend coordinate) MUST retain their calculated precision and MUST NOT be rounded to an integer merely because another part of the same feature/part is flagged.
 - **Known/unknown separation**: Flagging an unresolved feature does not authorize changing dimensions that are already proven. Keep all proven edges, lengths, hole sizes, and coordinates exact; isolate only the unresolved quantity/entity.
 - **No bounding-box substitution**: A known overall width/height may be reported as a bounding extent, but MUST NOT be emitted as a closed rectangular outline unless the contour trace proves that all four rectangle edges actually exist.

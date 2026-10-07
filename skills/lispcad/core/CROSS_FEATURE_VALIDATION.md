@@ -6,6 +6,10 @@ Always run after feature routing and before production DXF export. This module a
 
 ## Mandatory interactions
 
+- **BEND ↔ FACE EDGE OWNERSHIP (V4.32):** every bend must pass `BEND_ATTACHMENT_EDGE_LOCKED` from `references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md`. Prove the physical `FACE_A.edge_i <-> BEND <-> FACE_B.edge_j` connection; `NEAREST_VIEW_EDGE`, paper proximity and page-side assumptions are forbidden evidence.
+- **FEATURE DATUM ↔ ATTACHED FACE ORIENTATION (V4.32):** holes/cutouts/notches/chamfers on a bent face retain physical edge identity such as `BEND_EDGE` or `FREE_EDGE` through rotation/reflection and local-face -> flat mapping. A reversed attachment that swaps those identities is FAIL even when total flat length is unchanged.
+- **FORMED OD ↔ NOBI ↔ FLAT (V4.32):** when `references/FORMED_PROFILE_OD_MEASUREMENT.md` applies, establish `OD_actual` from the source-supported formed profile/outside envelope and explicit thickness/offset ownership before subtracting Nobi. Directly treating an inside/formed scalar as OD without proof is FAIL.
+- **MEASUREMENT VIEW ↔ MANUFACTURING OUTPUT (V4.32):** a `MEASUREMENT_CONSTRUCTION_VIEW` may prove topology, attachment or outside length but is not CUT merely because it is present beside a flat or on Layer 0 in a reference.
 - **SOURCE MANUFACTURING NOTE ↔ feature family (V4.29):** every production-affecting printed/handwritten instruction must retain a resolved family/output status under `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`. A source-active instruction may not disappear between preliminary census, routed modules, canonical geometry and serialized output.
 - **HOLE/TAP ↔ BEND:** preserve host-face ownership and the proved local-face -> flat transform. Do not move printed geometry merely to satisfy a generic shop-distance advisory.
 - **KEGAKI ↔ BEND/MULTI_FACE:** transform each mark with its owning face and verify fold-back locating function, count and segmentation.
@@ -26,11 +30,13 @@ For every final family record, confirm:
 
 1. source identity and quantity;
 2. applicable source manufacturing-note provenance/resolution;
-3. host face / datum ownership;
+3. host face / datum ownership, including physical edge identity for bent-face datums;
 4. routed rule modules;
 5. canonical geometry representation;
 6. interactions with other active families;
 7. serialized DXF representation;
 8. applicable source-reprojection and saved-DXF read-back.
 
-Any unexplained source-note loss, family loss, duplication, ownership conflict, or cross-feature contradiction is production FAIL/FLAG under the active validation rules.
+For bent/multi-face parts, fold-back must also reproduce the proved **attachment edge identity**, not only the same silhouette, bbox or total length.
+
+Any unexplained source-note loss, family loss, duplication, ownership conflict, bend-edge attachment conflict, measurement-view leakage into manufacturing geometry, or cross-feature contradiction is production FAIL/FLAG under the active validation rules.

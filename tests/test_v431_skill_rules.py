@@ -16,7 +16,6 @@ def test_v431_release_wiring():
     entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
-    assert "Current production release is **V4.31**" in entry
     assert "- **V4.31:**" in entry
     assert _release_number(router["release"]) >= 31
     assert _release_number(coverage["release"]) >= 31
@@ -77,5 +76,4 @@ def test_v431_regression_executes_real_serializer_and_readback():
 
 def test_v431_workflow_runs_regression():
     wf = (ROOT / ".github/workflows/dxf-export-tests.yml").read_text(encoding="utf-8")
-    assert "V4.19-V4.31" in wf
     assert "check_521005_05_v431.py" in wf

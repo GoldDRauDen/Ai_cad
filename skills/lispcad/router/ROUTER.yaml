@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.31
+release: V4.32
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -42,12 +42,16 @@ mode_routes:
       - skills/lispcad/modes/BEND_UNFOLD.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
       - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
       - references/BEND_EDGE_RELIEF_90.md
   MULTI_FACE:
     load:
       - skills/lispcad/modes/BEND_UNFOLD.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
       - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
       - references/BEND_EDGE_RELIEF_90.md
   UNKNOWN:
     load:
@@ -55,6 +59,8 @@ mode_routes:
       - skills/lispcad/modes/BEND_UNFOLD.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
       - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
       - references/BEND_EDGE_RELIEF_90.md
 
 feature_routes:
@@ -133,6 +139,8 @@ post_route_checks:
   - same_physical_parameter_before_reference_conflict
   - source_feature_completeness
   - dependency_closure
+  - bend_attachment_edge_lock
+  - formed_profile_od_measurement_when_applicable
   - bend_edge_length_lock
   - bend_end_offset_relief_90
   - cross_feature_validation
