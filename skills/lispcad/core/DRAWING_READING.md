@@ -1,3 +1,11 @@
+# V4.33 holistic re-solve and complete source-view fallback
+
+Before accepting `VIEWS_ONLY`, run `references/HOLISTIC_ENGINEERING_CHALLENGE.md`. A first failed interpretation is not source exhaustion. Re-open all relevant PDF views, DATA physical curves, witness chains, handwritten flat/Nobi arithmetic, part identity and candidate FACE_GRAPH relationships, then record the specific unresolved degree of freedom.
+
+If a defensible flat still cannot be proved but independently proved source/orthographic views exist, the executable fallback is **DRAW THE PROVED VIEWS**: preserve every proved source-view member as separate labeled review subgroups under the correct code, preserve physical DATA curves, keep all proved features, and FLAG only the unresolved relationship. Do not stop at a text report and do not emit a small representative subset.
+
+For multi-barcode / ①② / welded constituent drawings, build the routed `PART_IDENTITY_GRAPH` before assigning source views or DATA clusters to manufacturing codes.
+
 # LISPCAD Core — Drawing Reading & Execution Contract
 
 ## V4.19 FACE_GRAPH_CAPTURE — mandatory source representation for bent/multi-face parts

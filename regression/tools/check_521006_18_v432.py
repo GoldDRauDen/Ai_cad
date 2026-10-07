@@ -5,6 +5,10 @@ from pathlib import Path
 
 import yaml
 
+def release_number(value):
+    return int(str(value).upper().replace("V4.", ""))
+
+
 FORBIDDEN_ATTACHMENT_EVIDENCE = {
     "NEAREST_VIEW_EDGE",
     "PAPER_PROXIMITY",
@@ -95,8 +99,8 @@ def test_rule_wiring():
 
     assert "bend_attachment_edge_lock" in router["post_route_checks"]
     assert "formed_profile_od_measurement_when_applicable" in router["post_route_checks"]
-    assert router["release"] == "V4.32"
-    assert coverage["release"] == "V4.32"
+    assert release_number(router["release"]) >= 32
+    assert release_number(coverage["release"]) >= 32
     assert "V4.32" in coverage["release_coverage"]
 
 

@@ -1,4 +1,13 @@
-# MECHANICAL_CLASSIFIER — V4.23 source-census hardening over V4.20
+# MECHANICAL_CLASSIFIER — V4.33 identity/challenge hardening over V4.23/V4.20
+
+## V4.33 required identity/challenge fields
+
+Extend the mechanical record with:
+`part_identity_graph_status, source_utilization_status, first_solve_status, holistic_challenge_status, unresolved_blocker_class, final_engineering_sanity_status`.
+
+When multiple barcodes/codes, constituent marks, weld relationships or candidate child parts share a drawing/detail/DATA cluster, load `references/PART_IDENTITY_GRAPH.md` and close ownership before manufacturing geometry is assigned.
+
+A high-evidence part that the current solver cannot close is `AI_INTERPRETATION_GAP` until source exhaustion proves a true ambiguity; do not silently convert solver difficulty into customer missing-data status.
 
 ## V4.23 required source-census fields
 

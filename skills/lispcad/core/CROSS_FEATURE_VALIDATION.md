@@ -1,3 +1,16 @@
+# V4.33 holistic cross-feature anomaly checks
+
+In addition to feature-family interactions, run these whole-part contradictions before final PASS:
+
+- source physical/view inventory vs source-group/member ledger completeness;
+- barcode/constituent/assembly ownership vs assigned DATA/view bundles;
+- BEND shared-edge semantic ownership vs face/blank extents;
+- handwritten/printed flat arithmetic vs claimed inability to attempt a flat;
+- local unresolved feature vs whole-part VIEWS_ONLY escalation;
+- complete proved source-view inventory vs VIEWS_ONLY canonical members.
+
+Any contradiction raises `ENGINEERING_ANOMALY_DETECTED` and returns the part to source interpretation. Do not choose a missing answer by confidence, symmetry or sample geometry.
+
 # LISPCAD Core — Cross-feature validation
 
 ## Scope

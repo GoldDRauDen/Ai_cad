@@ -1,5 +1,5 @@
 schema_version: 1
-release: V4.32
+release: V4.33
 authority: ROUTING_ONLY
 production_mode: repo_direct
 unknown_policy: LOAD_ROUTE
@@ -15,6 +15,9 @@ default_load:
   - references/SOURCE_DATA_CLASSIFICATION.md
   - references/DXF_PHYSICAL_CURVE_DECODING.md
   - references/MECHANICAL_CLASSIFIER.md
+  - references/PART_IDENTITY_GRAPH.md
+  - references/HOLISTIC_ENGINEERING_CHALLENGE.md
+  - references/REFERENCE_EXPOSURE_FIREWALL.md
   - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
   - references/SOURCE_FEATURE_GROUP_CLOSURE.md
   - references/CANONICAL_MEMBER_COMPLETENESS.md
@@ -136,6 +139,7 @@ post_route_checks:
   - source_manufacturing_note_census
   - source_feature_group_closure
   - source_group_member_ledger
+  - part_identity_graph_when_applicable
   - same_physical_parameter_before_reference_conflict
   - source_feature_completeness
   - dependency_closure
@@ -144,6 +148,9 @@ post_route_checks:
   - bend_edge_length_lock
   - bend_end_offset_relief_90
   - cross_feature_validation
+  - holistic_engineering_challenge
+  - views_only_source_view_completeness
+  - final_engineering_sanity_review
   - raw_data_snapshot_freeze
   - same_parameter_gate_before_canonicalization
   - manufacturing_change_ledger
@@ -152,6 +159,8 @@ post_route_checks:
   - untouched_data_invariance
   - source_reprojection_when_applicable
   - canonical_to_saved_dxf_entity_id_equality
+  - source_only_snapshot_before_reference
+  - no_post_reference_source_rewrite
   - saved_dxf_readback
 
 history_policy:

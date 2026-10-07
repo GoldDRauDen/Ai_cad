@@ -1,8 +1,22 @@
-# CANONICAL_MEMBER_COMPLETENESS — V4.31
+# CANONICAL_MEMBER_COMPLETENESS — V4.33 ledger-plausibility hardening over V4.31
 
 **Status:** USER APPROVED 2026-10-06.
 
 This is an executable production hard gate. It closes the gap where a job can correctly name a source family/group in text yet serialize only a hand-picked subset of the proved geometry.
+
+## 0. V4.33 upstream ledger-plausibility gate
+
+The V4.31 equalities remain necessary but are not sufficient when the source ledger itself is incomplete.
+
+Before member equality, run the routed holistic challenge and verify:
+- every relevant source physical/view inventory entry maps to a source member or an explicit drawing-only/helper/duplicate/canceled classification;
+- every final feature-family YES/UNKNOWN has a scoped group/member or explicit unresolved group;
+- substantial physical DATA with zero proved source members is challenged rather than accepted by self-equality;
+- VIEWS_ONLY contains every independently proved source-view member required for the unresolved part;
+- multi-code/constituent jobs pass PART_IDENTITY_GRAPH with no unexplained whole-bundle collision;
+- a shared bend-edge dimension is not reused as an unrelated blank/face extent without same-physical-parameter proof.
+
+If census/inventory/group/member records disagree, fail upstream with `SOURCE_LEDGER_PLAUSIBILITY_FAIL`. Do not proceed merely because `PROVED_SOURCE_MEMBER_IDS == PROVED_SOURCE_BACKED_CANONICAL_MEMBER_IDS`.
 
 ## 1. Required production chain
 

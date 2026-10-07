@@ -1,3 +1,11 @@
+# V4.33 VIEWS_ONLY completeness / reference provenance output gate
+
+When a flat truly remains unresolved after source exhaustion and `HOLISTIC_ENGINEERING_CHALLENGE`, `VIEWS_ONLY` is an executable review output, not a report-only status. Preserve all independently proved source/orthographic view members as separate labeled subgroups under the correct code. For customer DATA, preserve the physical source curves unless an approved manufacturing canonicalization explicitly changes them. Missing proved source-view members is `VIEWS_ONLY_SOURCE_VIEW_COMPLETENESS` FAIL.
+
+A local unresolved feature does not erase an independently proved flat; output the proved flat and isolate the local FLAG/PREVIEW.
+
+If a sample/reference is introduced later, output/audit reporting must preserve the frozen source-only status. Sample FLAG/Magenta geometry declared pending is `CUSTOMER_CONFIRMATION_PENDING`, not approved manufacturing geometry.
+
 # TrainAiCad Core — CAD Output
 
 ## V4.31 executable canonical-completeness path

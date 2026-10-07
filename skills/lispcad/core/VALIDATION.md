@@ -1,3 +1,18 @@
+# V4.33 — HOLISTIC_ENGINEERING_CHALLENGE hard gates
+
+Before canonical serialization, run the routed holistic challenge and final sanity review.
+
+- **SOURCE_LEDGER_PLAUSIBILITY:** source census/inventory/group/member records must be mutually accountable. Substantial physical DATA with zero proved members is an anomaly unless every physical member is explicitly classified drawing-only/helper/duplicate/canceled.
+- **PART_IDENTITY_GRAPH:** multi-code / constituent / assembly source bundles must close barcode/code <-> constituent <-> source view <-> DATA cluster ownership. Duplicate whole-bundle assignment to independent codes is `PART_IDENTITY_COLLISION`.
+- **BEND_EDGE_USAGE:** a `SHARED_BEND_EDGE_LENGTH` cannot be reused as `FACE_WIDTH` or `FLAT_BLANK_EXTENT` without same-physical-parameter proof.
+- **LOCAL_UNCERTAINTY:** a local FLAG cannot force VIEWS_ONLY when a defensible flat is independently proved.
+- **VIEWS_ONLY_SOURCE_VIEW_COMPLETENESS:** after justified source exhaustion, every independently proved source-view member required for the unresolved part must survive into the VIEWS_ONLY canonical review representation.
+- **FINAL_ENGINEERING_SANITY_REVIEW:** unexplained unused views, missing downstream owners, suspiciously simple output, untested source-supported candidates or PASS by ledger self-equality return the job to source interpretation.
+
+When a part remains unresolved, classify the blocker as `TRUE_SOURCE_AMBIGUITY`, `AI_INTERPRETATION_GAP`, `SOURCE_MEMBER_CENSUS_GAP`, `PART_IDENTITY_GAP`, `GEOMETRY_DECODE_GAP`, `ROUTING_COVERAGE_GAP`, or `CUSTOMER_CONFIRMATION_PENDING`. Do not label an AI interpretation failure as missing customer evidence.
+
+For later sample/reference audit, freeze `SOURCE_ONLY_SNAPSHOT` before reference exposure and enforce `references/REFERENCE_EXPOSURE_FIREWALL.md`. A reference-only post hoc upgrade of a previously unresolved source claim is `POST_REFERENCE_SOURCE_REWRITE`, not source proof.
+
 # LISPCAD Core — Validation
 
 ## V4.24 — DATA_MANUFACTURING_CANONICALIZATION hard gates

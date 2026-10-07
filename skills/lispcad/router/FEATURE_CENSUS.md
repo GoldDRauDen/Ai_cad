@@ -19,6 +19,17 @@ The census is mandatory for every repo-direct production job.
 
 **UNKNOWN is never equivalent to NO.** A suspected feature with unresolved identity, scope, datum, quantity, process, ownership, or source-instruction mapping must route to the relevant module.
 
+## V4.33 identity and source-utilization census
+
+Before the final census is accepted, record whether multiple barcodes/codes, constituent marks, weld/assembly relationships or shared DATA clusters require `PART_IDENTITY_GRAPH`.
+
+After routed interpretation, every relevant source view/DATA physical member must be either:
+- represented by a scoped source group/member;
+- explicitly drawing-only/helper/duplicate/canceled; or
+- retained as an unresolved member.
+
+A family/state census that says YES/UNKNOWN while the corresponding group/member inventory is absent is not closed. Run `HOLISTIC_ENGINEERING_CHALLENGE` before downgrading such a part to VIEWS_ONLY.
+
 ## Evidence required before NO
 
 Do not mark a family NO merely because a keyword was not found. Check, as applicable:

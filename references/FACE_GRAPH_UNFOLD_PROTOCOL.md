@@ -1,4 +1,4 @@
-# FACE_GRAPH_UNFOLD_PROTOCOL — V4.32 attachment-edge hardening over V4.23/V4.19
+# FACE_GRAPH_UNFOLD_PROTOCOL — V4.33 holistic challenge hardening over V4.32/V4.23/V4.19
 
 ## V4.32 — BEND_ATTACHMENT_EDGE_LOCKED
 
@@ -148,6 +148,24 @@ Before `VIEWS_ONLY` may be selected:
 - record the specific unresolved degree of freedom, competing topology, attachment edge or missing evidence that remains after exhaustion.
 
 Hard FAIL if `VIEWS_ONLY` is selected while relevant DATA remains unharvested/unclassified, because the first graph attempt failed, or merely because the unfold is complex. A later approved/reference DXF may diagnose a prior premature `VIEWS_ONLY`, but in NEW construction it still cannot supply hidden source dimensions.
+
+### G7C — HOLISTIC_ENGINEERING_CHALLENGE
+
+After the first G1-G7 solve, but before accepting an unresolved graph or canonicalizing a flat, run `references/HOLISTIC_ENGINEERING_CHALLENGE.md`.
+
+For a bend/multi-face part, explicitly challenge:
+
+- whether every relevant source view/DATA face has been consumed or classified;
+- whether all source-supported attachment/order/sign candidates were actually tested;
+- whether a shared bend-edge length has been reused as a whole face/blank extent without proof;
+- whether handwritten/printed flat/Nobi arithmetic provides an independent closure not yet used;
+- whether a local unresolved feature is being allowed to erase an otherwise unique graph.
+
+If an anomaly remains, re-open the source. Do not call the graph source-ambiguous merely because the current solver has not solved it.
+
+### G7D — COMPLETE VIEWS_ONLY FALLBACK
+
+If G1-G7 remain genuinely unresolved only after G7A source exhaustion and G7C challenge, preserve every independently proved source-view member in the VIEWS_ONLY review output. Record the specific remaining DOF and blocker class. Missing source-view members is a hard `VIEWS_ONLY_SOURCE_VIEW_COMPLETENESS` failure.
 
 ### G8 — FOLD_BACK_MATCH
 After unfold, replay/fold the flat back through the signed graph (a deterministic 2.5D face graph is sufficient; a full B-rep is not required) and reproject/compare against the source-proved formed constraints.
