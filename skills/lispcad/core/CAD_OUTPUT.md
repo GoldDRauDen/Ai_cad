@@ -1,3 +1,20 @@
+# Current production packaging — canonical code JSON + isolated PASS cuts
+
+This section supersedes inherited V4.9/V4.11 composite-only defaults below,
+without changing approved geometry, material/Nobi/bend or canonical schema.
+Normal E2E uses `tools/export_canonical_dxf.py`; on successful canonical
+member and composite saved-DXF XDATA read-back, it persists per-code
+`geometry_json/<CODE>.json` even for REVIEW, emits
+`parts_dxf/<PASS_CODE>.dxf` **only for verified PASS** using analytic
+LINE/ARC/CIRCLE CUT primitives, and retains one entire-job composite
+`<JOB>_ALL.dxf` or `<JOB>_ALL_REVIEW_ONLY.dxf` with all codes and warnings.
+No non-cut marks, annotations, bend entities, preview or VIEWS_ONLY source
+views may enter individual CUT files. A REVIEW in one code cannot downgrade
+another's independent proved geometry, but the combined file always becomes
+REVIEW_ONLY. Existing lower-level V4.9/dual serializations are compatibility,
+not the canonical production entry point. Canonical data remain the sole
+physical geometry source, and saved-DXF read-back is mandatory.
+
 # V4.33 VIEWS_ONLY completeness / reference provenance output gate
 
 When a flat truly remains unresolved after source exhaustion and `HOLISTIC_ENGINEERING_CHALLENGE`, `VIEWS_ONLY` is an executable review output, not a report-only status. Preserve all independently proved source/orthographic view members as separate labeled subgroups under the correct code. For customer DATA, preserve the physical source curves unless an approved manufacturing canonicalization explicitly changes them. Missing proved source-view members is `VIEWS_ONLY_SOURCE_VIEW_COMPLETENESS` FAIL.
