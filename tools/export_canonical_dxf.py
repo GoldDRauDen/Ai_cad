@@ -10,6 +10,7 @@ import ezdxf
 
 from canonical_contract import CONTRACT, CanonicalContractError, validate_canonical_job
 from export_dxf import entity_signature, export_job
+from export_job_artifacts import export_part_artifacts
 
 APPID = "TRAINAICAD"
 
@@ -88,6 +89,7 @@ def export_canonical_job(job: dict, output_dir, gap_mm=10.0, write_manifest=Fals
     out.mkdir(parents=True, exist_ok=True)
     manifest = export_job(job, out, gap_mm=gap_mm, mode="single", write_manifest=False)
     manifest = _stamp_and_verify(job, manifest, out, validation)
+    manifest["artifacts"] = export_part_artifacts(job, out)
     if write_manifest:
         (out / f"{manifest['job_id']}_MANIFEST.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
