@@ -62,3 +62,14 @@ def test_benchmark_measures_real_file_bytes_without_claiming_total_token_savings
     # flat and bend jobs must be at least 30% smaller than eager L0–L3 loads.
     ordinary = [c for c in b["cases"] if c["scenario"] in {"flat", "bend_nobi"}]
     assert all(c["initial_context_reduction_pct_vs_eager_load"] >= 30 for c in ordinary)
+
+
+def test_no_exact_cross_module_rule_paragraph_duplicates():
+    """The current approved canonical modules have no repeated long paragraphs.
+
+    This does not prove the absence of semantic contradictions or short
+    repeated policy wording; those still need human/source rule review.
+    """
+    from audit_rule_duplicates import scan
+    report = scan(min_chars=170)
+    assert report["repeated_cross_module_paragraphs"] == 0
