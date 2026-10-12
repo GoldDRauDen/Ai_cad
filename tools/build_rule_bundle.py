@@ -14,6 +14,8 @@ import sys
 
 import yaml
 
+# This tool is also imported by tests using importlib.util.spec_from_file_location.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audit_rule_coverage import audit as audit_active_rule_coverage
 
 ROOT = Path(__file__).resolve().parents[1]
