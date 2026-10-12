@@ -74,7 +74,8 @@ def test_staged_deferred_validation_is_mandatory_but_not_preloaded():
     assert "skills/lispcad/core/VALIDATION.md" not in stages["L1_SOURCE_CENSUS"]["rule_paths"]
     assert "skills/lispcad/core/VALIDATION.md" in stages["L3_VALIDATE_EXPORT_QA"]["rule_paths"]
     assert "references/HOLISTIC_ENGINEERING_CHALLENGE.md" in stages["L3_VALIDATE_EXPORT_QA"]["rule_paths"]
-    assert "references/CANONICAL_MEMBER_COMPLETENESS.md" in stages["L3_VALIDATE_EXPORT_QA"]["rule_paths"]
+    assert "references/CANONICAL_MEMBER_COMPLETENESS.md" in stages["L1_SOURCE_CENSUS"]["rule_paths"]
+    assert "proved_source_to_canonical_member_equality" in r["post_route_checks"]
     assert len(r["rule_paths"]) == len(set(r["rule_paths"]))
     assert r["new_bytes_total"] == sum(
         stages[s]["new_bytes"] for s in r["stage_order"]
@@ -84,7 +85,7 @@ def test_staged_deferred_validation_is_mandatory_but_not_preloaded():
 def test_source_mode_drives_data_curve_decoder():
     p = "references/DXF_PHYSICAL_CURVE_DECODING.md"
     x = census(source="PDF_ONLY")
-    assert p not in resolve_rules(x)["rule_paths"]
+    assert p in resolve_rules(x)["stage_plans"]["L1_SOURCE_CENSUS"]["rule_paths"]
     for mode in ("PDF_DATA_RAW", "TRAIN_REFERENCE", "DIRECT_EXISTING_DXF_AUDIT"):
         x = census(source=mode)
         assert p in resolve_rules(x)["stage_plans"]["L1_SOURCE_CENSUS"]["rule_paths"]
