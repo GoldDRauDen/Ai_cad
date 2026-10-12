@@ -8,13 +8,13 @@ The census is mandatory for every repo-direct production job.
 
 ## Required order
 
-1. Load the always-on core and source-classification files declared in `ROUTER.yaml`.
-2. If any DXF participates as DATA/reference/audit source, apply `references/DXF_PHYSICAL_CURVE_DECODING.md` first and build a physical-curve view of all relevant `POLYLINE`/`LWPOLYLINE` segments, including bulges and closed final->first segments.
+1. Load the L0 bootstrap and L1 source-census files declared by `ROUTER.yaml`. L2 geometry and L3 validation/export/QA remain mandatory but should be read at their actual execution stage, rather than all at job startup.
+2. If any DXF participates as DATA/reference/audit source, apply routed `references/DXF_PHYSICAL_CURVE_DECODING.md` before physical comparison and build a physical-curve view of all relevant `POLYLINE`/`LWPOLYLINE` segments, including bulges and closed final->first segments.
 3. Inspect every relevant source page/view/section/detail and, when supplied, the corresponding customer DATA.
 4. Run `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md` and account for every production-affecting printed/handwritten/revision instruction before allowing an affected feature family to be `NO`.
 5. Record a preliminary census using only `YES`, `NO`, or `UNKNOWN`.
 6. Load every route whose state is `YES` **or** `UNKNOWN`.
-7. Re-check the source with the routed rules available.
+7. Re-check the source with the routed rules available; when a material forming, relief or topology family emerges late, revise the per-code census and rerun the resolver. Do not retain a stale earlier route.
 8. Produce a final census and run source-note completeness + source-family completeness + cross-feature validation before DXF export.
 
 **UNKNOWN is never equivalent to NO.** A suspected feature with unresolved identity, scope, datum, quantity, process, ownership, or source-instruction mapping must route to the relevant module.
@@ -75,6 +75,7 @@ Record at minimum:
 ```yaml
 source_mode: PDF_ONLY | PDF_DATA_RAW | TRAIN_REFERENCE | DIRECT_EXISTING_DXF_AUDIT
 part_mode: FLAT_NO_BEND | BEND | MULTI_FACE | UNKNOWN
+reference_present: YES | NO | UNKNOWN    # sample/reference present or planned; UNKNOWN loads firewall
 source_manufacturing_notes:
   - {note_text: "...", code_scope: "...", candidate_family: "...", resolution: ROUTED|CANCELLED|IRRELEVANT_TO_MANUFACTURING|UNRESOLVED}
 features:
@@ -86,6 +87,11 @@ features:
   PIASU: {state: YES|NO|UNKNOWN, evidence: []}
   SLIT_RELIEF: {state: YES|NO|UNKNOWN, evidence: []}
   RIB: {state: YES|NO|UNKNOWN, evidence: []}
+  FORMING_FEATURES: {state: YES|NO|UNKNOWN, evidence: []}  # louver/emboss/dimple/half-shear/curl/lance
+  L_PROFILE: {state: YES|NO|UNKNOWN, evidence: []}
+  U_PROFILE: {state: YES|NO|UNKNOWN, evidence: []}
+  MULTI_FACE_PROFILE: {state: YES|NO|UNKNOWN, evidence: []}
+  STEPPED_NOTCHED: {state: YES|NO|UNKNOWN, evidence: []}  # approved stepped-flange dimension equations
   CHAMFER_FILLET: {state: YES|NO|UNKNOWN, evidence: []}
   HEMMING: {state: YES|NO|UNKNOWN, evidence: []}
   Z_BEND: {state: YES|NO|UNKNOWN, evidence: []}
@@ -97,6 +103,23 @@ features:
 ```
 
 Evidence items should identify source page/view/region or DATA entity group and the observed cue. Do not invent evidence IDs.
+
+## Stage-plan invariant
+
+A completed per-code census yields a deterministic `stage_plans` mapping
+from `tools/resolve_rules.py`. Read the L0+L1 paths for discovery, the
+selected L2 mode/feature/geometry paths for interpretation, and all applicable
+L3 QA and output paths before production PASS. Do not treat a path absent
+from an earlier stage as an optional rule. Any switch from NO to YES/UNKNOWN
+must regenerate the plan. For mixed source/data/reference jobs, set
+`reference_present=YES` (or UNKNOWN until proven absent) so source-only
+sample firewall never disappears.
+
+The four topology families classify contours/faces and are independent of
+manufacturing type. `L_PROFILE`, `U_PROFILE`, `MULTI_FACE_PROFILE` and
+`STEPPED_NOTCHED` can be simultaneously YES. A stepped/notched flange
+must load `skills/lispcad/topology/STEPPED_PROFILE.md`; it is not implied
+safe by the basic flat/bend mode route.
 
 ## Hard stop
 
