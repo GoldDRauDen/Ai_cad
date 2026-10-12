@@ -42,7 +42,11 @@ def _state(value: object, family: str) -> str:
 
 
 def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -> dict:
-    """Return ordered, de-duplicated paths. Unknown features load their routes."""
+    """Make fail-closed, ordered stage plans; no PDF interpretation happens here.
+
+    Callers MUST consume L0, L1, L2 and L3 at their real execution stages.
+    A stage being deferred never permits a mandatory engineering gate to vanish.
+    """
     root = Path(root).resolve()
     if router is None:
         router = yaml.safe_load((root / ROUTER).read_text(encoding="utf-8"))
@@ -68,11 +72,21 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
             f"extra={sorted(supplied - required)}"
         )
 
+    stages = ("L0_BOOTSTRAP", "L1_SOURCE_CENSUS", "L2_GEOMETRY",
+              "L3_VALIDATE_EXPORT_QA")
+    stage_routes = router.get("stage_routes")
+    if not isinstance(stage_routes, dict) or set(stage_routes) != set(stages):
+        raise ResolutionError("Incomplete or invalid mandatory stage_routes")
     result: list[str] = []
     seen_paths: set[str] = set()
+    stage_plans: dict[str, dict] = {}
+    current_stage = stages[0]
+
+    for stage in stages:
+        stage_plans[stage] = {"rule_paths": [], "new_bytes": 0}
 
     def add_path(path: str) -> None:
-        if not isinstance(path, str) or not path or "\\" in path:
+        if not isinstance(path, str) or not path or "\\\\" in path:
             raise ResolutionError(f"Invalid route path: {path!r}")
         if path.startswith(FORBIDDEN) or path.startswith("/") or ".." in Path(path).parts:
             raise ResolutionError(f"Forbidden production route: {path}")
@@ -82,6 +96,8 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
         if path not in seen_paths:
             seen_paths.add(path)
             result.append(path)
+            stage_plans[current_stage]["rule_paths"].append(path)
+            stage_plans[current_stage]["new_bytes"] += resolved.stat().st_size
 
     def add_group(group: str, name: str) -> None:
         routes = router.get(group, {})
@@ -90,11 +106,19 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
         for path in routes[name].get("load", []):
             add_path(path)
 
+    current_stage = stages[0]
     for path in BOOTSTRAP:
         add_path(path)
+    add_group("stage_routes", current_stage)
+
+    current_stage = stages[1]
     for path in router.get("default_load", []):
         add_path(path)
+    add_group("stage_routes", current_stage)
     add_group("source_routes", source_mode)
+
+    current_stage = stages[2]
+    add_group("stage_routes", current_stage)
     add_group("mode_routes", part_mode)
 
     visited: set[str] = set()
@@ -123,18 +147,30 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
             selected.append(name)
             visit(name)
 
+    # A sample can coexist with PDF_ONLY or PDF_DATA_RAW. Unknown requires
+    # firewall preloading, not an unsafe assumption of no reference.
+    ref_presence = _state(census.get("reference_present", "UNKNOWN"), "reference_present")
+    if ref_presence != "NO":
+        add_path("references/REFERENCE_EXPOSURE_FIREWALL.md")
+
+    current_stage = stages[3]
+    add_group("stage_routes", current_stage)
+
     return {
         "release": router["release"],
         "production_mode": "repo_direct",
         "source_mode": source_mode,
         "part_mode": part_mode,
+        "reference_present": ref_presence,
         "selected_features": selected,
         "loaded_feature_routes": sorted(visited),
+        "stage_order": list(stages),
+        "stage_plans": stage_plans,
         "rule_paths": result,
+        "new_bytes_total": sum(stage_plans[k]["new_bytes"] for k in stages),
         "post_route_checks": list(router["post_route_checks"]),
-        "note": "Route resolution only; source inspection, geometry, QA and export are separate.",
+        "note": "Read mandatory stages in order and execute all gates; routing alone does not establish CAD PASS.",
     }
-
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
