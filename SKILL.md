@@ -134,7 +134,7 @@ remain authoritative until a reviewed, regression-tested exporter migration.
 
 When multi-file repository ingestion is unavailable, a code-capable executor
 can run `python tools/build_rule_bundle.py --output
-TrainAiCad_E2E_RULEPACK.md` and pass the resulting single generated document
+../TrainAiCad_E2E_RULEPACK.md` and pass the resulting single generated document
 to another model. The build collects current Router-approved modules, **not**
 obsolete portable snapshots. That document has a build manifest, content hash,
 and snapshot context. It is a read-only handoff, not a runtime/CAD engine.
