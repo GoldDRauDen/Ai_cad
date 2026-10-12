@@ -93,7 +93,7 @@ failed part does not force geometry reconstruction of already-verified parts.
 
 ## 3. Canonical status and artifact contracts
 
-**Current implemented exporter behavior** (consult active
+**Current canonical exporter behavior** (consult active
 `skills/lispcad/core/CAD_OUTPUT.md` and `tools/DXF_INPUT_SCHEMA.md`):
 - PASS-only job: `<JOB>_ALL.dxf`.
 - Any unresolved code/flag: `<JOB>_ALL_REVIEW_ONLY.dxf` and explicit non-cut
@@ -101,8 +101,8 @@ failed part does not force geometry reconstruction of already-verified parts.
 - The canonical exporter stamps and verifies Layer-0 `TRAINAICAD ENTITY_ID`
   XDATA. REVIEW_ONLY output is not safe to manufacture.
 
-**Target application artifact contract (not yet implemented end-to-end by
-the current repo exporter):**
+**Implemented canonical production artifact contract** (after upstream
+source/engineering QA and composite canonical read-back):
 
 ```text
 <JOB>/
@@ -112,11 +112,18 @@ the current repo exporter):**
   <JOB>_ALL_REVIEW_ONLY.dxf        # otherwise all codes, warnings intact
 ```
 
-The target cut-only individual DXFs must have standalone, correctly connected
-LINE/ARC/CIRCLE contours; no polylines, TEXT, dimensions or notes. Do not claim
-this output exists unless an implemented exporter and saved-file tests
-actually produce it. Current source canonical schema and historical exporter
-remain authoritative until a reviewed, regression-tested exporter migration.
+The canonical exporter now also persists per-code JSON for **every** code and
+produces individual DXFs for PASS codes only. Contours are decomposed
+analytically from their canonical bulges into LINE/ARC/CIRCLE with exact
+endpoints, identity/provenance XDATA and saved-file verification. Non-cut
+bends, Kegaki, POINT and warnings never enter individual CUT files.
+Known REVIEW geometry stays in the combined non-production DXF only.
+
+The historic lower-level `tools/export_dxf.py` still provides its original
+one-composite/opt-in-legacy mode; it is not the default E2E producer.
+Do not fabricate a claim of customer-drawing correctness merely because
+the structural export tests pass. Full source-grounded multi-job acceptance
+remains necessary for manufacturing PASS.
 
 ## 4. Execution and QA rules
 
