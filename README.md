@@ -52,6 +52,25 @@ AI_BOOTSTRAP
             +-- versions/                CI-pinned historical snapshots; never production input
 ```
 
+## Canonical E2E artifacts
+
+Normal `python tools/export_canonical_dxf.py job.json OUT/` first checks
+source-to-canonical members and composite XDATA read-back, then writes:
+
+```text
+OUT/
+  geometry_json/<CODE>.json           every code, including REVIEW
+  parts_dxf/<PASS_CODE>.dxf           PASS only; LINE/ARC/CIRCLE cut geometry
+  <JOB>_ALL.dxf                       when all PASS
+  <JOB>_ALL_REVIEW_ONLY.dxf           otherwise (all codes + warnings)
+```
+
+Individual DXFs are generated analytically from the canonical members and
+reopened with XDATA/geometry checks; they contain no text, bend, marking,
+points or polyline. The existing lower-level `tools/export_dxf.py` remains
+only a compatibility packager. Semantic PDF/source correctness still requires
+actual independent engineering QA.
+
 ## Deterministic rule retrieval
 
 After inspecting the source and completing `FEATURE_CENSUS.md`, an executor with Python
