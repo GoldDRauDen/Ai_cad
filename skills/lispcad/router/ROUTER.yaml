@@ -12,6 +12,8 @@ default_load:
   - references/DXF_PHYSICAL_CURVE_DECODING.md
   - references/CANONICAL_MEMBER_COMPLETENESS.md
   - references/MECHANICAL_CLASSIFIER.md
+  - references/HOLISTIC_ENGINEERING_CHALLENGE.md
+  - references/REFERENCE_EXPOSURE_FIREWALL.md
   - references/PART_IDENTITY_GRAPH.md
   - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
   - references/SOURCE_FEATURE_GROUP_CLOSURE.md
