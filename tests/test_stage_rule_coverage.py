@@ -73,7 +73,7 @@ def test_staged_deferred_validation_is_mandatory_but_not_preloaded():
     assert "skills/lispcad/core/VALIDATION.md" not in stages["L0_BOOTSTRAP"]["rule_paths"]
     assert "skills/lispcad/core/VALIDATION.md" not in stages["L1_SOURCE_CENSUS"]["rule_paths"]
     assert "skills/lispcad/core/VALIDATION.md" in stages["L3_VALIDATE_EXPORT_QA"]["rule_paths"]
-    assert "references/HOLISTIC_ENGINEERING_CHALLENGE.md" in stages["L3_VALIDATE_EXPORT_QA"]["rule_paths"]
+    assert "references/HOLISTIC_ENGINEERING_CHALLENGE.md" in stages["L1_SOURCE_CENSUS"]["rule_paths"]
     assert "references/CANONICAL_MEMBER_COMPLETENESS.md" in stages["L1_SOURCE_CENSUS"]["rule_paths"]
     assert "proved_source_to_canonical_member_equality" in r["post_route_checks"]
     assert len(r["rule_paths"]) == len(set(r["rule_paths"]))
@@ -93,7 +93,7 @@ def test_source_mode_drives_data_curve_decoder():
 
 def test_reference_firewall_not_skipped_when_unknown():
     p = "references/REFERENCE_EXPOSURE_FIREWALL.md"
-    assert p not in resolve_rules(census(reference="NO"))["rule_paths"]
+    assert p in resolve_rules(census(reference="NO"))["stage_plans"]["L1_SOURCE_CENSUS"]["rule_paths"]
     for state in ("YES", "UNKNOWN"):
         assert p in resolve_rules(census(reference=state))["rule_paths"]
 
