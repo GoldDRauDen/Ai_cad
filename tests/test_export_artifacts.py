@@ -226,3 +226,33 @@ def test_corrupt_pass_dxf_is_regenerated_after_read_back(tmp_path):
     output = export_canonical_job(src, tmp_path)
     assert not output["artifacts"]["parts"][0]["reused_verified_dxf"]
     assert ezdxf.readfile(cut).audit().has_errors is False
+
+
+def test_v431_multi_code_regression_keeps_every_proved_hole_and_bend_non_cut(tmp_path):
+    """Existing approved source-member regression fixture, not a fresh PDF read."""
+    import importlib.util
+    module_path = ROOT / "regression/tools/check_521005_05_v431.py"
+    spec = importlib.util.spec_from_file_location("v431_source_fixture", module_path)
+    fixture = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(fixture)
+    source = fixture.build_job()
+    result = export_canonical_job(source, tmp_path)
+    assert result["status"] == "REVIEW_ONLY"
+    assert result["filename"].endswith("_ALL_REVIEW_ONLY.dxf")
+    assert {p.name for p in (tmp_path / "geometry_json").glob("*.json")} == {
+        "057862.json", "057864.json", "057873.json",
+    }
+    assert {p.name for p in (tmp_path / "parts_dxf").glob("*.dxf")} == {
+        "057862.dxf", "057873.dxf",
+    }
+    assert not (tmp_path / "parts_dxf/057864.dxf").exists()
+    for code, hole_quantity in (("057862", 16), ("057873", 4)):
+        d = ezdxf.readfile(tmp_path / "parts_dxf" / f"{code}.dxf")
+        geometry = list(d.modelspace())
+        assert all(e.dxftype() in {"LINE", "ARC", "CIRCLE"} for e in geometry)
+        assert len([e for e in geometry if e.dxftype() == "CIRCLE"]) == hole_quantity
+        assert not any(e.dxf.get("linetype", "") == "DASHED" for e in geometry)
+    flagged = json.loads((tmp_path / "geometry_json/057864.json").read_text())
+    assert flagged["parts"][0]["flags"] and flagged["parts"][0]["status"] == "PREVIEW"
+    assert len(flagged["parts"][0]["source_groups"]) == len(source["parts"][1]["source_groups"])
