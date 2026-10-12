@@ -21,18 +21,15 @@ In addition to the V4.19 FACE_GRAPH, every bend must close a `PER_BEND_WITNESS_L
 
 Do not place a bend from total-flat closure alone. If a candidate bend pair differs from source/reference diagnosis by exactly ±t, treat that only as evidence of a possible thickness/datum ownership error and re-trace the ledger; do not auto-shift by t as a generic formula.
 
-
 Source: approved V4.3 production baseline.
 
 Load shared Nobi values from `../../../references/NOBI_TABLES.md`.
-
 
 ## V4.19 — Mandatory constraint-closed FACE_GRAPH before unfold
 
 For **every bent/multi-face part**, load `../../../references/FACE_GRAPH_UNFOLD_PROTOCOL.md` before calculating production flat coordinates. The source-first graph must lock dimension witnesses/owners, feature host faces/local datums, ordered adjacency, signed bend orientation and actual material domains. `sum(OD)-sum(Nobi)` or a matching flat bbox is not a substitute for graph closure.
 
 Production unfold is blocked until `TOPOLOGY_LOCKED`, `BEND_ATTACHMENT_EDGE_LOCKED`, `DIMENSION_WITNESS_LOCKED`, `FEATURE_OWNERSHIP_LOCKED`, `FACE_ORDER_LOCKED`, `BEND_SIGN_LOCKED`, `BEND_DOMAIN_LOCKED` and `CONSTRAINTS_CLOSED` pass. After unfold, `FOLD_BACK_MATCH` against source-proved formed constraints is mandatory before DXF serialization. If competing face graphs or attachment edges remain, use existing FLAG/VIEWS_ONLY policy rather than selecting by confidence.
-
 
 ## V4.13 520315-18 — only nonduplicate approved additions
 
@@ -43,29 +40,18 @@ Production unfold is blocked until `TOPOLOGY_LOCKED`, `BEND_ATTACHMENT_EDGE_LOCK
 **Exact printed inputs versus strictly <0.01 mm DERIVED comparison:** Continue rounding each calculated ID→OD offset to 0.01 before adding it to the actual printed ID and deducting the real Nobi. Read printed dimensions EXACTLY; the <0.01 mm threshold applies only to a representation/rounding difference when auditing ALREADY CORRECT derived quantities against a reference. Exactly 0.01 is not below threshold, and a wrong source input, datum, topology, feature class, or bend order fails regardless. Approved 018300: (797+0.26)+(24+0.26)-0.37=821.15 mm; 262+61.5-3.68=319.82 mm. Its previously measured reference bbox ~821.153 differs ~0.003 mm only in derived arithmetic.
 
 #### 4.2.6 Reference Dimensions Still Require a Proven Datum
-A parenthesized/reference dimension is **not automatically a coordinate from the global origin**. `Reference` means no mid-tolerance adjustment; its extension-line origin and target still control how the coordinate is calculated.
 
-- If a reference value `(276.5)` is measured from a hole-center row at `Y=10`, then the target is `Y=10+276.5=286.5`, not `Y=276.5`.
-- Apply Section 4.2 datum tracing exactly as for a normal dimension; only the tolerance treatment differs.
-- **Formed-view reference dimensions are not flat-pattern dimensions by default.** A parenthesized/参考 overall shown on a bent Front/Side/Section view describes that formed view unless its witness lines explicitly belong to a Development/Flat Pattern view.
-- Do NOT use a formed-view reference overall as the unfolded blank length merely because its numeric value is close to the expected flat length. Derive flat length from the proven ordered flange/body chain, ID→OD conversion where required, and Nobi deductions. Use the formed-view reference only for the geometry/view it actually dimensions.
-- If a formed-view reference value conflicts with a fully proven unfold equation, classify the issue as `REFERENCE/FORMED-DIMENSION ERROR` or source conflict; do not force the flat equation to equal the reference value.
+Authoritative rule: `../core/DATUM_DIMENSION.md` §4.2.6. Interpret witness origins there; this BEND module must not copy or override it.
 
 #### 4.2.7 Local-Face Datum → Global Flat Datum Mapping
-Features dimensioned on a bent flange/face MUST be transformed from the **local face coordinate system** into the **global unfolded blank coordinate system** before verified global-flat coordinates are emitted.
 
-1. Assign each formed face an ordered identity along the unfold path: `FACE_1 -> BEND_1 -> FACE_2 -> ...`.
-2. Establish the flat start/end coordinates of that face from the sequential OD/Nobi equations in Section 4.7.
-3. Preserve the dimension direction. If local coordinate `u` is measured from the face start datum, use `U_flat = FACE_START_flat + u`. If it is measured from the opposite/free edge, use `U_flat = FACE_END_flat - u`.
-4. A feature coordinate printed on a formed face MUST NOT be copied directly as a global flat coordinate unless the face datum is proven to coincide with the global flat datum.
-5. Record `face_id`, `local datum`, `local equation`, and `global flat equation` in the datum trace for holes/slots/notches that cross a bend mapping.
-
-This rule applies independently on both axes. Projection alignment may identify which face a feature belongs to, but may not replace the required unfold transform.
+Authoritative rule: `../core/DATUM_DIMENSION.md` §4.2.7; execute that proved local-face → global-flat coordinate transformation before any unfold output.
 
 **V4.32 physical edge datum identity:** if the local datum is edge-based, retain the actual edge identity through the transform, e.g. `FACE_2.BEND_EDGE` or `FACE_2.FREE_EDGE`. Rotation/reflection may change coordinate direction but may not silently swap bend/free edge identity.
 
 #### 4.2.8 Bend Sequence / Face Order Is Non-Commutative
-The total flat length equation may be numerically unchanged when two flange lengths are swapped, but **bend positions, feature transforms, and material topology are not**. Therefore:
+
+Apply `../core/DATUM_DIMENSION.md` §4.2.8 for the canonical face-order rule. Additional bend-specific hard gates follow:
 
 - Determine the ordered face sequence from the visible formed topology, bend callouts, section/detail views, and proven witness-line connectivity before calculating bend-line coordinates.
 - Lock the physical attachment edge for every face transition under V4.32; correct face order with the wrong attached edge is still FAIL.
@@ -89,7 +75,6 @@ $$\text{OD} = \text{ID} + \text{Offset}$$
 - Do not apply this special intermediate rounding rule to unrelated explicit dimensions. It is specifically the ID→OD offset normalization step.
 - V4.32: assign every ID→OD offset to the physical face contribution proved by the formed profile/attachment graph. Do not add the same offset again after an outside extent already includes it.
 
-
 ### 4.6.2 V4.15 — Acute bend `<85°`: construct real radius, then measure outside OD
 
 When the **proved included bend angle is strictly <85°**, this approved method takes precedence over using the generic §4.6 tangent-offset equation as the controlling OD construction for that bend.
@@ -103,7 +88,6 @@ When the **proved included bend angle is strictly <85°**, this approved method 
 7. A reference/proof DXF may confirm the independently reconstructed result but may never supply a PDF-missing OD or choose topology/normal signs.
 
 Approved executable regression: `../../../regression/tools/check_acute_bend_lt85.py`; proof assets: `../../../regression/assets/acute_bend_lt85/`.
-
 
 ### 4.7 Nobi (Bend Allowance) Lookup Priority & Sequential Formulas
 1. **Handwritten Nobi on Drawing**: Highest priority. Use directly (e.g., `-4.8`, `135° -1.71`) regardless of J-symbol.
@@ -144,6 +128,5 @@ When the actual Thickness (`t`) or Bend Length (`L`) does **not** exactly match 
 #### 4.10.1 V4.16 BOXMET-style four-flange box routing
 
 If the source proves a central/base rectangle with four adjacent bent flanges and BOXMET corner topology, load `../../../references/BOXMET_SLIT_RELIEF.md`. This reference decides which pair of flaps retreats by `t`, generates the four required slits, constructs the tangent `LINE + ARC R0.5 + LINE` geometry, and defines when the rule is not applicable. Do not omit a required BOXMET slit merely because the outer contour is already closed; do not auto-apply BOXMET slit logic to ordinary L/U/Z, single-flange/free-edge, non-crossing, or unrelated relief topology.
-
 
 ---
