@@ -24,7 +24,7 @@ E2E process and all Router-approved modules, without maintaining a second
 independent source of rules:
 
 ```sh
-python tools/build_rule_bundle.py --output TrainAiCad_E2E_RULEPACK.md
+python tools/build_rule_bundle.py --output ../TrainAiCad_E2E_RULEPACK.md
 ```
 
 The generated document is a point-in-time, read-only artifact. Source modules
