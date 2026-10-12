@@ -71,7 +71,7 @@ def test_nobi_and_laser_regressions_from_approved_workbook():
     r = (ROOT / "references/MATERIAL_RULES.md").read_text(encoding="utf-8")
     assert "| **3.0** | 1801 ~ 2400 | V40 | 7.84 | 7.80 |" in n
     assert "without documented 2B/#1 uses **2B**" in n
-    assert "OUTER material perimeter" in r and "inner holes" in r and "never" not in ""
+    assert "OUTER material perimeter" in r and "interior holes" in r
 
 
 def test_new_reference_routes_cover_hole_and_fine_tap():
