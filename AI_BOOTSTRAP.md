@@ -1,6 +1,6 @@
 # AI_BOOTSTRAP — TrainAiCad universal E2E entry
 
-This file is the release-independent bootstrap for any AI/agent that has access to this repository and the tools required to inspect the supplied source and create/verify DXF output.
+This file is the release-independent bootstrap, linked from root `SKILL.md`, for any AI/agent that has access to this repository and the tools required to inspect the supplied source and create/verify DXF output.
 
 Repository identity: `GoldDRauDen/TrainAiCad`.
 
