@@ -20,14 +20,48 @@ their checked-in fixtures; do not break existing coverage to shrink the repo.
 **Experimental runtime**: `services/trainaicad-mcp/`; separately tested,
 no default CAD production authority.
 
+## Stage-specific routing (PR #24 optimization)
+
+The validated `ROUTER.yaml` now classifies active rule modules in four
+mandatory stages. The source-census must be complete before selecting final
+mode/features; the tool does not infer them from keywords. After source
+inspection, `tools/resolve_rules.py` returns `stage_plans` with deduplicated
+file paths and exact byte totals:
+
+- L0_BOOTSTRAP: release/authority/Router contract.
+- L1_SOURCE_CENSUS: source reading, curve decode, note completeness, holistic
+  challenge, revision/reference firewall and canonical completeness.
+- L2_GEOMETRY: dimensional datums, selected geometry/face/Nobi/feature rules.
+- L3_VALIDATE_EXPORT_QA: cross-feature validation, source-member gates,
+  canonical DXF and read-back.
+
+A mandatory rule may be listed only once in its earliest valid stage. Its
+saved availability is not a waiver for the later checks: the user must
+actually perform L0, L1, L2 and L3 on each code.
+
+`tools/audit_rule_coverage.py` cross-checks **all 44 currently active
+module files**, not just the few Router-selected for a given job. In
+particular it blocks silently omitting `STEPPED_PROFILE.md`,
+`FORMING_FEATURES.md`, and any new active rule file. This is file-level
+reachability; approval and semantic correctness still require regression.
+
+`tools/build_rule_index.py` generates a scoped `RAG_INDEX.yaml` on demand
+from the Router, separating production, opt-in QA, evidence, executable
+tools, history and experimental MCP. Do not maintain another live rule list.
+
+Benchmark: `python tools/benchmark_rule_routes.py`. It measures UTF-8 bytes
+for five fixed synthetic routing scenarios. Earlier-stage savings are not
+full-job token savings. They must not be used to skip mandatory QA.
+Regression tests preserve all V4.19–V4.33 gates.
+
 ## Source-driven retrieval
 
 1. Inspect actual source pages, views, manufacturing notes and DXF physical
    curves. Produce a complete per-code feature census with every Router family
    explicitly marked `YES`, `NO` or `UNKNOWN`.
 2. Call `python tools/resolve_rules.py census.json` when Python/PyYAML are
-   available, or apply `ROUTER.yaml` manually. Missing features fail closed;
-   `UNKNOWN` loads the feature route.
+   available, or apply `ROUTER.yaml` manually. Consume L0–L3 in order.
+   Missing features fail closed; `UNKNOWN` loads the feature route.
 3. Deduplicate file paths while preserving Router-declared order and dependency
    closure. A feature routes only to approved rules, never to a case-specific
    regression or obsolete portable release.
