@@ -11,6 +11,7 @@ import ezdxf
 from canonical_contract import CONTRACT, CanonicalContractError, validate_canonical_job
 from export_dxf import entity_signature, export_job
 from export_job_artifacts import export_part_artifacts
+from holistic_engineering_guard import canonical_job_anomalies
 
 APPID = "TRAINAICAD"
 
@@ -85,6 +86,9 @@ def _stamp_and_verify(job: dict, manifest: dict, output_dir: Path, validation: d
 def export_canonical_job(job: dict, output_dir, gap_mm=10.0, write_manifest=False) -> dict:
     """Validate full member ledger, serialize single composite, stamp/read back entity IDs."""
     validation = validate_canonical_job(job)
+    source_anomalies = canonical_job_anomalies(job)
+    if source_anomalies:
+        fail("SOURCE_SEMANTIC_GUARD_FAIL: " + "; ".join(source_anomalies))
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
     manifest = export_job(job, out, gap_mm=gap_mm, mode="single", write_manifest=False)
