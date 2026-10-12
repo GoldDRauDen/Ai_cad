@@ -185,6 +185,7 @@ def test_status_downgrade_removes_stale_pass_cut(tmp_path):
     assert result["filename"] == "TESTJOB_ALL_REVIEW_ONLY.dxf"
     assert not (tmp_path / "parts_dxf/B.dxf").exists()
     assert (tmp_path / "parts_dxf/A.dxf").exists()
+    assert not (tmp_path / "TESTJOB_ALL.dxf").exists()
     assert json.loads((tmp_path / "geometry_json/B.json").read_text())["parts"][0]["status"] == "PREVIEW"
 
 
