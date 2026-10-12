@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "source_sheet": "顧客別情報一覧",
+  "scope": "CAD_ONLY",
+  "customer_code_source": "JOB_STATISTICS_NUMERIC_CODE_ONLY",
+  "on_missing_or_unlisted_customer_code": "GENERAL_RULES",
+  "legacy_struck_through": "OBSOLETE",
+  "as_sumi": "SYNC_STATUS_ONLY",
+  "customers": {
+    "240": {
+      "data_pdf_policy": "DATA_NO_DIM_COMPARE",
+      "notes": [
+        "Customer DATA controls geometry without a routine drawing dimensional reconciliation."
+      ],
+      "source": "J121"
+    },
+    "325": {
+      "notes": [
+        "Uncalled exterior corners sharp; explicit instructions override."
+      ],
+      "source": "J155"
+    },
+    "395": {
+      "data_pdf_policy": "PDF_PRIORITY",
+      "notes": [
+        "PDF controls conflicting dimensions.",
+        "Missing source dimensions may be read from DXF only for proved same physical parameter."
+      ],
+      "source": "J27"
+    },
+    "407": {
+      "data_pdf_policy": "PDF_PRIORITY",
+      "notes": [
+        "Customer-scoped piercing is through piercing.",
+        "Large DATA/PDF discrepancies require confirmation."
+      ],
+      "source": "J65"
+    },
+    "473": {
+      "notes": [
+        "All customer-specified pierces are through piercing.",
+        "Uncalled exterior corners stay sharp.",
+        "Differently colored DATA geometry may be KEGAKI; prove semantic role."
+      ],
+      "source": "J59"
+    },
+    "512": {
+      "notes": [
+        "Checkered sheet face shown in drawing is the textured face."
+      ],
+      "source": "J91"
+    },
+    "646": {
+      "nobi_profile": "AIKOKU_646",
+      "notes": [
+        "Job-list numeric code 646 selects Aikoku bend table even when in-house bending.",
+        "Default tooling per 646 table; R2 or alternate V only when explicitly instructed.",
+        "SLIT is laser-cut geometry; welding is downstream, never an added CUT."
+      ],
+      "source": "顧客別情報一覧!B6,J6"
+    },
+    "703": {
+      "notes": [
+        "PUNCH is white pierce.",
+        "Do not double Nobi unless proved for the specific bend."
+      ],
+      "source": "J90,L90"
+    },
+    "706": {
+      "notes": [
+        "Uncalled angle/channel rib both side widths shortened by 0.5 mm, not top/bottom.",
+        "Explicit dimensional callout overrides."
+      ],
+      "source": "J115"
+    },
+    "712": {
+      "notes": [
+        "Only source-marked manufacturing scope is processed unless full processing is specified.",
+        "Follow proved +2 mm material additions.",
+        "Uncalled corner C5; masking and pierce are white piercing when so scoped.",
+        "Order thickness may differ from drawing; use controlling order with provenance."
+      ],
+      "source": "J8"
+    },
+    "719": {
+      "notes": [
+        "MARKING is white pierce."
+      ],
+      "source": "J22,L22"
+    },
+    "733": {
+      "data_pdf_policy": "CONFIRM_CONFLICT",
+      "notes": [
+        "Confirm any physical difference between DXF and drawing."
+      ],
+      "source": "J19"
+    },
+    "745": {
+      "notes": [
+        "Uncuttable holes may be piercing.",
+        "Confirm if corner R reduces a controlled dimension."
+      ],
+      "source": "J32"
+    },
+    "777": {
+      "notes": [
+        "Uncalled exterior corners are sharp; extreme heat-risk corners may be R0.5 only if evidence proves applicability."
+      ],
+      "source": "J52"
+    },
+    "779": {
+      "notes": [
+        "Taps use pilot openings.",
+        "Square-tube +1 mm hole needs explicit confirmation; do not globally expand.",
+        "Uncalled outside R is sharp."
+      ],
+      "source": "J169"
+    },
+    "790": {
+      "notes": [
+        "Uncalled exterior corners sharp; explicit instructions override."
+      ],
+      "source": "J131"
+    },
+    "792": {
+      "notes": [
+        "Customer H7 reamer diameter is nominal -0.1 mm."
+      ],
+      "source": "J152"
+    },
+    "794": {
+      "notes": [
+        "Near-bend hole should not be silently moved; scoped process may require opening rather than white piercing."
+      ],
+      "source": "J16"
+    },
+    "822": {
+      "notes": [
+        "An explicitly marked 1 mm スリワリ can denote a SLIT; verify count/host.",
+        "Bend R>=5 with no overall size may need confirmation."
+      ],
+      "source": "J151"
+    },
+    "829": {
+      "data_pdf_policy": "DATA_NO_DIM_COMPARE",
+      "notes": [
+        "When supplied, customer DATA dimensions are authoritative; no PDF/DATA numeric-only comparison.",
+        "Physical hole identity/count/topology and manufacturing QA remain mandatory."
+      ],
+      "source": "J14"
+    },
+    "859": {
+      "notes": [
+        "Exterior corners sharp by default; ≥19 mm case needs confirmation.",
+        "Cutting below half thickness needs confirmation."
+      ],
+      "source": "J68"
+    },
+    "875": {
+      "notes": [
+        "For thickness <=9 mm cut holes below t/2 become piercing.",
+        "For thickness >=12 mm holes below t become white piercing."
+      ],
+      "source": "J85"
+    },
+    "898": {
+      "notes": [
+        "Uncalled R uses R3, uncalled C uses C3 where applicable.",
+        "In-house J-mark vs customer-operation determines pilot-hole / white-piercing route.",
+        "PUNCH maps to white piercing."
+      ],
+      "source": "J4,L4"
+    },
+    "899": {
+      "notes": [
+        "Proved welded seams require KEGAKI.",
+        "Tap pilot differing from in-house setting requires confirmation.",
+        "All customer-scoped piercing is through."
+      ],
+      "source": "J96"
+    },
+    "908": {
+      "notes": [
+        "Tap diameter <= thickness becomes white piercing.",
+        "All reamer holes white piercing; laser mark is white piercing.",
+        "A possible double Nobi is not automatic without scoped evidence."
+      ],
+      "source": "J39,L39"
+    }
+  }
+}
