@@ -167,11 +167,18 @@ def canonical_job_anomalies(job: Dict[str, Any]) -> List[str]:
             if group.get("status") == "PROVED" and not owned:
                 out.append(f"{code}:SOURCE_GROUP_HAS_NO_PHYSICAL_ENTITIES:{gid}")
             if family == "BEND" and group.get("status") == "PROVED":
-                if len(owned) != 2 or any(
-                    e.get("type") != "LINE" or e.get("linetype") != "DASHED"
-                    for e in owned
-                ):
-                    out.append(f"{code}:BEND_PAIR_SOURCE_GROUP_MISMATCH:{gid}")
+                # One source bend may have two physical lines; a group can
+                # legitimately contain several bends. Check each member.
+                for member in members_by_group.get(gid, []):
+                    lines = [
+                        entity_by_id[eid] for eid in member.get("entity_ids", [])
+                        if eid in entity_by_id
+                    ]
+                    if len(lines) != 2 or any(
+                        e.get("type") != "LINE" or e.get("linetype") != "DASHED"
+                        for e in lines
+                    ):
+                        out.append(f"{code}:BEND_PAIR_SOURCE_GROUP_MISMATCH:{gid}")
             if family == "KEGAKI" and group.get("status") == "PROVED":
                 if any(e.get("type") != "LINE" or e.get("color") != 1 for e in owned):
                     out.append(f"{code}:KEGAKI_SOURCE_GROUP_GEOMETRY_MISMATCH:{gid}")
