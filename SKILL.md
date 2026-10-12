@@ -59,8 +59,15 @@ executable job, not only a textual interpretation.
 3. **Feature routing:** Build a complete census for each code using
    `skills/lispcad/router/FEATURE_CENSUS.md`. Each Router family must be
    `YES`, `NO` or `UNKNOWN`; UNKNOWN loads its rule. Consult current
-   `ROUTER.yaml` and `RULE_COVERAGE.yaml`. Optional deterministic resolver:
-   `python tools/resolve_rules.py census.json`. Actually read selected rules.
+   `ROUTER.yaml` and `RULE_COVERAGE.yaml`. Deterministic resolver:
+   `python tools/resolve_rules.py census.json` when Python is available.
+   Consume its mandatory L0 bootstrap, L1 source/physical census, L2
+   selected mode/feature/geometry, and L3 validation/export/QA stage plans
+   at their actual execution stages. **All four stages are mandatory**;
+   reduced initial reading never permits skipping a later gate. Reroute
+   any code whose source feature classification changes after zoom/DATA audit.
+   Actually read the selected rule files; never treat a selected path as proof
+   that its contents were loaded.
 4. **Engineering geometry:** Establish part identity, datum, witness graph,
    source group/member inventory, hole/slot/R/C families and, when applicable,
    FACE_GRAPH, attachment edge, Nobi, bend relief and fold-back ownership.
