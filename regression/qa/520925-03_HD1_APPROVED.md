@@ -7,18 +7,18 @@ The operator confirmed on 2026-10-12:
 1. **HD1.dxf is an approved technical instruction for this job**, and may be
    consulted for the **method** on similar future drawings.
 2. **Nobi 6.70 / 5.88 is handwriting specific to this job**. These numbers are
-   NOT new rows for \`references/NOBI_TABLES.md\`.
-3. The revised output \`hd1_revised.zip\` is a post-instruction reconstruction,
+   NOT new rows for `references/NOBI_TABLES.md`.
+3. The revised output `hd1_revised.zip` is a post-instruction reconstruction,
    not an independent PDF-only solve.
 
 Authority remains the current repository's source and manufacturing contracts.
-\`HD1.dxf\` is NOT permission to inject its specific coordinates into another
+`HD1.dxf` is NOT permission to inject its specific coordinates into another
 drawing. A future PDF must prove its own host faces, witnesses, radii,
 Nobi, material domain and contact-footprint parameters.
 
 **Not a blind reference test:** the revised HD1 job followed inspection of a
 sample DXF. Retain the original source-only snapshot and classify these
-results as \`REFERENCE_ASSISTED_UNDERSTANDING\` plus the new operator-approved
+results as `REFERENCE_ASSISTED_UNDERSTANDING` plus the new operator-approved
 HD1 technical evidence. A future blind assessment must withhold all sample
 geometry until after the source-only snapshot is frozen.
 
@@ -41,17 +41,17 @@ The 056135 displayed inside angle 83.66° must not be confused with the
 96.34° ARC sweep when the associated DIMENSION text is overridden.
 
 The PDF detailed part material/t4.5 remains authoritative under existing
-\`DETAILED_SOURCE_BUNDLE\` precedence; conflicting page-1 summary material
+`DETAILED_SOURCE_BUNDLE` precedence; conflicting page-1 summary material
 must be accounted for, not unconditionally substituted.
 
 ## Generalizable mechanical lessons — existing rules, not new solvers
 
-- Use \`SOURCE_MANUFACTURING_NOTE_CENSUS\` and \`PART_IDENTITY_GRAPH\` to
+- Use `SOURCE_MANUFACTURING_NOTE_CENSUS` and `PART_IDENTITY_GRAPH` to
   distinguish welded constituent A from host B.
-- Use \`KEGAKI.md\` to project **contact surfaces/footprint onto B**, not to
+- Use `KEGAKI.md` to project **contact surfaces/footprint onto B**, not to
   copy the full A contour or draw guessed Magenta marks on A.
-- Use \`FACE_GRAPH_UNFOLD_PROTOCOL\`, \`FORMED_PROFILE_OD_MEASUREMENT\` and
-  \`ACUTE_BEND_LT85_FROM_SOURCE\` to reconstruct the physical outside
+- Use `FACE_GRAPH_UNFOLD_PROTOCOL`, `FORMED_PROFILE_OD_MEASUREMENT` and
+  `ACUTE_BEND_LT85_FROM_SOURCE` to reconstruct the physical outside
   envelope, choose the real free-edge datum and measure OD before deducting
   handwritten Nobi.
 - Compare fold-back face mapping, host and contact direction separately from
@@ -63,7 +63,7 @@ must be accounted for, not unconditionally substituted.
 
 ## Executable regression and scope
 
-\`tests/test_520925_03_hd1_semantics.py\` contains reduced **synthetic CUT
+`tests/test_520925_03_hd1_semantics.py` contains reduced **synthetic CUT
 holders** with the approved HD1 KEGAKI/BEND/OD expectations. It checks:
 
 1. Six scoped parts' note-family ownership, 11 KEGAKI and four BEND lines,
@@ -73,12 +73,12 @@ holders** with the approved HD1 KEGAKI/BEND/OD expectations. It checks:
 3. Negative: B-assigned KEGAKI emitted on A; invalid assigned destination.
 4. Negative: wrong Nobi versus OD/flat/bend-pair arithmetic.
 5. Negative: incomplete two-line bend member.
-6. Negative: \`VIEWS_ONLY\` with only boolean claims of source exhaustion and
+6. Negative: `VIEWS_ONLY` with only boolean claims of source exhaustion and
    no candidate/unresolved-object evidence.
 
-**Limits:** This unit regression does **not** visually parse \`520925-03.pdf\`,
+**Limits:** This unit regression does **not** visually parse `520925-03.pdf`,
 verify actual contact surfaces against all dimensions, or assert exact
-Hausdorff equality with \`520925-03_SS.dxf\` (not included in the branch).
+Hausdorff equality with `520925-03_SS.dxf` (not included in the branch).
 Do not label structural CI as fresh-source mechanical PASS. When reference
 assets are available under an approved role, perform source-first/blind
 reproduction and an independent physical-family diff separately.
@@ -90,11 +90,11 @@ reproduction and an independent physical-family diff separately.
 - A canonical source-member self-equality and DXF ENTITY_ID read-back can
   pass if a production note was omitted upstream. The remaining failure is
   **source evidence ownership and runtime wiring**.
-- \`tools/holistic_engineering_guard.py::canonical_job_anomalies\` verifies
+- `tools/holistic_engineering_guard.py::canonical_job_anomalies` verifies
   mapped manufacturing notes, target code/host assignment, source family and
   canonical member roles, per-member BEND double lines, and provided numeric
   OD/Nobi witness chains.
-- \`tools/export_canonical_dxf.py\` runs the semantic gate before output.
+- `tools/export_canonical_dxf.py` runs the semantic gate before output.
   No canonical schema bump, no changes to material/Nobi tables or serializer.
 
 **Residual risk:** An entirely unread/unrecorded PDF instruction is invisible
