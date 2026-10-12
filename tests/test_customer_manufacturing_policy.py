@@ -94,3 +94,21 @@ def test_catalog_has_no_management_or_contact_fields():
         assert re.fullmatch(r"[0-9]+", code)
         assert set(record) <= {"source", "notes", "data_pdf_policy", "nobi_profile"}
         assert not any(k in record for k in ("name", "phone", "email", "staff", "contact"))
+
+def test_customer_technical_note_census_partitions_all_codes():
+    census = CATALOG["customer_note_census"]
+    included = set(CATALOG["customers"])
+    excluded = set(census["excluded_non_cad_codes"])
+    obsolete = set(census["fully_obsolete_codes"])
+    assert len(included) == 90
+    assert len(excluded) == 16
+    assert obsolete == {"880"}
+    assert included.isdisjoint(excluded | obsolete)
+    assert excluded.isdisjoint(obsolete)
+    assert len(included | excluded | obsolete) == census["source_note_bearing_codes"] == 107
+    assert census["active_note_bearing_codes"] == 106
+    assert CATALOG["source_workbook_sha256"] == "67851a40fc2fdde09f3ba0692cece5054ca9759d074134d8e16a1774cf7bbddb"
+    assert "891" in included and "610" in included and "621" in included
+    assert "old" in " ".join(CATALOG["customers"]["891"]["notes"]).lower() or "obsolete" in " ".join(CATALOG["customers"]["891"]["notes"]).lower()
+    assert "OBSOLETE" in " ".join(CATALOG["customers"]["610"]["notes"])
+    assert "OBSOLETE" in " ".join(CATALOG["customers"]["621"]["notes"])

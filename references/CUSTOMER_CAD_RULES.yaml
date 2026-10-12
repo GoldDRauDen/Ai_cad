@@ -623,5 +623,34 @@
       ],
       "source": "J340"
     }
+  },
+  "source_workbook_sha256": "67851a40fc2fdde09f3ba0692cece5054ca9759d074134d8e16a1774cf7bbddb",
+  "customer_note_census": {
+    "source_note_bearing_codes": 107,
+    "active_note_bearing_codes": 106,
+    "cad_rule_codes": 90,
+    "excluded_non_cad_codes": [
+      "410",
+      "601",
+      "630",
+      "667",
+      "727",
+      "784",
+      "789",
+      "856",
+      "860",
+      "862",
+      "878",
+      "895",
+      "935",
+      "948",
+      "971",
+      "993"
+    ],
+    "fully_obsolete_codes": [
+      "880"
+    ],
+    "exclusion_reason": "Only administration, NC operations, historical company names, or non-operative vague checks; not laser-cut CAD geometry.",
+    "strike_rule": "Rich-text and whole-cell strikethrough spans removed before curation. AS済 is sync metadata only."
   }
 }
