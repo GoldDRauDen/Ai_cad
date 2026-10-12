@@ -136,3 +136,8 @@ Before production export:
 `SOURCE MANUFACTURING NOTES -> SOURCE ACTIVE FAMILIES -> FINAL CENSUS -> LOADED ROUTES -> CANONICAL FAMILIES -> SERIALIZED OUTPUT`
 
 must close without an unexplained missing note/family. A valid DXF file or correct bounding box does not compensate for a missing manufacturing instruction, missing manufacturing family, or a source ARC flattened into its chord.
+
+
+## Customer-code census — approved 2026-10-12
+Record `customer_code: <numeric JOB STATISTICS code>|null` independently from the part/job family code. Never infer KH646 from Japanese name alone or from the unrelated historic job-family 646 rule. If absent, use general CAD rules without a missing-code REVIEW.
+After resolving customer code, load the selected CAD-only record from `references/CUSTOMER_CAD_RULES.yaml` via `tools/resolve_rules.py`. KH646 bend routes additionally load `references/AIKOKU_646_NOBI.md`. A customer-specific DATA dimensional exception never waives mismatch checks for missing/extra M/Ø/holes, source physical census or immutable DATA provenance. If source manufacturing notes are unresolved, retain local UNKNOWN/FLAG under current rules.

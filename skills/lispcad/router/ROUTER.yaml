@@ -17,6 +17,7 @@ default_load:
   - references/PART_IDENTITY_GRAPH.md
   - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
   - references/SOURCE_FEATURE_GROUP_CLOSURE.md
+  - references/CAD_CUSTOMER_POLICY.md
   - skills/lispcad/router/FEATURE_CENSUS.md
 
 # Stage-specific mandatory gates, not optional rules.
@@ -91,11 +92,13 @@ feature_routes:
     load:
       - skills/lispcad/features/HOLES_TAPS.md
       - references/MATERIAL_RULES.md
+      - references/COUNTERSINK_COUNTERBORE.md
   TAP:
     depends_on: [HOLE]
     load:
       - skills/lispcad/features/HOLES_TAPS.md
       - references/THREAD_PILOT_TABLE.md
+      - references/THREAD_FINE_PILOT_TABLE.md
       - references/MATERIAL_RULES.md
   SLOT_STRAIGHT:
     load:
@@ -165,6 +168,12 @@ feature_routes:
   REVISION_CANCELLATION:
     load:
       - skills/lispcad/features/REVISION_CANCELLATION.md
+
+customer_rule_catalog: references/CUSTOMER_CAD_RULES.yaml
+customer_routes:
+  '646':
+    load:
+      - references/AIKOKU_646_NOBI.md
 
 dependency_aliases:
   BEND:

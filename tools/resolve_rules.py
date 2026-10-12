@@ -77,6 +77,29 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
     stage_routes = router.get("stage_routes")
     if not isinstance(stage_routes, dict) or set(stage_routes) != set(stages):
         raise ResolutionError("Incomplete or invalid mandatory stage_routes")
+    # Numeric customer ID comes ONLY from job statistics, never from names,
+    # part IDs, barcodes or the legacy job-family '646' DATA requirement.
+    code_raw = census.get("customer_code")
+    if code_raw is None:
+        customer_code = None
+    elif isinstance(code_raw, bool) or not str(code_raw).strip().isdigit():
+        raise ResolutionError("customer_code must be an explicit numeric job-statistics ID")
+    else:
+        customer_code = str(int(str(code_raw).strip()))
+    catalog_path = router.get("customer_rule_catalog")
+    if catalog_path != "references/CUSTOMER_CAD_RULES.yaml":
+        raise ResolutionError("Unapproved customer rule catalog path")
+    catalog = yaml.safe_load((root / catalog_path).read_text(encoding="utf-8"))
+    if not isinstance(catalog, dict) or catalog.get("scope") != "CAD_ONLY":
+        raise ResolutionError("Unapproved CAD customer catalog")
+    customer_rules = (catalog.get("customers") or {}).get(customer_code, {}) if customer_code else {}
+    if customer_rules and not isinstance(customer_rules, dict):
+        raise ResolutionError("Invalid selected customer rule record")
+    if customer_rules.get("nobi_profile") == "AIKOKU_646" and customer_code != "646":
+        raise ResolutionError("KH646 Nobi profile/customer mismatch")
+    if customer_code == "646" and customer_rules.get("nobi_profile") != "AIKOKU_646":
+        raise ResolutionError("KH646 Nobi routing record missing")
+
     result: list[str] = []
     seen_paths: set[str] = set()
     stage_plans: dict[str, dict] = {}
@@ -120,6 +143,8 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
     current_stage = stages[2]
     add_group("stage_routes", current_stage)
     add_group("mode_routes", part_mode)
+    if customer_code in (router.get("customer_routes") or {}) and part_mode in ("BEND", "MULTI_FACE", "UNKNOWN"):
+        add_group("customer_routes", customer_code)
 
     visited: set[str] = set()
     aliases = router.get("dependency_aliases", {})
@@ -160,6 +185,8 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
         "release": router["release"],
         "production_mode": "repo_direct",
         "source_mode": source_mode,
+        "customer_code": customer_code,
+        "customer_rules": customer_rules,
         "part_mode": part_mode,
         "reference_present": ref_presence,
         "selected_features": selected,
