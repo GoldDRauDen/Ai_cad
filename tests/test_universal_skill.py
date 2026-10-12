@@ -54,3 +54,22 @@ def test_invalid_route_to_regression_is_rejected(tmp_path):
     # silently bundling partial contents.
     with pytest.raises(builder.BundleError, match="Missing or unsafe"):
         builder.approved_paths(root)
+
+
+def test_rulepack_cli_writes_one_file_with_manifest_hash(tmp_path):
+    """Exercise the actual one-file portability entry point, not only its pure helper."""
+    import hashlib
+    import json
+    import subprocess
+    import sys
+
+    outfile = tmp_path / "TrainAiCad_E2E_RULEPACK.md"
+    cmd = [sys.executable, str(ROOT / "tools/build_rule_bundle.py"),
+           "--repo-root", str(ROOT), "--output", str(outfile)]
+    process = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=True)
+    record = json.loads(process.stdout)
+    data = outfile.read_bytes()
+    assert record["bytes"] == len(data)
+    assert record["sha256"] == hashlib.sha256(data).hexdigest()
+    assert "BEGIN SOURCE: AI_ENTRYPOINT.md" in data.decode("utf-8")
+    assert "BEGIN SOURCE: skills/lispcad/versions/" not in data.decode("utf-8")
