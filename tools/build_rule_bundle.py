@@ -16,7 +16,7 @@ import yaml
 
 # This tool is also imported by tests using importlib.util.spec_from_file_location.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from audit_rule_coverage import audit as audit_active_rule_coverage
+from audit_rule_coverage import CoverageError, audit as audit_active_rule_coverage
 
 ROOT = Path(__file__).resolve().parents[1]
 ROUTER_PATH = "skills/lispcad/router/ROUTER.yaml"
@@ -42,7 +42,10 @@ def approved_paths(root: Path = ROOT) -> tuple[str, list[str]]:
     root = Path(root).resolve()
     # A seemingly complete bundle must not silently miss an active topology
     # or forming rule omitted from the router.
-    audit_active_rule_coverage(root)
+    try:
+        audit_active_rule_coverage(root)
+    except CoverageError as exc:
+        raise BundleError(f"Missing or unsafe active rule coverage: {exc}") from exc
     router = yaml.safe_load((root / ROUTER_PATH).read_text(encoding="utf-8"))
     if not isinstance(router, dict) or router.get("production_mode") != "repo_direct":
         raise BundleError("Cannot bundle non-repo-direct Router")
