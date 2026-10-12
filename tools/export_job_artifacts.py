@@ -206,7 +206,7 @@ def _verify_cut(path, expected):
                     "CANONICAL_MEMBER_IDS=" + ",".join(members)} <= set(values):
                 fail(f"{path.name}: missing/reassigned TRAINAICAD provenance")
         return True
-    except (OSError, ezdxf.DXFError):
+    except (OSError, UnicodeError, ValueError, ezdxf.DXFError):
         return False
 
 
