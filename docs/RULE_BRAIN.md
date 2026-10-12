@@ -56,11 +56,18 @@ source-grounded YES/NO/UNKNOWN to narrow safely.
 
 ## Scope of this refactor
 
-This refactor does not change material formulas, bend/Nobi algorithms,
-canonical schema, saved DXF geometry, production output packaging or existing
-approved regression data. JSON-per-code and PASS-only individual DXF packaging
-require a separate exporter implementation with source/part QA and round-trip
-tests; do not claim those behaviors are already implemented.
+This refactor does not change material formulas, bend/Nobi algorithms or
+the TrainAiCad-CANONICAL-V4.31 input schema. It extends packaging only after
+the composite canonical/member/XDATA read-back: every code is stored as an
+independently readable canonical JSON and PASS codes receive contour-only
+LINE/ARC/CIRCLE DXF derived from exactly those same entities. PREVIEW and
+VIEWS_ONLY parts receive no individual production DXF. The generated cut-only
+DXF is reopened to verify every physical primitive and derived identity.
+These structural checks do not substitute for actual PDF/engineering QA.
+
+Older versioned portable snapshots remain immutable, excluded from normal
+routing and retained because existing CI checks their historical contents.
+They are not competing current production rules.
 
 No vector index, embeddings, auto-learning from output or automatic rule
 promotion is required.
