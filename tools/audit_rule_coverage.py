@@ -67,7 +67,7 @@ def audit(root: Path = ROOT, router: dict | None = None) -> dict:
                 routed.add(p)
     all_paths = required | routed
     for p in sorted(all_paths):
-        if (p.startswith(EXCLUDED_PREFIXES) or p.startswith("/") or "\\\\" in p
+        if (p.startswith(EXCLUDED_PREFIXES) or p.startswith("/") or "\\" in p
                 or ".." in Path(p).parts):
             raise CoverageError(f"Forbidden active route {p}")
         resolved = (root / p).resolve()
