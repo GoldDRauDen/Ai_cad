@@ -4,6 +4,20 @@ Current production release is **V4.33**.
 
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
+**Current packaging contract (supersedes inherited V4.9 one-composite-only
+wording; retains V4.31 canonical input and all engineering/QA gates):** after
+`tools/export_canonical_dxf.py` validates source/canonical completeness and
+reopens the composite with verified `TRAINAICAD ENTITY_ID`, the same canonical
+job emits `geometry_json/<CODE>.json` for every PASS/PREVIEW/VIEWS_ONLY code,
+`parts_dxf/<PASS_CODE>.dxf` for PASS codes only, and exactly one
+`<JOB>_ALL.dxf` or `<JOB>_ALL_REVIEW_ONLY.dxf` at the output root.
+Individual PASS DXFs are CUT-only LINE/ARC/CIRCLE and exclude bend/marking,
+POINT, notes and every unproved entity; their derived provenance and physical
+geometry are validated by actual saved-DXF read-back. One code's REVIEW
+does not suppress other proved codes' PASS cut files, while it always makes
+the combined DXF REVIEW_ONLY. Existing `tools/export_dxf.py` compatibility
+modes do not override this canonical E2E contract.
+
 ## Invocation contract
 
 When the user supplies CAD source and says `E2E`, `read TrainAiCad and do E2E`, or equivalent, treat that as an instruction to execute the complete current repo-direct production flow below to its executable limit. Do not require the user to restate census, routing, canonical, export, read-back or QA steps already defined by this repository.
