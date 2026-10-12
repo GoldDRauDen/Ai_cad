@@ -20,6 +20,13 @@
       ],
       "source": "J155"
     },
+    "390": {
+      "notes": [
+        "Proved blue LINE geometry denotes KEGAKI; blue or red text alone is not a KEGAKI feature.",
+        "Treat the customer DATA view as the front face when source provenance agrees."
+      ],
+      "source": "J377"
+    },
     "395": {
       "data_pdf_policy": "PDF_PRIORITY",
       "notes": [
@@ -36,6 +43,18 @@
       ],
       "source": "J65"
     },
+    "425": {
+      "notes": [
+        "Unless explicitly instructed, outside corners remain sharp (pin角)."
+      ],
+      "source": "J368"
+    },
+    "433": {
+      "notes": [
+        "Only when numeric customer code 433 is identified, generic DATA/PDF same-parameter numeric conflict threshold is 1.0 mm; this does not waive hole/feature QA."
+      ],
+      "source": "J280"
+    },
     "473": {
       "notes": [
         "All customer-specified pierces are through piercing.",
@@ -50,6 +69,57 @@
       ],
       "source": "J91"
     },
+    "513": {
+      "notes": [
+        "For TAP and countersink/counterbore processes, CAD laser output is the proved pilot opening only.",
+        "An uncuttable pilot becomes customer-scoped PIERCING."
+      ],
+      "source": "J225"
+    },
+    "514": {
+      "notes": [
+        "Undimensioned centerline may be understood as center only when the proved feature is centered by the source's convention; an explicit off-center callout overrides.",
+        "If a checkered-sheet face is not marked, the shown/front face is the default textured side, unless source says back."
+      ],
+      "source": "J361"
+    },
+    "518": {
+      "notes": [
+        "All explicit PIERCING indications are through piercing."
+      ],
+      "source": "J393"
+    },
+    "563": {
+      "notes": [
+        "Acute-angle bend dimensions are based on proved *as-formed* lengths, not arbitrary theoretical intersection points."
+      ],
+      "source": "J311"
+    },
+    "587": {
+      "notes": [
+        "A C callout written 3×45° means C3; the numeric dimension precedes the angle."
+      ],
+      "source": "J253"
+    },
+    "600": {
+      "notes": [
+        "For proved t3.2 jig, pierce may belong on interior side; lacking proved coordinate means local REVIEW, not guessed relocation."
+      ],
+      "source": "J275"
+    },
+    "610": {
+      "notes": [
+        "Active instruction only: finish symbols ▽▽, ▽, ※ at their proved scopes require +2 mm material allowance.",
+        "Old default 'outer contour only' sentence is struck through and OBSOLETE."
+      ],
+      "source": "J210"
+    },
+    "624": {
+      "notes": [
+        "Require proof of Nobi or developed length before final bending coordinates; use customer confirmation when the supplied dimensions cannot close."
+      ],
+      "source": "J341"
+    },
     "646": {
       "nobi_profile": "AIKOKU_646",
       "notes": [
@@ -59,12 +129,26 @@
       ],
       "source": "顧客別情報一覧!B6,J6"
     },
+    "676": {
+      "notes": [
+        "PDF dimensions control even with customer DXF DATA.",
+        "If the physical discrepancy is substantial, request confirmation.",
+        "Proved welding locations require KEGAKI and scoped left/right assembly identifiers must not be guessed."
+      ],
+      "source": "J382"
+    },
     "703": {
       "notes": [
         "PUNCH is white pierce.",
         "Do not double Nobi unless proved for the specific bend."
       ],
       "source": "J90,L90"
+    },
+    "705": {
+      "notes": [
+        "PUNCH = white piercing, not through piercing or KEGAKI, when source scope is clear."
+      ],
+      "source": "J323"
     },
     "706": {
       "notes": [
@@ -88,6 +172,13 @@
       ],
       "source": "J22,L22"
     },
+    "720": {
+      "notes": [
+        "Handwritten source instructions control.",
+        "A ring/doughnut Ø×Ø instruction does not authorize adding all apparent PCD holes from a reference unless source separately proves those holes."
+      ],
+      "source": "J350"
+    },
     "733": {
       "data_pdf_policy": "CONFIRM_CONFLICT",
       "notes": [
@@ -95,12 +186,47 @@
       ],
       "source": "J19"
     },
+    "741": {
+      "notes": [
+        "On explicitly scoped marking-to-white-pierce assignments, MARKING/KEGAKI is white piercing rather than freeform CUT."
+      ],
+      "source": "J266"
+    },
     "745": {
       "notes": [
         "Uncuttable holes may be piercing.",
         "Confirm if corner R reduces a controlled dimension."
       ],
       "source": "J32"
+    },
+    "760": {
+      "notes": [
+        "Proved dotted lines denote KEGAKI unless actual DATA color/linetype evidence contradicts it.",
+        "For checkered sheet lock the textured face as the upper face; NC joints are excluded."
+      ],
+      "source": "J172"
+    },
+    "764": {
+      "notes": [
+        "Active rules: PIERCING and MARKING designate white piercing.",
+        "On explicitly scoped BFC customer drawings, TAP is white piercing even if the note is missing.",
+        "Counterbore pilot notes on the order may control; do not fabricate missing hole geometry."
+      ],
+      "source": "J251,K251,L251"
+    },
+    "765": {
+      "notes": [
+        "Uncalled outside corners use R3, including the specifically identified chamfered exterior regions; source explicit R/C still controls."
+      ],
+      "source": "J289"
+    },
+    "776": {
+      "notes": [
+        "Use proved handwritten tap-hole and Nobi values.",
+        "PIERCING is through piercing; PUNCH is white piercing; a parenthesized note may indicate conditional operation and must be checked.",
+        "Corner precedence: handwriting > drawing note > general 旭 shop rule when neither is present."
+      ],
+      "source": "J257,K257,L257"
     },
     "777": {
       "notes": [
@@ -115,6 +241,20 @@
         "Uncalled outside R is sharp."
       ],
       "source": "J169"
+    },
+    "780": {
+      "notes": [
+        "An interference-relief hole may be permitted at a proved bend collision without additional customer approval.",
+        "Permission is not geometry: no automatic hole unless shape, size, host and witness are demonstrable."
+      ],
+      "source": "J252"
+    },
+    "781": {
+      "notes": [
+        "Open actual round CUT holes only at source indications using Φ.",
+        "TAP, drill and counterbore process notes produce white pierce rather than full machining outlines; MARKING = white piercing."
+      ],
+      "source": "J315"
     },
     "790": {
       "notes": [
@@ -134,12 +274,39 @@
       ],
       "source": "J16"
     },
+    "803": {
+      "notes": [
+        "If adding an automatic corner radius shortens a dimensioned part, require confirmation."
+      ],
+      "source": "J95"
+    },
+    "804": {
+      "notes": [
+        "Numbered customer DATA may differ from printed drawing; verify same physical parameter before selecting authority.",
+        "NC pierce/joint position is deferred."
+      ],
+      "source": "J303"
+    },
+    "808": {
+      "notes": [
+        "On a handwritten ring/round drawing with specified -0.05 tolerance, subtract exactly 0.05 mm on the scoped value."
+      ],
+      "source": "J254"
+    },
     "822": {
       "notes": [
         "An explicitly marked 1 mm スリワリ can denote a SLIT; verify count/host.",
         "Bend R>=5 with no overall size may need confirmation."
       ],
       "source": "J151"
+    },
+    "824": {
+      "notes": [
+        "This customer's Nobi is sometimes printed as one-sided allowance and the affected bend needs 2× the proved one-side allowance.",
+        "Do not double an unrelated already-total Nobi; if the interpretation of V-die is missing, require confirmation.",
+        "Microscopic NC hole joints are deferred."
+      ],
+      "source": "J260"
     },
     "829": {
       "data_pdf_policy": "DATA_NO_DIM_COMPARE",
@@ -148,6 +315,29 @@
         "Physical hole identity/count/topology and manufacturing QA remain mandatory."
       ],
       "source": "J14"
+    },
+    "830": {
+      "notes": [
+        "Follow specific drawing indications, including exterior R callouts.",
+        "Machine-infeasible R is manufacturing WARN if the geometric instruction is otherwise unambiguous."
+      ],
+      "source": "J385"
+    },
+    "843": {
+      "notes": [
+        "For this customer's explicitly one-sided Nobi, multiply by two for the proved physical bend.",
+        "Source-specific AL A5052 t5 Nobi=7.72 mm is customer-only, not a global AL default.",
+        "When explicitly instructed to add bend SLIT, position at the proved Nobi-center; no auto-SLIT without instruction.",
+        "For SUS respect source front-side label."
+      ],
+      "source": "J318"
+    },
+    "850": {
+      "notes": [
+        "Below-half-thickness holes may exceptionally be cut only with case-specific confirmation.",
+        "Close neighboring holes may form an R1 keyhole/daruma; missing external notebook details prevent automatic construction and require REVIEW."
+      ],
+      "source": "J320"
     },
     "859": {
       "notes": [
@@ -162,6 +352,25 @@
         "For thickness >=12 mm holes below t become white piercing."
       ],
       "source": "J85"
+    },
+    "879": {
+      "notes": [
+        "For proved corner-cut bent geometry, custom slit may be prohibited; exact condition refers to unrequested auxiliary sheet, so unresolved interpretation stays local REVIEW.",
+        "Hole deformation from bending may be accepted as manufacturing advisory, not a reason to alter source hole center."
+      ],
+      "source": "J288"
+    },
+    "881": {
+      "notes": [
+        "If a rib becomes dimensionally undersized due to added manufacturing R, confirm instead of accepting altered part size."
+      ],
+      "source": "J328"
+    },
+    "891": {
+      "notes": [
+        "Only ACTIVE span survives old mixed strikethrough: DATA differences require confirmation; older J-mark/pilot rules are OBSOLETE."
+      ],
+      "source": "J171"
     },
     "898": {
       "notes": [
@@ -179,6 +388,12 @@
       ],
       "source": "J96"
     },
+    "907": {
+      "notes": [
+        "Hairline grain orientation is printed near the drawing border; preserve directional face orientation."
+      ],
+      "source": "J246"
+    },
     "908": {
       "notes": [
         "Tap diameter <= thickness becomes white piercing.",
@@ -186,6 +401,72 @@
         "A possible double Nobi is not automatic without scoped evidence."
       ],
       "source": "J39,L39"
+    },
+    "915": {
+      "notes": [
+        "Customer DATA normally controls supplied geometry with the existing universal same-parameter semantic QA, unless a more explicit contrary instruction is proved."
+      ],
+      "source": "J384"
+    },
+    "921": {
+      "notes": [
+        "CENTER MARKING is white piercing.",
+        "Thin-gauge thermal-damage situations may require white piercing only when the source process scope is proved."
+      ],
+      "source": "J243,K243,L243"
+    },
+    "938": {
+      "notes": [
+        "Weld-location KEGAKI remains required even without in-house welding."
+      ],
+      "source": "J197"
+    },
+    "940": {
+      "notes": [
+        "M12 Ø10.5 note is marked uncertain by source; verify its scope rather than replacing universal M12×1.75 Ø10.3.",
+        "Mark/pin-hole/punch are white piercing when source identifies them."
+      ],
+      "source": "J274"
+    },
+    "956": {
+      "notes": [
+        "When a hole cannot be cut, confirm whether to represent piercing or omit the hole; never choose unilaterally."
+      ],
+      "source": "J182"
+    },
+    "957": {
+      "notes": [
+        "Weld-location KEGAKI remains required even when no in-house welding operation is planned.",
+        "For SUS bends lock front/back surface from source."
+      ],
+      "source": "J191"
+    },
+    "964": {
+      "notes": [
+        "Customer DATA controls dimensional values.",
+        "For exact seismic-fixture drawing category or welded construct, inside bend surface is the finished front side; verify that category before applying."
+      ],
+      "source": "J281"
+    },
+    "974": {
+      "notes": [
+        "A proved DATA/drawing discrepancy needs local confirmation.",
+        "If the source has multiple dimensional options, use the ordered drawing number as scope; do not choose by appearance."
+      ],
+      "source": "J102"
+    },
+    "978": {
+      "notes": [
+        "Thick plate holes that cannot be cut may be white piercing without separate inquiry if process/feature are proved.",
+        "Angular bends can use general 旭 Nobi only when the table supplies the corresponding supported angle/geometry; no fabricated non-90° Nobi."
+      ],
+      "source": "J290"
+    },
+    "979": {
+      "notes": [
+        "Uncalled outside corners stay sharp (pin角), except explicitly specified corner features."
+      ],
+      "source": "J340"
     }
   }
 }
