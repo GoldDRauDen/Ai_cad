@@ -90,6 +90,11 @@ def export_canonical_job(job: dict, output_dir, gap_mm=10.0, write_manifest=Fals
     manifest = export_job(job, out, gap_mm=gap_mm, mode="single", write_manifest=False)
     manifest = _stamp_and_verify(job, manifest, out, validation)
     manifest["artifacts"] = export_part_artifacts(job, out)
+    # Avoid stale production composites after PASS -> REVIEW (or reverse).
+    obsolete = (f"{manifest['job_id']}_ALL.dxf"
+                if manifest["status"] == "REVIEW_ONLY"
+                else f"{manifest['job_id']}_ALL_REVIEW_ONLY.dxf")
+    (out / obsolete).unlink(missing_ok=True)
     if write_manifest:
         (out / f"{manifest['job_id']}_MANIFEST.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
