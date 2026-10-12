@@ -14,6 +14,8 @@ import sys
 
 import yaml
 
+from audit_rule_coverage import audit as audit_active_rule_coverage
+
 ROOT = Path(__file__).resolve().parents[1]
 ROUTER_PATH = "skills/lispcad/router/ROUTER.yaml"
 BASE_FILES = (
@@ -36,6 +38,9 @@ class BundleError(ValueError):
 
 def approved_paths(root: Path = ROOT) -> tuple[str, list[str]]:
     root = Path(root).resolve()
+    # A seemingly complete bundle must not silently miss an active topology
+    # or forming rule omitted from the router.
+    audit_active_rule_coverage(root)
     router = yaml.safe_load((root / ROUTER_PATH).read_text(encoding="utf-8"))
     if not isinstance(router, dict) or router.get("production_mode") != "repo_direct":
         raise BundleError("Cannot bundle non-repo-direct Router")
@@ -61,7 +66,7 @@ def approved_paths(root: Path = ROOT) -> tuple[str, list[str]]:
         add(p)
     for p in router.get("default_load", []):
         add(p)
-    for group in ("source_routes", "mode_routes", "feature_routes"):
+    for group in ("stage_routes", "source_routes", "mode_routes", "feature_routes"):
         for route in router[group].values():
             for p in route.get("load", []):
                 add(p)
@@ -115,7 +120,7 @@ def main() -> int:
             raise BundleError("Output must be outside repository working tree")
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(content, encoding="utf-8")
-    except (BundleError, OSError, KeyError, yaml.YAMLError) as exc:
+    except (BundleError, ValueError, OSError, KeyError, yaml.YAMLError) as exc:
         print(f"RULEPACK_BUILD_FAIL: {exc}", file=sys.stderr)
         return 2
     print(json.dumps({"output": str(destination),
