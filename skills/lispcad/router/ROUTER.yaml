@@ -126,7 +126,7 @@ feature_routes:
       - references/NOBI_TABLES.md
   REVISION_CANCELLATION:
     load:
-      - regression/datum/520709-07_APPROVED.md
+      - skills/lispcad/features/REVISION_CANCELLATION.md
 
 dependency_aliases:
   BEND:

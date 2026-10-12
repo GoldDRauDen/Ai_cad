@@ -26,10 +26,30 @@ AI_BOOTSTRAP
             +-- modes/                   flat / bend-unfold
             +-- features/                hole, tap, slot, kegaki, slit, rib...
             +-- references/              material, Nobi, source/DATA, FACE_GRAPH...
-            +-- regression/              approved tests/evidence
+            +-- regression/              approved tests/evidence (not universal rules)
             +-- portable/                complete compatibility snapshot; not default
-            +-- versions/                historical archive; never normal production input
+            +-- versions/                CI-pinned historical snapshots; never production input
 ```
+
+## Deterministic rule retrieval
+
+After inspecting the source and completing `FEATURE_CENSUS.md`, an executor with Python
+can resolve exactly which modules to read:
+
+```sh
+python tools/resolve_rules.py path/to/feature_census.json
+```
+
+The JSON census must provide `source_mode`, `part_mode`, and every
+`ROUTER.yaml` feature with `YES`, `NO`, or `UNKNOWN`. Missing features are
+errors (not silently treated as `NO`). The resolver never searches historical
+snapshots, portable skills, or regression documents for production rules.
+See `docs/RULE_BRAIN.md`. The AI still has to inspect the actual source,
+perform geometry interpretation, apply mandatory gates, and verify saved DXF.
+
+Historical portable releases remain checked in because existing immutable-release
+regressions currently read them directly. Removing them safely requires migrating
+those tests first, not deleting the evidence.
 
 ## Important
 
