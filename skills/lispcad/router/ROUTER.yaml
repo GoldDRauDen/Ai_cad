@@ -9,6 +9,8 @@ default_load:
   - references/RUNTIME_AUTHORITY_GUARD.md
   - skills/lispcad/core/DRAWING_READING.md
   - references/SOURCE_DATA_CLASSIFICATION.md
+  - references/DXF_PHYSICAL_CURVE_DECODING.md
+  - references/CANONICAL_MEMBER_COMPLETENESS.md
   - references/MECHANICAL_CLASSIFIER.md
   - references/PART_IDENTITY_GRAPH.md
   - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
