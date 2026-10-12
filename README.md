@@ -71,6 +71,38 @@ points or polyline. The existing lower-level `tools/export_dxf.py` remains
 only a compatibility packager. Semantic PDF/source correctness still requires
 actual independent engineering QA.
 
+## Staged, coverage-checked deterministic routing
+
+Active engineering authority is still the Router and its approved modules.
+`tools/audit_rule_coverage.py` rejects an active `core/`, `features/`,
+`modes/`, `topology/` or `references/` file without a live route; this
+includes the stepped/notched flange rules that were formerly unreachable.
+The resolver now produces a per-code, **mandatory L0–L3** stage plan:
+L0 bootstrap; L1 source inspection and feature census; L2 routed geometry;
+L3 full validation/canonical/export/read-back. All stages must execute before
+PASS. Inherited V4.26 physical curve decoding, V4.31 completeness and V4.33
+holistic/reference-firewall requirements remain loaded before census.
+
+Read initial stages first; read later rule files just before their execution.
+This optimizes **initial context**, not necessarily cumulative whole-job tokens.
+If a feature becomes YES/UNKNOWN after source reinspection, rerun the resolver.
+Never change an unproved UNKNOWN into NO to save tokens.
+
+Generated scoped RAG index, single-file portable rulepack and benchmark:
+
+```sh
+python tools/audit_rule_coverage.py
+python tools/build_rule_index.py --output ../RAG_INDEX.yaml
+python tools/build_rule_bundle.py --output ../TrainAiCad_E2E_RULEPACK.md
+python tools/benchmark_rule_routes.py
+```
+
+`RAG_INDEX.yaml` is an on-demand derivative of Router; it is **not**
+another manually maintained source of production authority. Regression
+documents and history remain evidence, not live rule context; experimental
+MCP stays isolated. Exact duplicate-paragraph analysis is available via
+`python tools/audit_rule_duplicates.py`, but never auto-deletes formulas.
+
 ## Deterministic rule retrieval
 
 After inspecting the source and completing `FEATURE_CENSUS.md`, an executor with Python
