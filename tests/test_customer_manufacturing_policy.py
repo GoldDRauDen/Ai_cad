@@ -112,3 +112,14 @@ def test_customer_technical_note_census_partitions_all_codes():
     assert "old" in " ".join(CATALOG["customers"]["891"]["notes"]).lower() or "obsolete" in " ".join(CATALOG["customers"]["891"]["notes"]).lower()
     assert "OBSOLETE" in " ".join(CATALOG["customers"]["610"]["notes"])
     assert "OBSOLETE" in " ".join(CATALOG["customers"]["621"]["notes"])
+
+def test_bend_feasibility_is_warning_only_and_routed_on_nobi():
+    x = census(646, "BEND")
+    x["features"]["NOBI"]["state"] = "YES"
+    assert "references/BEND_TOOLING_FEASIBILITY.md" in resolve_rules(x)["rule_paths"]
+    doc = (ROOT / "references/BEND_TOOLING_FEASIBILITY.md").read_text(encoding="utf-8")
+    assert "| SUS | 3 | V40 | 28.4 | 29.6 |" in doc
+    assert "| SS | 4.5 | V25 | 17.8 | 26 |" in doc
+    assert "| AL | 4 | V40 | 27.4 | - |" in doc
+    assert "WARN only" in doc and "not REVIEW" in doc
+    assert "do not promote" in doc

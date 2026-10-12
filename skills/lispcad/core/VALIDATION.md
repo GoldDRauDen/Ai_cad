@@ -1,3 +1,6 @@
+## 2026-10-12 production validation precedence — customer CAD rules
+For each code obtain only explicit numeric `customer_code` from the job statistics sheet. Missing code uses general rules without automatic REVIEW. A `DATA_NO_DIM_COMPARE` customer policy waives **only** the generic numeric PDF/DATA mismatch gate, never feature existence, physically wrong/missing holes, nominal M identity, topology, DATA/Geometry-JSON member completeness, or saved DXF read-back. A clear handwritten Nobi outranks a table value and table difference is an audit record, not blocking FLAG. SS t>=19 automatic R3 is only for corners on the material's **outer perimeter contour**, including concave corners of that exterior contour, never inner hole/slot contours. Machine minimum L/Z warnings are nonblocking when dimensions/geometry are independently proved. The NC toolpath stage is deferred; keep CAD PIERCING semantic rules. Never use numeric KH646 merely because the old job-family identifier contains digits 646.
+
 # V4.33 — HOLISTIC_ENGINEERING_CHALLENGE hard gates
 
 Before canonical serialization, run the routed holistic challenge and final sanity review.

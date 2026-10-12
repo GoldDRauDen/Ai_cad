@@ -18,3 +18,5 @@ Tests added for customer routing, general fallback, reject inferred customer IDs
 ## Pinned source hashes (audit without storing originals)
 `CAD_顧客別 0911 .xlsm` SHA-256: `67851a40fc2fdde09f3ba0692cece5054ca9759d074134d8e16a1774cf7bbddb`.
 `伸び下穴経路一覧.xlsx` SHA-256: `2585a9e4426e8bf5899875a4ec315904c578f726f1603cab27c9577f6655c395`.
+
+The source `旭26-9-18` min-leg L/Z applicability is now retained in `references/BEND_TOOLING_FEASIBILITY.md` as **WARN-only** after proved die selection. Explicit UNKNOWN/blank values are not zero and do not trigger automatic geometric alteration.
