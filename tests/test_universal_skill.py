@@ -19,7 +19,7 @@ def test_universal_skill_is_single_workflow_entrypoint():
     for term in ("AI_BOOTSTRAP.md", "AI_ENTRYPOINT.md", "ROUTER.yaml",
                  "Geometry JSON", "saved-DXF", "REVIEW", "SOURCE"):
         assert term.casefold() in skill.casefold()
-    assert "not yet implemented" in skill
+    assert "Implemented canonical production artifact contract" in skill
 
 
 def test_bundle_contains_current_approved_rule_modules_without_history():
