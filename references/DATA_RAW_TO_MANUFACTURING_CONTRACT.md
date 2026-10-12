@@ -24,6 +24,9 @@ Before any tolerance, Nobi, thread-pilot, R/C or other manufacturing adjustment:
 
 ## 3. SAME_PARAMETER_GATE before canonicalization
 
+**2026-10-12 override:** first check the explicit numeric customer-code policy from `CUSTOMER_CAD_RULES.yaml`. `DATA_NO_DIM_COMPARE` bypasses ONLY the PDF-vs-DATA numeric discrepancy test. Full M/Ø/hole count/location/identity, source membership, topology, provenance and read-back remain mandatory; discrepancies require local REVIEW. No matching customer-code record => general gate below. Do not confuse job-family 646 with customer-code 646.
+
+
 The DATA<->PDF threshold is evaluated only between the **same physical parameter** after code/view/feature/datum/unit mapping.
 
 For the normal customer threshold:

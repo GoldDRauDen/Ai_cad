@@ -15,6 +15,10 @@ For later sample/reference audit, freeze `SOURCE_ONLY_SNAPSHOT` before reference
 
 # LISPCAD Core — Validation
 
+2026-10-12 CUSTOMER CAD OVERRIDE: correct source geometry can PASS with nonblocking WARN for machine L/Z/reach; customer-authorized DATA_NO_DIM_COMPARE waives only PDF/DATA dimension-only conflict, never missing or mismatched holes, topology, count or physical DATA audit. SS>=19 R3 is exterior-perimeter-only (outer contour may contain concave corners). A legible handwritten Nobi/table discrepancy is logged as audit, not a blocking FLAG.
+
+
+
 ## V4.24 — DATA_MANUFACTURING_CANONICALIZATION hard gates
 
 For every `PDF_DATA_RAW` production part, run these checks in addition to V4.23 bidirectional closure:
@@ -51,7 +55,7 @@ Also require `CONSTRAINTS_CLOSED`: no unresolved semantic owner, face transform,
 
 - Before comparing a reference DXF, reconcile $INSUNITS metadata with independently established PDF/user-confirmed actual numeric units. If contradictory and unresolved, FLAG SOURCE_UNIT_CONFLICT; do not automatically scale by 25.4. Output DXF remains mm, $INSUNITS=4.
 - Treat original and mirrored drawing CODES as separate records. A mirror requires an established original/target relation, axis and feature scope, including actual holes/slots/R/C/bends, then independent count/containment validation. When inner formed faces are shown, assemble the proved INSIDE_VIEW first, apply only the evidenced reflection and compare hole family/center only in a shared final frame.
-- If bend J, legible handwritten Nobi and a genuinely comparable table row ALL exist, draw with N_hand and FLAG HANDWRITTEN_NOBI_DIFFERS_FROM_TABLE when the prescribed values disagree. Comparing a 165° note to a 90° table is an invalid conflict; no compatible row does not override handwriting.
+- If bend J, legible handwritten Nobi and a genuinely comparable table row ALL exist, draw with N_hand and record HANDWRITTEN_NOBI_DIFFERS_FROM_TABLE as a nonblocking audit note when the prescribed values disagree. Comparing a 165° note to a 90° table is an invalid conflict; no compatible row does not override handwriting.
 - EXACT printed PDF inputs never receive a comparison tolerance. Only absolute differences strictly <0.01 mm caused by internal precision/rounding in an already-correct DERIVED result can pass an arithmetic-only comparison with reference DXF. Exactly 0.01 fails this test. This does not waive feature/datum/topology/bend/manufacturing checks. V4.12 already prohibits routine shop-spacing customer approval questions; do not duplicate that rule.
 
 

@@ -35,7 +35,7 @@ Production unfold is blocked until `TOPOLOGY_LOCKED`, `BEND_ATTACHMENT_EDGE_LOCK
 
 **INSIDE_VIEW assembled before proved reflection:** When source views prove they show inner faces, identify each face's datum, view direction and fold order. Apply the existing ID→OD, handwritten/table Nobi and local-face-to-flat rules, assemble the complete proved inside-face flat, and ONLY THEN reflect the assembled geometry when the intended target blank requires the proved axis. Compare hole center, actual M/Ø family and count IN THE SAME final frame; a left/right appearance in unmatched frames is not a hole error. Never mirror every bent part by default. User-approved 018297 is the regression for a false M3/Ø7 swap conclusion.
 
-**Handwritten/J mismatch audit:** Existing Rule 1 always draws with scoped legible N_hand, including bends marked J. Only if the approved table supplies a genuinely compatible N_table for the SAME material, thickness, bend length, angle and applicable surface state, record both and FLAG HANDWRITTEN_NOBI_DIFFERS_FROM_TABLE if their prescribed values differ. Do not borrow a 90° table row for a 165° bend; if the table has no match, never replace a proved handwritten Nobi with an OD fallback.
+**Handwritten/J mismatch audit:** Existing Rule 1 always draws with scoped legible N_hand, including bends marked J. Only if the approved table supplies a genuinely compatible N_table for the SAME material, thickness, bend length, angle and applicable surface state, record both and retain HANDWRITTEN_NOBI_DIFFERS_FROM_TABLE only as a nonblocking audit note if prescribed values differ. Do not borrow a 90° table row for a 165° bend; if the table has no match, never replace a proved handwritten Nobi with an OD fallback.
 
 **Exact printed inputs versus strictly <0.01 mm DERIVED comparison:** Continue rounding each calculated ID→OD offset to 0.01 before adding it to the actual printed ID and deducting the real Nobi. Read printed dimensions EXACTLY; the <0.01 mm threshold applies only to a representation/rounding difference when auditing ALREADY CORRECT derived quantities against a reference. Exactly 0.01 is not below threshold, and a wrong source input, datum, topology, feature class, or bend order fails regardless. Approved 018300: (797+0.26)+(24+0.26)-0.37=821.15 mm; 262+61.5-3.68=319.82 mm. Its previously measured reference bbox ~821.153 differs ~0.003 mm only in derived arithmetic.
 
@@ -90,6 +90,10 @@ When the **proved included bend angle is strictly <85°**, this approved method 
 Approved executable regression: `../../../regression/tools/check_acute_bend_lt85.py`; proof assets: `../../../regression/assets/acute_bend_lt85/`.
 
 ### 4.7 Nobi (Bend Allowance) Lookup Priority & Sequential Formulas
+
+**2026-10-12 clarification:** If no defensible Nobi exists for a non-90° bend, preserve separate source/orthographic views under local REVIEW so the operator can assemble after customer confirmation. Never insert a 90° table value. KH646 is its own numeric customer-code route. Legible handwritten PDF Nobi overrides a differing table number with a nonblocking audit record.
+
+
 1. **Handwritten Nobi on Drawing**: Highest priority. Use directly (e.g., `-4.8`, `135° -1.71`) regardless of J-symbol.
 2. **No Handwritten Nobi + J-Symbol Present**: Look up Nobi from standard tables (Section 7.3) by Material, Thickness, Bend Length, and Angle — applying the Interpolation Rule in Section 4.8 when the exact value is not tabulated.
 3. **No Handwritten Nobi + J-Symbol Absent**: Draw the affected flange as a separate piece detached from the main body, offset by a fixed `10 mm` gap for downstream reassembly. Set `is_flagged = true`.

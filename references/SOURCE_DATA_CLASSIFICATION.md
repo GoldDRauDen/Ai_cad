@@ -1,5 +1,8 @@
 # SOURCE_DATA_CLASSIFICATION — V4.25 repo-direct source routing
 
+## 2026-10-12 numeric customer-code dimensional authority exception
+The selected `references/CUSTOMER_CAD_RULES.yaml` record is authoritative for per-customer DATA/PDF dimensional comparison, only when a numeric **customer_code** was independently identified on the job statistics sheet. `DATA_NO_DIM_COMPARE` waives generic numerical PDF-vs-DATA discrepancy flags for that customer's DATA-derived parameters, never missing/mismatched holes, nominal M identity, source family/member completeness, dimensional witnesses belonging to an absent member, topology, revisions, unchanged DATA geometry, or DXF saved read-back. `PDF_PRIORITY` uses proved PDF dimensions with DATA provenance. `CONFIRM_CONFLICT` locally REVIEWs true same-parameter disagreement. With no customer_code use general existing thresholds. The historical job-family 646 DATA-required rule below is independent of numeric customer code 646.
+
 ## V4.25 DATA-first / manufacturing-second clarification
 
 For every `PDF_DATA_RAW` job, **DATA geometry must be harvested/preserved before manufacturing canonicalization**. Load `DATA_RAW_TO_MANUFACTURING_CONTRACT.md` in addition to the existing V4.21/V4.24 preservation and physical-census references.
