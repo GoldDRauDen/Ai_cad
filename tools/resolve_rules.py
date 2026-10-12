@@ -86,7 +86,7 @@ def resolve_rules(census: dict, root: Path = ROOT, router: dict | None = None) -
         stage_plans[stage] = {"rule_paths": [], "new_bytes": 0}
 
     def add_path(path: str) -> None:
-        if not isinstance(path, str) or not path or "\\\\" in path:
+        if not isinstance(path, str) or not path or "\\" in path:
             raise ResolutionError(f"Invalid route path: {path!r}")
         if path.startswith(FORBIDDEN) or path.startswith("/") or ".." in Path(path).parts:
             raise ResolutionError(f"Forbidden production route: {path}")
