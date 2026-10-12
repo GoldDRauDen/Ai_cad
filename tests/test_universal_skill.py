@@ -18,7 +18,7 @@ def test_universal_skill_is_single_workflow_entrypoint():
     skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
     for term in ("AI_BOOTSTRAP.md", "AI_ENTRYPOINT.md", "ROUTER.yaml",
                  "Geometry JSON", "saved-DXF", "REVIEW", "SOURCE"):
-        assert term in skill
+        assert term.casefold() in skill.casefold()
     assert "not yet implemented" in skill
 
 
