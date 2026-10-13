@@ -43,6 +43,7 @@ At minimum raise `ENGINEERING_ANOMALY_DETECTED` when any applicable condition is
 - VIEWS_ONLY is selected before every source-supported FACE_GRAPH candidate has been tested through the routed constraints;
 - the output is materially simpler than the source inventory without a member-by-member explanation;
 - a PASS depends only on ledger self-equality while upstream census/inventory/ledger cardinalities or ownership disagree.
+- source assembly/welding views were available but no independent weld-site inventory or explicit negative disposition exists, or a proved KH851 weld site has no corresponding KEGAKI member/local FLAG.
 
 An anomaly is not proof that a particular alternative answer is correct. It is a mandatory reason to re-open the source and test the interpretation.
 
