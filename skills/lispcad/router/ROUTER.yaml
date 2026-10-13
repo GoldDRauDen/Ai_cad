@@ -198,6 +198,7 @@ post_route_checks:
   - bend_edge_length_lock
   - bend_end_offset_relief_90
   - cross_feature_validation
+  - weld_site_kegaki_canonical_closure
   - holistic_engineering_challenge
   - views_only_source_view_completeness
   - final_engineering_sanity_review
