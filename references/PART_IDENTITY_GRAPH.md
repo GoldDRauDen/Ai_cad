@@ -25,6 +25,18 @@ Each edge requires source provenance.
 
 A drawing can show an assembly and its child parts together; paper proximity does not merge them into one manufacturing part.
 
+## 2A. Assembly datum ownership and indirect feature positions
+
+When an assembly/installation view provides the only route to a child part's hole, slot or KEGAKI position, keep its shared **assembly-frame dimension witnesses** distinct from the child's physical manufacturing geometry. Before flagging that child feature as undimensioned:
+
+- prove each participating barcode/part code, target feature, host face and related parent/child part;
+- resolve physical assembly contact/attachment and witness identities, not proximity of views or nominal symmetry;
+- hand the proved, signed relation graph to `skills/lispcad/core/DATUM_DIMENSION.md` §4.2.2b, then apply any required face-to-flat transform;
+- audit each derived feature from the child's own datum with the source evidence and assembly-fit closure;
+- retain unresolved physical relationships as local FLAG. Do not copy reference/sample coordinates or silently duplicate child contours under the parent code.
+
+The graph solves *positions*, not part ownership; it cannot replace PART_IDENTITY_GRAPH or create a manufacturing feature not actually called out in the source.
+
 ## 3. Collision gate
 
 Raise `PART_IDENTITY_COLLISION` when:
