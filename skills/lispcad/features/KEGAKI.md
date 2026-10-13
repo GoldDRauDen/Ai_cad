@@ -1,5 +1,17 @@
 # LISPCAD Feature — KEGAKI / locating marks
 
+## Source-backed weld-site census closure
+
+For KH851, load ../../../references/WELD_SITE_KEGAKI_CLOSURE.md.
+Every independently proved weld site needs locating KEGAKI even without
+an explicit printed marking callout. Validate parent/child identity,
+host face, assembly witness, physical contact, local-to-flat transform,
+and actual mark quantity. If datum/shape is customer-pending, keep
+a scoped FLAG rather than emitting a fabricated RED production line.
+The source/canonical weld-site gate independently checks this requirement.
+Other customers retain the V4.27 source-cue and locating-function scope.
+
+
 **V4.20 approved; V4.27 weld-cue scope approved.**
 
 KEGAKI is an independent manufacturing family, not CUT/BEND/decoration. Production KEGAKI is Layer 0, Color 1 Red, LINE or proved LWPOLYLINE. Red supports identification but is not proof by itself.

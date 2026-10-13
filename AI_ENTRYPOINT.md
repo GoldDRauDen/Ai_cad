@@ -2,6 +2,16 @@
 
 Current production release is **V4.33**.
 
+**KH851 weld-location KEGAKI completeness:** after reading numeric customer
+code and before declaring KEGAKI=NO, follow
+references/WELD_SITE_KEGAKI_CLOSURE.md. Independently enumerate every
+assembly/weld site, then link each required marking to the appropriate
+source/canonical KEGAKI member, or retain a scoped FLAG. Run
+tools/weld_kegaki_guard.py through Router and canonical validation
+before export. Do not claim PASS from a self-consistent incomplete
+source-member census, DXF read-back or a copied reference mark.
+
+
 This file is the production routing authority. Normal CAD jobs use **repo-direct modular routing**. Do not load the complete portable skill by default.
 
 **Current packaging contract (supersedes inherited V4.9 one-composite-only
