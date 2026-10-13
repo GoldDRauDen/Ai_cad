@@ -11,6 +11,7 @@ release_coverage:
       - references/HOLISTIC_ENGINEERING_CHALLENGE.md
       - references/REFERENCE_EXPOSURE_FIREWALL.md
       - references/PART_IDENTITY_GRAPH.md
+      - references/WELD_SITE_KEGAKI_CLOSURE.md
       - references/CANONICAL_MEMBER_COMPLETENESS.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
       - references/MECHANICAL_CLASSIFIER.md
