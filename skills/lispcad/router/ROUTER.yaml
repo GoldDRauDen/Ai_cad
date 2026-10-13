@@ -189,6 +189,7 @@ post_route_checks:
   - source_feature_group_closure
   - source_group_member_ledger
   - part_identity_graph_when_applicable
+  - weld_site_kegaki_source_census_closure
   - same_physical_parameter_before_reference_conflict
   - source_feature_completeness
   - dependency_closure
