@@ -11,6 +11,7 @@ release_coverage:
       - references/HOLISTIC_ENGINEERING_CHALLENGE.md
       - references/REFERENCE_EXPOSURE_FIREWALL.md
       - references/PART_IDENTITY_GRAPH.md
+      - references/WELD_SITE_KEGAKI_CLOSURE.md
       - references/CANONICAL_MEMBER_COMPLETENESS.md
       - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
       - references/MECHANICAL_CLASSIFIER.md
@@ -21,11 +22,13 @@ release_coverage:
       - skills/lispcad/router/FEATURE_CENSUS.md
       - skills/lispcad/router/ROUTER.yaml
       - tools/holistic_engineering_guard.py
+      - tools/weld_kegaki_guard.py
       - tools/reference_exposure_guard.py
     regression:
       - regression/qa/521007-07_V4_33_APPROVED.md
       - regression/tools/check_521007_07_v433.py
       - tests/test_v433_holistic_reference_guards.py
+      - tests/test_weld_kegaki_guard.py
   V4.32:
     active:
       - AI_ENTRYPOINT.md

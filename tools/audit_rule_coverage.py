@@ -23,7 +23,7 @@ ACTIVE_GLOBS = (
     "skills/lispcad/topology/*.md",
     "references/*.md",
 )
-ROUTE_GROUPS = ("stage_routes", "source_routes", "mode_routes", "feature_routes")
+ROUTE_GROUPS = ("stage_routes", "source_routes", "mode_routes", "feature_routes", "customer_routes")
 EXCLUDED_PREFIXES = (
     "regression/", "skills/lispcad/portable/", "skills/lispcad/versions/",
     "docs/history/", "services/trainaicad-mcp/",
@@ -45,6 +45,9 @@ def audit(root: Path = ROOT, router: dict | None = None) -> dict:
     if not isinstance(coverage, dict) or coverage.get("release") != router.get("release"):
         raise CoverageError("Current Router / Coverage release mismatch")
 
+    catalog = router.get("customer_rule_catalog")
+    if catalog != "references/CUSTOMER_CAD_RULES.yaml" or not (root / catalog).is_file():
+        raise CoverageError("Missing or unauthorized customer CAD catalog")
     active = {p.relative_to(root).as_posix()
               for pattern in ACTIVE_GLOBS for p in root.glob(pattern) if p.is_file()}
     if not active:

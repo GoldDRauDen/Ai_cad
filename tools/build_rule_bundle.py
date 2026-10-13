@@ -29,6 +29,7 @@ BASE_FILES = (
     "skills/lispcad/router/RULE_COVERAGE.yaml",
     "tools/CANONICAL_INPUT_SCHEMA_V431.md",
     "tools/DXF_INPUT_SCHEMA.md",
+    "references/CUSTOMER_CAD_RULES.yaml",
 )
 EXCLUDED = ("skills/lispcad/portable/", "skills/lispcad/versions/",
             "docs/history/", "regression/", "services/trainaicad-mcp/")
@@ -71,7 +72,7 @@ def approved_paths(root: Path = ROOT) -> tuple[str, list[str]]:
         add(p)
     for p in router.get("default_load", []):
         add(p)
-    for group in ("stage_routes", "source_routes", "mode_routes", "feature_routes"):
+    for group in ("stage_routes", "source_routes", "mode_routes", "feature_routes", "customer_routes"):
         for route in router[group].values():
             for p in route.get("load", []):
                 add(p)

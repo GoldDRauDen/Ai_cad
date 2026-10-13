@@ -1,5 +1,9 @@
 # Nobi Allowance Reference Tables
 
+## Approved 2026-10-12 recalibration from `旭26-9-18`
+Use the existing TrainAiCad unfolding formulas, NOT a new bend algorithm. `SUS` without documented 2B/#1 uses **2B** by default; an explicit #1 on source overrides. SUS304 t3 L1801–2400 V40 2B **7.84** (was erroneous 8.54) and #1 **7.80**. A legible handwritten PDF Nobi is higher authority and any table mismatch is an audit record, not QA REVIEW. 旭 Nobi does NOT backfill missing values for numeric customer code 646. Machine min L/Z is nonblocking feasibility WARN when proved geometry is correct. NC operations are excluded.
+
+
 Source: approved V4.3 Nobi values, with approved L09 material-routing clarification on 2026-09-25. **SUS430 uses SS/SUS430/BRASS Nobi ONLY; use workbook group SUS, 他 for Laser R, hole limits and White Piercing in `references/MATERIAL_RULES.md`. All Nobi numbers remain unchanged.**
 
 ### 7.3 Nobi Allowance Standards Tables *(fully restored from V1 — including the previously-dropped Copper table and all intermediate L-brackets)*
@@ -52,7 +56,7 @@ Source: approved V4.3 Nobi values, with approved L09 material-routing clarificat
 | **3.0** | ~ 750 | V12 | 4.80 | 4.68 |
 | **3.0** | 751 ~ 1250 | V18 | 5.64 | 5.36 |
 | **3.0** | 1251 ~ 1800 | V25 | 6.46 | 6.10 |
-| **3.0** | 1801 ~ 2400 | V40 | 8.54 | 7.80 |
+| **3.0** | 1801 ~ 2400 | V40 | 7.84 | 7.80 |
 | **4.0** | ~ 650 | V18 | 6.78 | 6.50 |
 | **4.0** | 651 ~ 1000 | V25 | 7.66 | 7.28 |
 | **4.0** | 1001 ~ 1650 | V40 | 8.44 | 8.90 |

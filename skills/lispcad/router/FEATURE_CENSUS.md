@@ -62,6 +62,18 @@ Apply `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`.
 - `スリット 8` is evidence for the scoped drawing's slit value `8`; it is not a universal size rule and does not authorize assuming a bend-center location.
 - Existing separately-triggered relief families remain governed by their own routed mechanisms.
 
+## Independent source weld-site inventory / KH 851
+
+Apply references/WELD_SITE_KEGAKI_CLOSURE.md during L1 before final
+KEGAKI classification. Read numeric customer_code from JOB STATISTICS.
+For KH851, every proved welding contact, including a side A/B assembly
+view without an explicit KEGAKI callout, mandates a locating mark. Persist
+all independent assembly-view and weld-site IDs plus a source-witness
+disposition for absent sites. KEGAKI is YES only where the actual mark
+geometry is proved; otherwise it remains UNKNOWN with local FLAG, never
+NO for a required site. Re-run Router if the welding/site census
+reveals a new KEGAKI group. Unresolved customer dimensions stay FLAGGED.
+
 ## V4.27 weld-cue gate before KEGAKI = NO
 
 When a reversed-e mark is proved immediately above a barcode, record the scoped process evidence as `REVERSED_E_ABOVE_BARCODE -> WELD_REQUIRED_CUE` for that barcode's code/detail cluster only.
@@ -140,3 +152,8 @@ Before production export:
 `SOURCE MANUFACTURING NOTES -> SOURCE ACTIVE FAMILIES -> FINAL CENSUS -> LOADED ROUTES -> CANONICAL FAMILIES -> SERIALIZED OUTPUT`
 
 must close without an unexplained missing note/family. A valid DXF file or correct bounding box does not compensate for a missing manufacturing instruction, missing manufacturing family, or a source ARC flattened into its chord.
+
+
+## Customer-code census — approved 2026-10-12
+Record `customer_code: <numeric JOB STATISTICS code>|null` independently from the part/job family code. Never infer KH646 from Japanese name alone or from the unrelated historic job-family 646 rule. If absent, use general CAD rules without a missing-code REVIEW.
+After resolving customer code, load the selected CAD-only record from `references/CUSTOMER_CAD_RULES.yaml` via `tools/resolve_rules.py`. KH646 bend routes additionally load `references/AIKOKU_646_NOBI.md`. A customer-specific DATA dimensional exception never waives mismatch checks for missing/extra M/Ø/holes, source physical census or immutable DATA provenance. If source manufacturing notes are unresolved, retain local UNKNOWN/FLAG under current rules.

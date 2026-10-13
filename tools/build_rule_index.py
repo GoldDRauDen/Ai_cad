@@ -50,6 +50,8 @@ def build_index(root: Path = ROOT) -> dict:
             "source_routes": router["source_routes"],
             "mode_routes": router["mode_routes"],
             "feature_routes": router["feature_routes"],
+            "customer_routes": router["customer_routes"],
+            "customer_rule_catalog": router["customer_rule_catalog"],
             "active_modules": all_active,
             "retrieval_policy": "YES_AND_UNKNOWN_LOAD; MANDATORY_L0_L1_L2_L3",
         },
