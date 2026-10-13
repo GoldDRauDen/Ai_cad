@@ -141,3 +141,71 @@ def test_flat_without_assembly_evidence_is_not_forced_to_use_assembly_solver():
         "code": "unrelated-flat",
         "part_mode": "FLAT_NO_BEND",
     })
+
+
+def _assembly_case(status="PROVED", offset="20", graph=None, reason=None):
+    if graph is None:
+        graph = source_graph()
+    part = {
+        "code": "059636",
+        "status": "PASS" if status == "PROVED" else "VIEWS_ONLY",
+        "assembly_indirect_candidates": [{
+            "feature_id": "F_M6_ROW",
+            "datum_node": "F_BOTTOM",
+            "target_node": "F_M6_CENTER",
+            "axis": "Y",
+        }],
+        "assembly_datum_traces": [{
+            "feature_id": "F_M6_ROW",
+            "status": status,
+            "offset_mm": offset,
+            "graph": graph,
+            "reason": reason,
+        }],
+    }
+    return part
+
+
+def test_canonical_guard_recomputes_correct_assembly_offset():
+    spec = importlib.util.spec_from_file_location(
+        "guard_assembly_correct", ROOT / "tools/holistic_engineering_guard.py"
+    )
+    g = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(g)
+    assert not any("ASSEMBLY_DATUM" in x or "DERIVABLE_ASSEMBLY" in x
+                   for x in g.canonical_job_anomalies({"parts": [_assembly_case()]}))
+
+
+def test_canonical_guard_blocks_missing_trace_and_wrong_25():
+    spec = importlib.util.spec_from_file_location(
+        "guard_assembly_wrong", ROOT / "tools/holistic_engineering_guard.py"
+    )
+    g = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(g)
+    no_trace = _assembly_case()
+    no_trace["assembly_datum_traces"] = []
+    assert "059636:ASSEMBLY_DATUM_TRACE_NOT_ATTEMPTED" in (
+        g.canonical_job_anomalies({"parts": [no_trace]})
+    )
+    wrong_25 = _assembly_case(offset="25")
+    assert "059636:ASSEMBLY_DATUM_RESULT_MISMATCH:F_M6_ROW" in (
+        g.canonical_job_anomalies({"parts": [wrong_25]})
+    )
+
+
+def test_canonical_guard_blocks_flagged_proved_chain_and_allows_true_blocker():
+    spec = importlib.util.spec_from_file_location(
+        "guard_assembly_flag", ROOT / "tools/holistic_engineering_guard.py"
+    )
+    g = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(g)
+    still_flagged = _assembly_case(status="FLAGGED", reason="not yet checked")
+    assert "059636:DERIVABLE_ASSEMBLY_COORDINATE_FLAGGED:F_M6_ROW" in (
+        g.canonical_job_anomalies({"parts": [still_flagged]})
+    )
+    no_path = source_graph()
+    no_path["constraints"][2]["status"] = "FLAGGED"
+    truly_flagged = _assembly_case(status="FLAGGED", graph=no_path,
+                                   reason="NO_PROVED_ASSEMBLY_DATUM_PATH")
+    assert not any("ASSEMBLY_DATUM" in x or "DERIVABLE_ASSEMBLY" in x
+                   for x in g.canonical_job_anomalies({"parts": [truly_flagged]}))
