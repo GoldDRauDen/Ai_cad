@@ -46,6 +46,7 @@ SOURCE
   -> SOURCE MANUFACTURING NOTE CENSUS
   -> SOURCE FEATURE-GROUP / REFERENCE-PARAMETER CLOSURE
   -> PART IDENTITY GRAPH when multi-code / constituent / assembly evidence exists
+  -> ASSEMBLY DATUM candidate census for indirectly dimensioned features, when applicable
   -> FEATURE CENSUS
   -> ROUTER
   -> selected mode / feature / reference modules
