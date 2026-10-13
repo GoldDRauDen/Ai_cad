@@ -73,7 +73,7 @@ def _stamp_and_verify(job: dict, manifest: dict, output_dir: Path, validation: d
     if read_ids != expected_ids or set(read_ids) != set(expected_ids):
         fail("CANONICAL_ENTITY_IDS_EQ_SAVED_DXF_ENTITY_IDS failed")
 
-    manifest["canonical_contract"] = CONTRACT
+    manifest["canonical_contract"] = validation["contract"]
     manifest["canonical_completeness"] = {
         "status": "PASS",
         "source_to_canonical": "PASS",
@@ -83,7 +83,8 @@ def _stamp_and_verify(job: dict, manifest: dict, output_dir: Path, validation: d
     return manifest
 
 
-def export_canonical_job(job: dict, output_dir, gap_mm=10.0, write_manifest=False) -> dict:
+def export_canonical_job(job: dict, output_dir, gap_mm=10.0, write_manifest=False,
+                         composite_only=False) -> dict:
     """Validate full member ledger, serialize single composite, stamp/read back entity IDs."""
     validation = validate_canonical_job(job)
     source_anomalies = canonical_job_anomalies(job)
@@ -93,7 +94,7 @@ def export_canonical_job(job: dict, output_dir, gap_mm=10.0, write_manifest=Fals
     out.mkdir(parents=True, exist_ok=True)
     manifest = export_job(job, out, gap_mm=gap_mm, mode="single", write_manifest=False)
     manifest = _stamp_and_verify(job, manifest, out, validation)
-    manifest["artifacts"] = export_part_artifacts(job, out)
+    manifest["artifacts"] = export_part_artifacts(job, out, composite_only=composite_only)
     # Avoid stale production composites after PASS -> REVIEW (or reverse).
     obsolete = (f"{manifest['job_id']}_ALL.dxf"
                 if manifest["status"] == "REVIEW_ONLY"
@@ -112,9 +113,11 @@ def main() -> None:
     ap.add_argument("output_dir", type=Path)
     ap.add_argument("--gap-mm", type=float, default=10.0)
     ap.add_argument("--write-manifest", action="store_true")
+    ap.add_argument("--composite-only", action="store_true", help="Emit combined DXF and per-code JSON only")
     args = ap.parse_args()
     job = json.loads(args.input_json.read_text(encoding="utf-8"))
-    manifest = export_canonical_job(job, args.output_dir, args.gap_mm, args.write_manifest)
+    manifest = export_canonical_job(job, args.output_dir, args.gap_mm, args.write_manifest,
+                                    composite_only=args.composite_only)
     print(json.dumps({
         "job_id": manifest["job_id"],
         "file": manifest["filename"],

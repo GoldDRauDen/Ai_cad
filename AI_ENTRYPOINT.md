@@ -1,3 +1,6 @@
+## V4.34 source-witness and material/orientation supplement (2026-10-13)
+Production E2E for **new** jobs uses `TrainAiCad-CANONICAL-V4.34` plus `tools/CANONICAL_INPUT_SCHEMA_V434.md`; preexisting V4.31 fixtures remain supported. Load `references/MATERIAL_ALIASES.yaml` for material grades (SECC=ボンデ → SS), retain per-process exceptions, record PDF-grounded typed witness graphs for holes/slots, and explicit slot anchor source endpoints before PASS. All HL needs a proven part-relative grain vector; otherwise REVIEW regardless of Excel 横目. Individual CUT DXF orientation (X long unless HL→X) is downstream exporter-only; composite stays source-readable. Do not learn missing witnesses from sample DXF.
+
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
 Current production release is **V4.33**.

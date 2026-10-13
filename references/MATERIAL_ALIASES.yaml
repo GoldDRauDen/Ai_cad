@@ -1,0 +1,65 @@
+# Source: user-approved Book1.xlsx / 一覧表2026.07.30, A28:E48.
+# Group labels are process routing, NOT assertions of chemical equivalence.
+# Row 48 warns that supplied checkered plate can be SUS, therefore it is not
+# inferred from 縞板 alone. Surface treatments (2B, HL, #400) are not grades.
+version: 1
+source: "Book1.xlsx!一覧表2026.07.30!A28:E48"
+groups:
+  SS:
+    "SS": A29
+    "SS400": A31
+    "SECC": A32
+    "ボンデ": A32
+    "酸洗": A30
+    "SK": A33
+    "SPCC": A34
+    "みがき": A34
+    "黒かわ": A35
+    "SPHC": A36
+    "S45C": A37
+    "S48C": A37
+    "SECC-P": A38
+    "SPC": A39
+    "リボン材": A40
+    "STPL": A41
+    "STEN": A42
+    "ベーナイト": A43
+    "ハイテン材": A44
+    "SUP": A45
+    "SPHCP": A46
+    "No205": A46
+    "焼入れリボン鋼": A47
+  SUS:
+    "SUS": C28
+    "301": C34
+    "430": C35
+    "304CSP": C36
+    "304-400": C37
+    "310S": C38
+    "316L": C39
+    "VBI": C40
+    "410S": C41
+    "301CSP": C42
+  AL:
+    "AL": E28
+    "A505": E29
+    "A5052": E30
+    "A2017": E31
+  CU_BRASS:
+    "銅": E48
+    "真ちゅう": E46
+    "BRASS": E46
+    "CU": E48
+  OTHER:
+    "チタン": E47
+surface_finishes:
+  - "HL"
+  - "ヘアライン"
+  - "2B"
+  - "#1"
+  - "#400"
+  - "両研"
+  - "片研"
+notes:
+  - "SUS430 uses SS/SUS430/BRASS for Nobi, but SUS/他 for Laser R, hole limits and white piercing."
+  - "Excel M51 HL 横目 does not prove direction relative to a specific part."

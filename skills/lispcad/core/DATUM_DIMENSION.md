@@ -1,3 +1,6 @@
+## V4.34 typed witness node closure (2026-10-13)
+For every **proved HOLE/SLOT member** in V4.34, declare `witness_required_feature_ids` and a `feature_witness_graph` for both X and Y. Every used dimension edge records a physical `from_node`/`to_node`, endpoint types (`OUTER_EDGE`, `HOLE_CENTER`, `SLOT_MIDPOINT`, `ARC_CENTER`, `TANGENT_POINT`, ...), signed axis/value, dimension kind, source page and a verifiable PDF crop/witness ref. `tools/dimension_witness.py` independently solves signed paths, rejects disconnected graphs/contradictory cycles, and cross-checks declared canonical CIRCLE coordinates. A claim `endpoint_verified=true` is not source proof by itself: source QA must inspect the crop and confirm the physical endpoints. 521013-21/059759 negative regression: taking 265 from the external RIGHT_EDGE rather than the RIGHT_HOLE_CENTER adds 10 mm to the group; sample/reference geometry cannot supply a missing witness. Old V4.31 jobs retain compatibility while V4.34 imposes the stronger evidence record.
+
 # LISPCAD Core — Datum & Dimension Semantics
 
 Source: approved V4.3 production baseline, with independently approved V4.10 source-origin/axis mapping. These rules apply across all topology and mode modules.

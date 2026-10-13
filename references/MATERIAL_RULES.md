@@ -1,3 +1,6 @@
+## V4.34 approved Excel alias resolution (2026-10-13)
+Resolve printed material via `references/MATERIAL_ALIASES.yaml` and `tools/material_resolver.py` before selecting Laser R/hole-capacity rows. The alias table cites **Book1.xlsx / 一覧表2026.07.30 A28:E48**, including **SECC=ボンデ (A32) → SS**, **SECC-P (A38) → SS**, SPCC, SPHC, SS400, SUS and AL names. Preserve the printed grade separately. SUS430 retains its prior process split; surface `HL`, `2B`, `#400` are finishes, not independent grades. Excel `M51: H.L(ヘアライン)は横目` does NOT alone prove direction relative to the part: keep direction-uncertain HL as REVIEW with no production individual DXF. Customer-scoped exceptions and explicit PDF R/C still take precedence. Do not infer unidentified alloys from visual similarity.
+
 # Production reference — Laser corner R, hole capacity, White Piercing
 
 ## Customer-approved 2026-10-12 SS t>=19 R3 scope clarification

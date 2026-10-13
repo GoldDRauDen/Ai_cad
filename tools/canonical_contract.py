@@ -8,6 +8,8 @@ from collections import defaultdict
 from weld_kegaki_guard import WeldKegakiError, validate_weld_kegaki
 
 CONTRACT = "TrainAiCad-CANONICAL-V4.31"
+CONTRACT_V434 = "TrainAiCad-CANONICAL-V4.34"
+SUPPORTED_CONTRACTS = {CONTRACT, CONTRACT_V434}
 SOURCE_STATUSES = {"PROVED", "FLAGGED", "CANCELED"}
 CANON_SOURCE_STATUSES = {"PROVED", "PREVIEW", "FLAGGED_NO_GEOMETRY", "SOURCE_VIEW"}
 ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$")
@@ -185,8 +187,9 @@ def validate_part(part: dict, customer_code: str | None = None) -> dict:
 
 
 def validate_canonical_job(job: dict) -> dict:
-    if job.get("canonical_contract") != CONTRACT:
-        fail(f"job canonical_contract must be {CONTRACT}")
+    contract = job.get("canonical_contract")
+    if contract not in SUPPORTED_CONTRACTS:
+        fail(f"job canonical_contract must be in {sorted(SUPPORTED_CONTRACTS)}")
     parts = job.get("parts")
     if not isinstance(parts, list) or not parts:
         fail("canonical job requires parts")
@@ -198,9 +201,61 @@ def validate_canonical_job(job: dict) -> dict:
     else:
         customer_code = None
     records = [validate_part(part, customer_code=customer_code) for part in parts]
+    if contract == CONTRACT_V434:
+        from material_resolver import is_hairline, resolve_material, MaterialResolveError
+        for part in parts:
+            code = part["code"]
+            try:
+                resolve_material(part["material"], "LASER_R")
+            except MaterialResolveError as exc:
+                fail(f"{code}: {exc}")
+            grain = part.get("grain", {})
+            has_hl = is_hairline(part["material"]) or grain.get("is_hl", False)
+            if has_hl and (not isinstance(grain, dict) or grain.get("is_hl") is not True):
+                fail(f"{code}: HL_DIRECTION_UNPROVED: grain record required")
+            if part["status"] == "REVIEW":
+                if part.get("review_reason") != "HL_DIRECTION_UNPROVED" or not has_hl or not part.get("flags"):
+                    fail(f"{code}: REVIEW requires HL_DIRECTION_UNPROVED and a flag")
+                if grain.get("direction_xy") is not None:
+                    fail(f"{code}: HL review cannot claim proved grain direction")
+            elif part["status"] == "PASS" and has_hl:
+                if not grain.get("evidence_ref") or grain.get("direction_xy") is None:
+                    fail(f"{code}: HL_DIRECTION_UNPROVED")
+            proven = {
+                member["member_id"] for group in part["source_groups"]
+                if group["family"].upper() in {"HOLE", "SLOT"} and group["status"] == "PROVED"
+                for member in group.get("members", [])
+                if member.get("status", "PROVED") == "PROVED"
+            }
+            required = set(part.get("witness_required_feature_ids", []))
+            if not proven <= required:
+                fail(f"{code}: WITNESS_REQUIRED_FEATURE_MISSING:{sorted(proven - required)}")
+            if proven and not part.get("feature_witness_graph"):
+                fail(f"{code}: WITNESS_GRAPH_MISSING")
+            hole_members = {
+                member["member_id"] for group in part["source_groups"]
+                if group["family"].upper() == "HOLE" and group["status"] == "PROVED"
+                for member in group.get("members", [])
+                if member.get("status", "PROVED") == "PROVED"
+            }
+            trace_targets = part.get("feature_witness_graph", {}).get("targets", [])
+            if hole_members and any(
+                not target.get("entity_id")
+                for target in trace_targets if target.get("feature_id") in hole_members
+            ):
+                fail(f"{code}: WITNESS_CANONICAL_ENTITY_LINK_MISSING")
+            slots = {
+                member["member_id"] for group in part["source_groups"]
+                if group["family"].upper() == "SLOT" and group["status"] == "PROVED"
+                for member in group.get("members", [])
+                if member.get("status", "PROVED") == "PROVED"
+            }
+            if slots and not slots <= {rec.get("slot_id") for rec in part.get("slot_anchor_records", [])}:
+                fail(f"{code}: SLOT_ANCHOR_RECORD_MISSING")
+
     all_ids = []
     for rec in records:
         all_ids.extend(rec["entity_ids"])
     if len(all_ids) != len(set(all_ids)):
         fail("entity_id must be globally unique across the composite job")
-    return {"contract": CONTRACT, "parts": records, "entity_ids": all_ids}
+    return {"contract": contract, "parts": records, "entity_ids": all_ids}

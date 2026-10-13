@@ -1,3 +1,6 @@
+## V4.34 slot *position anchor* (2026-10-13)
+The source dimension may locate `SLOT_MIDPOINT`, `ARC_CENTER_1/2`, `OUTER_TIP_1/2`, or another explicitly proven witness point. The midpoint is distinct from either semicircular center and from either extreme outside tip. With width W and semicircle-center separation C, total length L=C+W; midpoint-to-arc-center=C/2, midpoint-to-extreme=L/2 **along the signed slot-axis unit vector**. Never infer an anchor type from slot shape alone, from a reference DXF, or from the dimension value. V4.34 `slot_anchor_records` bind per-slot member ID, source PDF witness/ref, canonical midpoint, width/C/L, signed axis, and canonical slot entity ID; `tools/slot_anchor.py` and source/geometry cross-check reject inconsistencies. Regression 521013-21: W6.6, C7.5, a 3.75 mm shift of the midpoint is FAIL. This augments, not replaces, the preexisting overall-vs-center-distance slot *size* classification.
+
 # LISPCAD Feature — Slots
 
 Source: approved V4.3 production baseline.

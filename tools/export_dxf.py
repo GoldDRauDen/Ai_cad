@@ -148,8 +148,8 @@ def validate_job(job):
         if number(part.get("thickness_mm"), f"{code} thickness") <= 0:
             fail(f"{code}: thickness must be positive")
         state = part.get("status")
-        if state not in ("PASS", "PREVIEW", "VIEWS_ONLY"):
-            fail(f"{code}: status must be PASS, PREVIEW or VIEWS_ONLY")
+        if state not in ("PASS", "PREVIEW", "VIEWS_ONLY", "REVIEW"):
+            fail(f"{code}: invalid status, expected PASS/PREVIEW/VIEWS_ONLY/REVIEW")
         checks = part.get("checks")
         permitted = ("PASS", "N/A", "FLAGGED") if state == "VIEWS_ONLY" else ("PASS", "N/A")
         if not isinstance(checks, dict) or any(checks.get(key) not in permitted for key in CHECKS):
@@ -158,6 +158,12 @@ def validate_job(job):
             fail(f"{code}: production PASS requires no flags and applicable critical checks")
         if state == "PREVIEW" and (not part.get("flags") or part.get("preview_reason") != "numeric_only_known_topology"):
             fail(f"{code}: preview permitted ONLY for numeric uncertainty on proved topology with flags")
+        if state == "REVIEW" and (
+            part.get("review_reason") != "HL_DIRECTION_UNPROVED" or not part.get("flags") or
+            not part.get("grain", {}).get("is_hl") or
+            part.get("grain", {}).get("direction_xy") is not None
+        ):
+            fail(f"{code}: REVIEW requires unresolved HL direction, not guessed geometry")
         if state == "VIEWS_ONLY" and (not part.get("flags") or part.get("preview_reason") != "separate_source_views"):
             fail(f"{code}: VIEWS_ONLY requires independently proved source views, reason and unresolved flags")
         ents = part.get("entities")

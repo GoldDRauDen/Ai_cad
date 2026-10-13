@@ -1,3 +1,6 @@
+## V4.34 orientation and composite-only export (2026-10-13)
+`tools/export_canonical_dxf.py --composite-only` persists per-code canonical JSON and exports ONE composite, without any standalone CUT DXFs. Individual PASS CUT DXFs alone are pose-normalized: if there is no proved HL, choose bounding-box X>=Y (90-degree rotate only if Y>X); with proved HL, align the source-proved part-local grain vector parallel to X even when Y>X. HL direction missing relative to the part => REVIEW and NO individual PASS file. No scale/mirror, no user-visible TEXT/BEND/POINT in standalone CUT, and no change to source-canonical coordinate records. Record orientation transform and read back transformed LINE/ARC/CIRCLE/XDATA. Composite uses the readable source orientation (translation/layout only) and remains independent of the standalone rotation. Old V4.31 canonical jobs are accepted; NEW source jobs use V4.34 to require witness and grain proof.
+
 # Current production packaging — canonical code JSON + isolated PASS cuts
 
 This section supersedes inherited V4.9/V4.11 composite-only defaults below,

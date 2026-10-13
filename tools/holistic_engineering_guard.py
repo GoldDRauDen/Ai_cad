@@ -193,6 +193,38 @@ def canonical_job_anomalies(job: Dict[str, Any]) -> List[str]:
     out: List[str] = []
     for part in parts:
         code = str(part.get("code", "?"))
+        from dimension_witness import WitnessError, validate_part_witnesses
+        from slot_anchor import SlotAnchorError, validate_slot_anchor
+        try:
+            validate_part_witnesses(part)
+        except WitnessError as exc:
+            out.append(f"{code}:{exc}")
+        for target in part.get("feature_witness_graph", {}).get("targets", []):
+            entity_id = target.get("entity_id")
+            if entity_id:
+                found = next((e for e in part.get("entities", []) if e.get("entity_id") == entity_id), None)
+                axis = target.get("axis")
+                if not found or found.get("type") != "CIRCLE" or axis not in {"X", "Y"}:
+                    out.append(f"{code}:WITNESS_ENTITY_UNPROVED:{entity_id}")
+                elif abs(float(found["center"][0 if axis == "X" else 1]) - float(target["coordinate_mm"])) > 1e-7:
+                    out.append(f"{code}:WITNESS_CANONICAL_COORDINATE_MISMATCH:{entity_id}")
+        for record in part.get("slot_anchor_records", []):
+            slot_id = record.get("slot_id", "?")
+            try:
+                expected = validate_slot_anchor(record)
+            except SlotAnchorError as exc:
+                out.append(f"{code}:{exc}:{slot_id}")
+                continue
+            entity_id = record.get("entity_id")
+            slot_entity = next((e for e in part.get("entities", []) if e.get("entity_id") == entity_id), None)
+            if (not slot_entity or slot_entity.get("role") != "slot" or
+                    slot_entity.get("type") != "LWPOLYLINE" or len(slot_entity.get("vertices", [])) != 4):
+                out.append(f"{code}:SLOT_CANONICAL_GEOMETRY_UNVERIFIABLE:{slot_id}")
+            else:
+                vertices = slot_entity["vertices"]
+                mid = (sum(v[0] for v in vertices) / 4, sum(v[1] for v in vertices) / 4)
+                if abs(mid[0] - expected[0]) > 1e-7 or abs(mid[1] - expected[1]) > 1e-7:
+                    out.append(f"{code}:SLOT_CANONICAL_MIDPOINT_MISMATCH:{slot_id}")
         groups = part.get("source_groups", [])
         entity_by_id = {
             e.get("entity_id"): e for e in part.get("entities", [])

@@ -16,6 +16,8 @@ import ezdxf
 
 from canonical_contract import CONTRACT, CanonicalContractError
 from export_dxf import entity_signature, new_doc, safe_name
+from cut_orientation import orient_cut_doc
+from ezdxf.math import Matrix44
 
 APPID = "TRAINAICAD"
 CUT_ROLES = frozenset({"outer", "cutout", "slot", "hole", "relief", "slit", "cut"})
@@ -141,6 +143,19 @@ def _owner_map(part):
     return owners
 
 
+def _inverse_signature_equal(source_sig, restored_sig):
+    """ARC angle 0/360 and negative/positive turns are the same physical arc."""
+    if source_sig[0] != restored_sig[0]:
+        return False
+    if source_sig[0][0] != "ARC":
+        return source_sig == restored_sig
+    ac, ar, a0, a1 = source_sig[1]
+    bc, br, b0, b1 = restored_sig[1]
+    def angle_match(a, b):
+        return abs((a - b + 180) % 360 - 180) <= 2e-6
+    return ac == bc and ar == br and angle_match(a0, b0) and angle_match(a1, b1)
+
+
 def _xdata(entry):
     return [tag.value for tag in entry.get_xdata(APPID) if tag.code == 1000]
 
@@ -183,7 +198,19 @@ def _plan_cut_doc(part):
         fail(f"{part['code']}: no closed verified contour or circle for CUT")
     if not any(e["role"] == "outer" for e in part["entities"]):
         fail(f"{part['code']}: missing proved outside contour")
-    return doc, expected, cut_count, contour_count
+    orientation = orient_cut_doc(doc, part)
+    updated = []
+    for obj, (source_sig, eid, parent, members) in zip(doc.modelspace(), expected):
+        # Reverse-check final physical geometry against the unrotated canonical
+        # manufacturing curve, independently of saved-file signature equality.
+        restored = obj.copy()
+        dx, dy = orientation["translation_mm"]
+        restored.transform(Matrix44.translate(-dx, -dy, 0))
+        restored.transform(Matrix44.z_rotate(-math.radians(orientation["rotation_deg"])))
+        if not _inverse_signature_equal(source_sig, entity_signature(restored)):
+            fail(f"{part['code']}/{eid}: INVERSE_TRANSFORM_MISMATCH")
+        updated.append((entity_signature(obj), eid, parent, members))
+    return doc, updated, cut_count, contour_count, orientation
 
 
 def _verify_cut(path, expected):
@@ -220,7 +247,7 @@ def _atomic_text(path, payload):
     return True
 
 
-def export_part_artifacts(job, output_dir):
+def export_part_artifacts(job, output_dir, composite_only=False):
     """Persist one canonical JSON per code and validated independent PASS CUTs.
 
     This is intentionally downstream of validate_canonical_job and successful
@@ -245,8 +272,8 @@ def export_part_artifacts(job, output_dir):
         json_changed = _atomic_text(target_json, data)
         entry = {"code": code, "status": part["status"], "geometry_json": str(target_json.relative_to(root)),
                  "geometry_sha256": hashlib.sha256(data).hexdigest(), "json_changed": json_changed}
-        if part["status"] == "PASS" and not part.get("flags"):
-            doc, expected, members, contours = _plan_cut_doc(part)
+        if part["status"] == "PASS" and not part.get("flags") and not composite_only:
+            doc, expected, members, contours, orientation = _plan_cut_doc(part)
             target_dxf = cut_dir / f"{code}.dxf"
             # Always read back cached PASS DXF; replace if stale or corrupted.
             cached = not json_changed and target_dxf.exists() and _verify_cut(target_dxf, expected)
@@ -260,9 +287,11 @@ def export_part_artifacts(job, output_dir):
             keep_pass.add(code)
             entry.update({"cut_dxf": str(target_dxf.relative_to(root)), "cut_entity_count": len(expected),
                           "canonical_cut_member_count": members, "closed_contours": contours,
-                          "cut_readback": "PASS", "reused_verified_dxf": cached})
+                          "cut_readback": "PASS", "reused_verified_dxf": cached,
+                          "orientation": orientation})
         else:
-            entry.update({"cut_dxf": None, "cut_readback": "NOT_PRODUCTION"})
+            entry.update({"cut_dxf": None,
+                          "cut_readback": "COMPOSITE_ONLY" if composite_only else "NOT_PRODUCTION"})
         statuses.append(entry)
     # These are generated-only directories. Drop stale results on status changes.
     for p in json_dir.glob("*.json"):
