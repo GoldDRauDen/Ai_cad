@@ -10,6 +10,81 @@ from __future__ import annotations
 from typing import Any, Dict, Iterable, List
 
 
+
+def _assembly_datum_anomalies(part: Dict[str, Any]) -> List[str]:
+    """Independently re-solve declared cross-part derived-feature candidates.
+
+    Optional for single-part jobs. When source census reports an indirect
+    assembly candidate, an unattempted or unverified trace cannot count as PASS.
+    """
+    candidates = part.get("assembly_indirect_candidates", [])
+    if not candidates:
+        return []
+    if not isinstance(candidates, list):
+        return ["ASSEMBLY_DATUM_CANDIDATE_LEDGER_INVALID"]
+    traces = part.get("assembly_datum_traces", [])
+    if not isinstance(traces, list):
+        return ["ASSEMBLY_DATUM_TRACE_NOT_ATTEMPTED"]
+    by_id = {t.get("feature_id"): t for t in traces if isinstance(t, dict)}
+    if not by_id:
+        return ["ASSEMBLY_DATUM_TRACE_NOT_ATTEMPTED"]
+
+    # Loading here avoids making unrelated flat/older jobs pay solver overhead.
+    import importlib.util
+    from decimal import Decimal, InvalidOperation
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(
+        "assembly_datum_solver_for_qa",
+        Path(__file__).with_name("assembly_datum_solver.py"),
+    )
+    if spec is None or spec.loader is None:
+        return ["ASSEMBLY_DATUM_SOLVER_NOT_AVAILABLE"]
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    errors: List[str] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            errors.append("ASSEMBLY_DATUM_CANDIDATE_LEDGER_INVALID")
+            continue
+        feature_id = candidate.get("feature_id")
+        if not isinstance(feature_id, str) or not feature_id or feature_id in seen:
+            errors.append("ASSEMBLY_DATUM_CANDIDATE_LEDGER_INVALID")
+            continue
+        seen.add(feature_id)
+        trace = by_id.get(feature_id)
+        if not trace or not isinstance(trace.get("graph"), dict):
+            errors.append(f"ASSEMBLY_DATUM_TRACE_NOT_ATTEMPTED:{feature_id}")
+            continue
+        try:
+            solved = module.solve_relative(
+                trace["graph"],
+                candidate["datum_node"],
+                candidate["target_node"],
+                candidate["axis"],
+            )
+        except (module.DatumSolveError, KeyError, TypeError) as exc:
+            if trace.get("status") != "FLAGGED" or not trace.get("reason"):
+                errors.append(f"ASSEMBLY_DATUM_UNPROVED:{feature_id}")
+            continue
+
+        if trace.get("status") != "PROVED":
+            errors.append(f"DERIVABLE_ASSEMBLY_COORDINATE_FLAGGED:{feature_id}")
+            continue
+        try:
+            claimed = Decimal(str(trace["offset_mm"]))
+            actual = Decimal(solved["offset_mm"])
+        except (KeyError, InvalidOperation, TypeError):
+            errors.append(f"ASSEMBLY_DATUM_RESULT_MISSING:{feature_id}")
+            continue
+        if not claimed.is_finite() or claimed != actual:
+            errors.append(f"ASSEMBLY_DATUM_RESULT_MISMATCH:{feature_id}")
+        if not solved["witness_path"]:
+            errors.append(f"ASSEMBLY_DATUM_WITNESS_PATH_MISSING:{feature_id}")
+    return sorted(set(errors))
+
+
 def part_anomalies(part: Dict[str, Any]) -> List[str]:
     out: List[str] = []
 
@@ -48,6 +123,7 @@ def part_anomalies(part: Dict[str, Any]) -> List[str]:
     if part.get("high_source_evidence", False) and not part.get("flat_attempted", False):
         out.append("HIGH_SOURCE_EVIDENCE_WITHOUT_SOLVE_ATTEMPT")
 
+    out.extend(_assembly_datum_anomalies(part))
     return sorted(set(out))
 
 
@@ -182,6 +258,10 @@ def canonical_job_anomalies(job: Dict[str, Any]) -> List[str]:
             if family == "KEGAKI" and group.get("status") == "PROVED":
                 if any(e.get("type") != "LINE" or e.get("color") != 1 for e in owned):
                     out.append(f"{code}:KEGAKI_SOURCE_GROUP_GEOMETRY_MISMATCH:{gid}")
+
+        # Independent cross-part witness re-solve is mandatory when the
+        # source census declares an indirect assembly-position candidate.
+        out.extend(f"{code}:{error}" for error in _assembly_datum_anomalies(part))
 
         # Optional per-bend source arithmetic: never accept a hardcoded
         # 'flat_attempted=True' when actual witness arithmetic is supplied.
