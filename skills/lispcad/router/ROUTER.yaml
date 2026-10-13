@@ -18,6 +18,7 @@ default_load:
   - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
   - references/SOURCE_FEATURE_GROUP_CLOSURE.md
   - references/CAD_CUSTOMER_POLICY.md
+  - references/WELD_SITE_KEGAKI_CLOSURE.md
   - skills/lispcad/router/FEATURE_CENSUS.md
 
 # Stage-specific mandatory gates, not optional rules.
