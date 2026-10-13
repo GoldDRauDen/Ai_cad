@@ -1,0 +1,81 @@
+{
+  "fixture_id": "521013-04_059636",
+  "purpose": "Case-scoped approved assembly-datum regression. Never generalize its numbers to other jobs.",
+  "frame_id": "ASSEMBLY_521013_04_FG",
+  "nodes": {
+    "A_REFERENCE": {
+      "part_id": "A",
+      "kind": "REFERENCE_DATUM"
+    },
+    "G_BOTTOM": {
+      "part_id": "G",
+      "kind": "OUTER_EDGE"
+    },
+    "G_M6_CENTER": {
+      "part_id": "G",
+      "kind": "HOLE_CENTER"
+    },
+    "F_M6_CENTER": {
+      "part_id": "F",
+      "kind": "HOLE_CENTER"
+    },
+    "F_BOTTOM": {
+      "part_id": "F",
+      "kind": "OUTER_EDGE"
+    }
+  },
+  "constraints": [
+    {
+      "edge_id": "A_TO_G_BOTTOM",
+      "from": "A_REFERENCE",
+      "to": "G_BOTTOM",
+      "axis": "Y",
+      "delta_mm": "41",
+      "frame_id": "ASSEMBLY_521013_04_FG",
+      "dimension_type": "BASELINE",
+      "status": "PROVED",
+      "source_ref": "USER_CONFIRMED:521013-04:059636:assembly-chain",
+      "witness_from": "A assembly datum plane",
+      "witness_to": "G bottom physical edge"
+    },
+    {
+      "edge_id": "G_BOTTOM_TO_HOLE",
+      "from": "G_BOTTOM",
+      "to": "G_M6_CENTER",
+      "axis": "Y",
+      "delta_mm": "14",
+      "frame_id": "ASSEMBLY_521013_04_FG",
+      "dimension_type": "LOCAL",
+      "status": "PROVED",
+      "source_ref": "USER_CONFIRMED:521013-04:059636:assembly-chain",
+      "witness_from": "G bottom physical edge",
+      "witness_to": "G M6 center, half of source 28"
+    },
+    {
+      "edge_id": "G_HOLE_TO_F_HOLE",
+      "from": "G_M6_CENTER",
+      "to": "F_M6_CENTER",
+      "axis": "Y",
+      "delta_mm": "290",
+      "frame_id": "ASSEMBLY_521013_04_FG",
+      "dimension_type": "ASSEMBLY_OFFSET",
+      "status": "PROVED",
+      "source_ref": "USER_CONFIRMED:521013-04:059636:assembly-chain",
+      "witness_from": "G M6 center in assembly frame",
+      "witness_to": "F M6 center in same assembly frame"
+    },
+    {
+      "edge_id": "A_TO_F_BOTTOM",
+      "from": "A_REFERENCE",
+      "to": "F_BOTTOM",
+      "axis": "Y",
+      "delta_mm": "325",
+      "frame_id": "ASSEMBLY_521013_04_FG",
+      "dimension_type": "BASELINE",
+      "status": "PROVED",
+      "source_ref": "USER_CONFIRMED:521013-04:059636:assembly-chain",
+      "witness_from": "A assembly datum plane",
+      "witness_to": "F bottom physical edge"
+    }
+  ]
+}
