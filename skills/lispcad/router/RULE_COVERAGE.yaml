@@ -22,6 +22,7 @@ release_coverage:
       - skills/lispcad/router/FEATURE_CENSUS.md
       - skills/lispcad/router/ROUTER.yaml
       - tools/holistic_engineering_guard.py
+      - tools/weld_kegaki_guard.py
       - tools/reference_exposure_guard.py
     regression:
       - regression/qa/521007-07_V4_33_APPROVED.md
