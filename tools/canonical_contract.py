@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 
+from weld_kegaki_guard import WeldKegakiError, validate_weld_kegaki
+
 CONTRACT = "TrainAiCad-CANONICAL-V4.31"
 SOURCE_STATUSES = {"PROVED", "FLAGGED", "CANCELED"}
 CANON_SOURCE_STATUSES = {"PROVED", "PREVIEW", "FLAGGED_NO_GEOMETRY", "SOURCE_VIEW"}
@@ -32,7 +34,7 @@ def _members_of(group):
     return members
 
 
-def validate_part(part: dict) -> dict:
+def validate_part(part: dict, customer_code: str | None = None) -> dict:
     code = ident(part.get("code"), "part code")
     entities = part.get("entities")
     if not isinstance(entities, list) or not entities:
@@ -161,8 +163,16 @@ def validate_part(part: dict) -> dict:
         if not annotation and eid not in entity_owners:
             fail(f"{code}: orphan canonical manufacturing entity {eid}")
 
+    # Independent weld-site census is checked against real KEGAKI source
+    # members and canonical RED marking, not merely source/canonical equality.
+    try:
+        weld_closure = validate_weld_kegaki(part, customer_code)
+    except WeldKegakiError as exc:
+        fail(str(exc))
+
     return {
         "code": code,
+        "weld_kegaki_closure": weld_closure,
         "source_group_count": len(groups),
         "source_member_count": len(source_member),
         "proved_source_member_count": len(proved_source),
@@ -180,7 +190,14 @@ def validate_canonical_job(job: dict) -> dict:
     parts = job.get("parts")
     if not isinstance(parts, list) or not parts:
         fail("canonical job requires parts")
-    records = [validate_part(part) for part in parts]
+    raw_customer_code = job.get("customer_code")
+    if raw_customer_code is not None:
+        if isinstance(raw_customer_code, bool) or not str(raw_customer_code).strip().isdigit():
+            fail("customer_code must be the numeric code from job statistics")
+        customer_code = str(int(str(raw_customer_code).strip()))
+    else:
+        customer_code = None
+    records = [validate_part(part, customer_code=customer_code) for part in parts]
     all_ids = []
     for rec in records:
         all_ids.extend(rec["entity_ids"])

@@ -109,6 +109,7 @@ feature_routes:
   KEGAKI:
     load:
       - skills/lispcad/features/KEGAKI.md
+      - references/WELD_SITE_KEGAKI_CLOSURE.md
   PIASU:
     load:
       - skills/lispcad/features/HOLES_TAPS.md
@@ -188,6 +189,7 @@ post_route_checks:
   - source_feature_group_closure
   - source_group_member_ledger
   - part_identity_graph_when_applicable
+  - weld_site_kegaki_source_census_closure
   - same_physical_parameter_before_reference_conflict
   - source_feature_completeness
   - dependency_closure
@@ -196,6 +198,7 @@ post_route_checks:
   - bend_edge_length_lock
   - bend_end_offset_relief_90
   - cross_feature_validation
+  - weld_site_kegaki_canonical_closure
   - holistic_engineering_challenge
   - views_only_source_view_completeness
   - final_engineering_sanity_review

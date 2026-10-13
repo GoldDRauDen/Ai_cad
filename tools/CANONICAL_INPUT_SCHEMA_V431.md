@@ -24,6 +24,20 @@ Each part retains the existing `tools/DXF_INPUT_SCHEMA.md` fields (`code`, `mate
 
 ## Source groups
 
+## Conditional weld-site/KEGAKI completeness (no schema version change)
+
+For jobs with numeric KH851 customer_code or source-identified assembly/
+weld sites, persist the source-first weld inventory before marking geometry.
+Optional job-level customer_code is the explicit job-statistics numeric ID,
+not a barcode suffix. Parts contain source_assembly_view_ids,
+source_weld_site_ids and weld_site_census. Sites link to source-backed KEGAKI
+members through mark_member_ids; the canonical validator checks their
+physical RED marking or local FLAG, independently of member self-equality.
+Use references/WELD_SITE_KEGAKI_CLOSURE.md for exact fields and negative
+(no weld) evidence. Older jobs with no assembly/weld indicators and no
+applicable KH851 scope retain their existing V4.31 canonical format.
+
+
 ```json
 "source_groups": [
   {

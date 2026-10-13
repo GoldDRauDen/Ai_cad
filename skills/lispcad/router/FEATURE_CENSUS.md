@@ -58,6 +58,18 @@ Apply `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`.
 - `スリット 8` is evidence for the scoped drawing's slit value `8`; it is not a universal size rule and does not authorize assuming a bend-center location.
 - Existing separately-triggered relief families remain governed by their own routed mechanisms.
 
+## Independent source weld-site inventory / KH 851
+
+Apply references/WELD_SITE_KEGAKI_CLOSURE.md during L1 before final
+KEGAKI classification. Read numeric customer_code from JOB STATISTICS.
+For KH851, every proved welding contact, including a side A/B assembly
+view without an explicit KEGAKI callout, mandates a locating mark. Persist
+all independent assembly-view and weld-site IDs plus a source-witness
+disposition for absent sites. KEGAKI is YES only where the actual mark
+geometry is proved; otherwise it remains UNKNOWN with local FLAG, never
+NO for a required site. Re-run Router if the welding/site census
+reveals a new KEGAKI group. Unresolved customer dimensions stay FLAGGED.
+
 ## V4.27 weld-cue gate before KEGAKI = NO
 
 When a reversed-e mark is proved immediately above a barcode, record the scoped process evidence as `REVERSED_E_ABOVE_BARCODE -> WELD_REQUIRED_CUE` for that barcode's code/detail cluster only.
