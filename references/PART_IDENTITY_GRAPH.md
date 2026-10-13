@@ -27,6 +27,19 @@ A drawing can show an assembly and its child parts together; paper proximity doe
 
 ## 3. Collision gate
 
+### Welded parent/child contact ownership
+
+For an assembly or A/B detail, identify which code owns the main
+manufacturing sheet, which constituent is mounted/welded to it, and
+which actual physical face hosts each proved contact. Preserve the
+assembly-view ID and contact-site provenance in the independent
+WELD_SITE_KEGAKI_CLOSURE ledger. A side-positioning view beside a
+part is not ignorable merely because its curves are not CUT.
+The KH851 customer exception requires marking proved weld sites even
+if a KEGAKI callout is absent. Do not transfer the site to an
+adjacent barcode solely by paper proximity.
+
+
 Raise `PART_IDENTITY_COLLISION` when:
 
 - two independent codes receive the same complete DATA/source-view bundle;
