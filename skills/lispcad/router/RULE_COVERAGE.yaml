@@ -28,6 +28,7 @@ release_coverage:
       - regression/qa/521007-07_V4_33_APPROVED.md
       - regression/tools/check_521007_07_v433.py
       - tests/test_v433_holistic_reference_guards.py
+      - tests/test_weld_kegaki_guard.py
   V4.32:
     active:
       - AI_ENTRYPOINT.md
