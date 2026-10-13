@@ -12,11 +12,11 @@ phase1_integration:
   exporter_or_qa_hooks: false
   incident_history_recording: false
   read_only_manual_cli: true
-active_production_skill: skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md
+active_production_skill: AI_ENTRYPOINT.md
 authority:
   priority:
   - user current explicit instructions
-  - current approved portable production skill and modules
+  - current approved repo-direct AI_ENTRYPOINT, Router and routed modules
   - currently applicable approved regressions
   - this catalog as retrieval and QA metadata only
   new_lesson_requires_direct_user_approval: true

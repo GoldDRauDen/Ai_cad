@@ -51,6 +51,13 @@ def validate(c: dict, repo_root: Path | None = None) -> dict:
     if c.get("phase1_integration") != PASSIVE:
         errors.append("Phase 1 integration MUST remain passive and read-only")
     authority = c.get("authority", {})
+    if c.get("active_production_skill") != "AI_ENTRYPOINT.md":
+        errors.append("Catalog production authority must be current AI_ENTRYPOINT.md")
+    priority = authority.get("priority", [])
+    if not isinstance(priority, list) or len(priority) < 2 or (
+        priority[1] != "current approved repo-direct AI_ENTRYPOINT, Router and routed modules"
+    ):
+        errors.append("Catalog authority priority must follow repo-direct routing")
     if not authority.get("new_lesson_requires_direct_user_approval"):
         errors.append("Missing direct user approval boundary")
     if not authority.get("legacy_superseded_fragments_never_override_current_skill"):

@@ -1,5 +1,9 @@
 # LISPCAD Feature — Holes / Taps / Piercing
 
+2026-10-12 clarification: For a countersink/counterbore, only the proved through-opening/pilot is prospective laser CUT; never serialize machining-mouth diameter as a second CUT. See `references/COUNTERSINK_COUNTERBORE.md`. Fine-pitch threads only when pitch is explicitly proved; route `references/THREAD_FINE_PILOT_TABLE.md`. Even DATA-authority customer exceptions cannot waive physical hole identity/count/type/position checks. NC pierce paths and joints are deferred.
+
+
+
 ## V4.24 — universal DATA M* nominal-reference / pilot canonicalization
 
 This applies to **every proved `M*` tap**, not only M6.

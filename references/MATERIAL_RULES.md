@@ -1,5 +1,9 @@
 # Production reference — Laser corner R, hole capacity, White Piercing
 
+## Customer-approved 2026-10-12 SS t>=19 R3 scope clarification
+The workbook `一覧表2026.07.30!I41:I42` states **鉄の外周R、19t以上は全ての角に3R**. Operationally, SS t>=19 automatic R3 applies only to corners on the **OUTER material perimeter contour**, including concave/re-entrant corners belonging to that same exterior contour. It **does not** auto-fillet contours of interior holes, slots or voids. Explicit customer drawing instructions override this table for each scoped corner (sharp/pin角 or R/C). This approved restriction supersedes the wider original row-9 transcription; keep original source cell as provenance, not active scope. Laser-NC pierce paths/joints are deferred from CAD.
+
+
 ## V4.24 PDF_DATA_RAW automatic-R execution hardening
 
 No workbook value changes. In `PDF_DATA_RAW`, a customer DATA corner being sharp is **not** evidence to omit an automatic Laser R required by this table. After the DATA corner identity/topology is proved, every otherwise uncalled eligible outside corner `<=90°` receives the active material/thickness R as a recorded `DATA_AUTO_R_CANONICALIZATION`. Preserve the surrounding DATA geometry and build the true tangent replacement locally. An explicit PDF/source R or C at that corner retains precedence, and this rule never authorizes smoothing arbitrary internal notches or unrelated curve chains.
@@ -19,7 +23,7 @@ For sheet-metal grade labels, normalize whitespace/case and match family prefixe
 | 6 | SS | 6 | 9 | outside corner ≤90° | R2 | — | 〇 |
 | 7 | SS | 10 | 12 | — | none (無) | — | 〇 |
 | 8 | SS | 16 | 16 | — | none (無) | ≥ t | 〇 |
-| 9 | SS | 19 | — | inside/outside corners, including chamfer (内外角/面取含) | R3 (※3 ignored) | — | 〇 |
+| 9 | SS | 19 | — | outer material perimeter corners only (2026-10-12 active scope; original 内外角/面取含) | R3 (※3 ignored) | — | 〇 |
 | 10 | SUS, 他 | — | 5 | outside corner ≤90° | R0.5 | ≥ t/2 | × |
 | 11 | SUS, 他 | 6 | 6 | outside corner ≤90° | R0.5 | — | 〇 |
 | 12 | SUS, 他 | 7 | 8 | — | none (無) | — | 〇 |

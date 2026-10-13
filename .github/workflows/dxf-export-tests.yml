@@ -6,6 +6,10 @@ on:
       - 'AI_BOOTSTRAP.md'
       - 'PROJECT_INSTRUCTIONS_GPT_WEB.md'
       - 'AI_ENTRYPOINT.md'
+      - 'SKILL.md'
+      - 'QA_ENTRYPOINT.md'
+      - 'README.md'
+      - 'docs/**'
       - 'skills/**'
       - 'references/**'
       - 'regression/**'
@@ -19,6 +23,10 @@ on:
       - 'AI_BOOTSTRAP.md'
       - 'PROJECT_INSTRUCTIONS_GPT_WEB.md'
       - 'AI_ENTRYPOINT.md'
+      - 'SKILL.md'
+      - 'QA_ENTRYPOINT.md'
+      - 'README.md'
+      - 'docs/**'
       - 'skills/**'
       - 'references/**'
       - 'regression/**'
@@ -36,6 +44,13 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements.txt
       - run: python -m pytest tests/ -q
+      - name: Rule coverage, scoped index, portable rulepack and stage benchmark
+        run: |
+          python tools/audit_rule_coverage.py
+          python tools/build_rule_index.py --output /tmp/TRAINAICAD_RAG_INDEX.yaml
+          python tools/build_rule_bundle.py --output /tmp/TRAINAICAD_E2E_RULEPACK.md
+          python tools/benchmark_rule_routes.py
+          python tools/audit_rule_duplicates.py
       - name: Production rule regressions V4.19-V4.33
         run: |
           python regression/tools/check_520929_25_v419.py

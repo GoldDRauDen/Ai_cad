@@ -1,6 +1,16 @@
-# TrainAiCad V4.9 canonical geometry → ONE code-labeled DXF
+# TrainAiCad lower-level V4.9 DXF serializer (compatibility only)
 
-The serializer accepts **independently interpreted and verified** PDF drawing geometry. It never proves PDF dimensions, customer corrections, true unfold face order, manufacturing containment or Nobi. See [AI_ENTRYPOINT.md](../AI_ENTRYPOINT.md) and [current portable skill](../skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md).
+**Production E2E** uses `tools/export_canonical_dxf.py` and
+`tools/CANONICAL_INPUT_SCHEMA_V431.md`, not this lower-level CLI directly.
+After canonical source/member validation, it writes one
+`geometry_json/<CODE>.json` per part, PASS-only individual
+`parts_dxf/<PASS_CODE>.dxf` with LINE/ARC/CIRCLE CUT primitives and one
+all-code composite (`<JOB>_ALL.dxf` or `<JOB>_ALL_REVIEW_ONLY.dxf`).
+See `tools/export_job_artifacts.py` for analytic bulge decomposition and
+independent DXF read-back. The historical lower-level API described below
+continues to behave exactly as its original tests require.
+
+The serializer accepts **independently interpreted and verified** PDF drawing geometry. It never proves PDF dimensions, customer corrections, true unfold face order, manufacturing containment or Nobi. See [AI_ENTRYPOINT.md](../AI_ENTRYPOINT.md) and the active modular [core rule](../skills/lispcad/core/CAD_OUTPUT.md).
 
 ## Default and filenames
 
