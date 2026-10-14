@@ -23,7 +23,7 @@ When such an invocation accompanies PDF/image/customer DXF DATA, do not stop aft
 4. Read the mandatory router files named by the current entrypoint:
    - `skills/lispcad/router/FEATURE_CENSUS.md`
    - `skills/lispcad/router/ROUTER.yaml`
-   - `skills/lispcad/router/RULE_COVERAGE.yaml`
+   (`RULE_COVERAGE.yaml` is an audit map, not a per-job load.)
 5. Load the current router-declared always-on modules/references, inspect the actual source, route every `YES`/`UNKNOWN` family, and follow the current repo-direct E2E flow to its executable limit.
 6. If a complete feature census is available and Python with PyYAML can run, `tools/resolve_rules.py` may calculate the deterministic, de-duplicated Router file set. This helper does not replace source inspection, mandatory routing, or any engineering gate; if unavailable, follow the Router directly.
 7. Use current repository tools/contracts for canonicalization, DXF serialization, save/reopen/read-back and applicable source reprojection/fold-back.

@@ -38,7 +38,7 @@ def test_index_is_generated_from_live_router_and_complete_coverage():
 
 
 def test_rag_index_cli_outputs_reproducible_manifest(tmp_path):
-    output = tmp_path / "RAG_INDEX.yaml"
+    output = tmp_path / "ROUTE_INDEX.yaml"
     result = subprocess.run([sys.executable, str(ROOT / "tools/build_rule_index.py"),
                              "--output", str(output)],
                             cwd=ROOT, text=True, capture_output=True, check=True)

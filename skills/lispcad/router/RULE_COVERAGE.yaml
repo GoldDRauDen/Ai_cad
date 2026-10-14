@@ -1,10 +1,25 @@
 schema_version: 1
-release: V4.33
+release: V4.34
 purpose: ROUTING_COVERAGE_AUDIT
 
 # This file proves where approved release families live after modular routing.
 # It is an audit map, not an instruction to load every file for every job.
 release_coverage:
+  V4.34:
+    active:
+      - AI_ENTRYPOINT.md
+      - references/MATERIAL_ALIASES.yaml
+      - references/MATERIAL_RULES.md
+      - skills/lispcad/features/SLOTS.md
+      - tools/CANONICAL_INPUT_SCHEMA_V434.md
+      - tools/canonical_contract.py
+      - tools/material_resolver.py
+      - tools/dimension_witness.py
+      - tools/slot_anchor.py
+      - tools/cut_orientation.py
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - tests/test_v434_material_witness_slot_orientation.py
   V4.33:
     active:
       - AI_ENTRYPOINT.md
@@ -229,6 +244,7 @@ release_coverage:
   V4.10:
     active:
       - skills/lispcad/core/DATUM_DIMENSION.md
+      - tools/datum_coordinates.py
     regression:
       - regression/datum/520728-06_043793_TOP_LEFT_APPROVED.md
   V4.9:

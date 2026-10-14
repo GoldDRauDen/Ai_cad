@@ -62,7 +62,7 @@ def main():
     chamfer = (root / "skills/lispcad/features/CHAMFER_RADIUS.md").read_text(encoding="utf-8")
     validation = (root / "skills/lispcad/core/VALIDATION.md").read_text(encoding="utf-8")
     boxmet = (root / "references/BOXMET_SLIT_RELIEF.md").read_text(encoding="utf-8")
-    entry = (root / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (root / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (root / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
 
     assert "V4.18 DETAILED_SOURCE_BUNDLE" in drawing and "DETAILED_SOURCE_BUNDLE" in portable
     assert "V4.18 C/R_SEMANTIC_LOCK" in chamfer and "C/R_SEMANTIC_LOCK" in portable

@@ -49,7 +49,7 @@ def test_agents_is_orchestration_only_and_release_independent():
 
 
 def test_entrypoint_accepts_e2e_invocation_without_repeating_workflow():
-    text = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    text = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     assert "## Invocation contract" in text
     assert "`E2E`" in text
     assert "complete current repo-direct production flow" in text

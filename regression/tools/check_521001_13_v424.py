@@ -28,7 +28,7 @@ def pilot_from_table(m_name):
 current = read("skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md")
 v424 = read("skills/lispcad/versions/V4.24/SKILL_LISPCAD_V4_24_PORTABLE.md")
 v423 = read("skills/lispcad/versions/V4.23/SKILL_LISPCAD_V4_23_PORTABLE.md")
-entry = read("AI_ENTRYPOINT.md")
+entry = (read("AI_ENTRYPOINT.md") + read("docs/RELEASE_INDEX.md"))
 router = read("skills/lispcad/router/ROUTER.yaml")
 coverage = read("skills/lispcad/router/RULE_COVERAGE.yaml")
 geom = read("references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md")

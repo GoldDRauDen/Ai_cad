@@ -10,7 +10,7 @@ RUNNER=ROOT/"regression/tools/check_520929_10_v417.py"
 VALID=ROOT/"skills/lispcad/core/VALIDATION.md"
 
 def test_release_and_routing():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.17 PORTABLE")
     assert "V4.17 direct approval" in skill

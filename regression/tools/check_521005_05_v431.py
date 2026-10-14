@@ -160,7 +160,7 @@ def part_057873():
 
 def build_job():
     return {
-        "canonical_contract": "TrainAiCad-CANONICAL-V4.31",
+        "canonical_contract": "TrainAiCad-CANONICAL-V4.31", "legacy_fixture": True,
         "job_id": "521005-05-V431",
         "parts": [part_057862(), part_057864(), part_057873()],
     }

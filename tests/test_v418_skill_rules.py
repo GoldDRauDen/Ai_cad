@@ -10,7 +10,7 @@ QA=ROOT/"regression/qa/520929-18_V4_18_APPROVED.md"
 RUNNER=ROOT/"regression/tools/check_520929_18_v418.py"
 
 def test_release_and_routing():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.18 PORTABLE")
     assert "V4.18 direct approval / PUSH" in skill

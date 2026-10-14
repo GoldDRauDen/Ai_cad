@@ -41,15 +41,22 @@ function lockEvidence(jobId: string) {
   };
 }
 
-test("release pin fails closed when entrypoint and CURRENT disagree", () => {
+test("release pin fails closed when AI_ENTRYPOINT and ROUTER.yaml disagree", () => {
   const root = mkdtempSync(join(tmpdir(), "trainaicad-root-"));
-  mkdirSync(join(root, "skills/lispcad/portable"), { recursive: true });
+  mkdirSync(join(root, "skills/lispcad/router"), { recursive: true });
   writeFileSync(join(root, "AI_ENTRYPOINT.md"), "Current production release is **V4.17**.\n");
-  writeFileSync(
-    join(root, "skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"),
-    "# SKILL_LISPCAD V4.18 PORTABLE\n"
-  );
+  writeFileSync(join(root, "skills/lispcad/router/ROUTER.yaml"), "release: V4.34\n");
   assert.throws(() => readReleasePin(root), /SKILL_FRESHNESS_UNVERIFIED/);
+});
+
+test("release pin matches ROUTER.yaml and ignores a stale portable snapshot", () => {
+  const root = mkdtempSync(join(tmpdir(), "trainaicad-root-"));
+  mkdirSync(join(root, "skills/lispcad/router"), { recursive: true });
+  mkdirSync(join(root, "skills/lispcad/portable"), { recursive: true });
+  writeFileSync(join(root, "AI_ENTRYPOINT.md"), "Current production release is **V4.34**.\n");
+  writeFileSync(join(root, "skills/lispcad/router/ROUTER.yaml"), "release: V4.34\n");
+  writeFileSync(join(root, "skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"), "# SKILL_LISPCAD V4.24 PORTABLE\n");
+  assert.equal(readReleasePin(root).release, "V4.34");
 });
 
 test("sanitizeFileName strips traversal and enforces extension whitelist", () => {

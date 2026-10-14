@@ -50,7 +50,10 @@ def model(code="A", width=12, height=40, material="SS", grain=None):
 
 
 def job(part, version="TrainAiCad-CANONICAL-V4.31"):
-    return {"canonical_contract": version, "job_id": "QA_V434", "parts": [part]}
+    doc = {"canonical_contract": version, "job_id": "QA_V434", "parts": [part]}
+    if version.endswith("V4.31"):
+        doc["legacy_fixture"] = True  # V4.31 is legacy-only; new jobs use V4.34
+    return doc
 
 
 def test_excel_material_aliases_and_process_split():

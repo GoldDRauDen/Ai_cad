@@ -7,7 +7,7 @@ RELEASE=ROOT/"skills/lispcad/versions/V4.23/SKILL_LISPCAD_V4_23_PORTABLE.md"
 PREV=ROOT/"skills/lispcad/versions/V4.22/SKILL_LISPCAD_V4_22_PORTABLE.md"
 
 def test_v423_historical_release_and_v424_inheritance():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
     assert "- **V4.23:**" in entry
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.23 PORTABLE")
@@ -18,7 +18,7 @@ def test_v423_historical_release_and_v424_inheritance():
     assert "V4.23 direct approval" not in PREV.read_text(encoding="utf-8")
 
 def test_v423_physical_census_bidirectional_and_bend_wiring():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     physical=(ROOT/"references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md").read_text(encoding="utf-8")
     graph=(ROOT/"references/FACE_GRAPH_UNFOLD_PROTOCOL.md").read_text(encoding="utf-8")
     validation=(ROOT/"skills/lispcad/core/VALIDATION.md").read_text(encoding="utf-8")

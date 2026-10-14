@@ -100,8 +100,10 @@ def test_rule_wiring(root: Path):
     firewall = (root / "references/REFERENCE_EXPOSURE_FIREWALL.md").read_text(encoding="utf-8")
     identity = (root / "references/PART_IDENTITY_GRAPH.md").read_text(encoding="utf-8")
 
-    assert router["release"] == "V4.33"
-    assert coverage["release"] == "V4.33"
+    # V4.33 wiring must remain; later releases (V4.34+) may be current.
+    def _ver(v): return tuple(int(x) for x in str(v).lstrip("V").split("."))
+    assert _ver(router["release"]) >= (4, 33), router["release"]
+    assert _ver(coverage["release"]) >= (4, 33), coverage["release"]
     for path in [
         "references/HOLISTIC_ENGINEERING_CHALLENGE.md",
         "references/REFERENCE_EXPOSURE_FIREWALL.md",

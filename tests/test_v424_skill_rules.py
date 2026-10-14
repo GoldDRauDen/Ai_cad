@@ -7,7 +7,7 @@ RELEASE = ROOT / "skills/lispcad/versions/V4.24/SKILL_LISPCAD_V4_24_PORTABLE.md"
 PREV = ROOT / "skills/lispcad/versions/V4.23/SKILL_LISPCAD_V4_23_PORTABLE.md"
 
 def test_v424_current_release_and_immutable_v423():
-    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill = CURRENT.read_text(encoding="utf-8")
     assert "- **V4.24:**" in entry
     assert CURRENT.read_bytes() == RELEASE.read_bytes()

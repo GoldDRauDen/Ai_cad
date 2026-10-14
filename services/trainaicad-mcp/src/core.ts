@@ -37,22 +37,25 @@ export function resolveRepoRoot(start = process.env.TRAINAICAD_REPO_ROOT ?? proc
 }
 
 export function readReleasePin(repoRoot = resolveRepoRoot()): ReleasePin {
+  // Authority: AI_ENTRYPOINT.md must agree with the routing release in ROUTER.yaml.
+  // The portable snapshot is compatibility-only and is hashed when present, never
+  // used to pin the release (plan_claude_fix F5).
   const entrypoint = readFileSync(join(repoRoot, "AI_ENTRYPOINT.md"), "utf8");
-  const currentSkill = readFileSync(
-    join(repoRoot, "skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"),
-    "utf8"
-  );
-
+  const router = readFileSync(join(repoRoot, "skills/lispcad/router/ROUTER.yaml"), "utf8");
   const entryMatch = entrypoint.match(/Current production release is \*\*(V\d+\.\d+)\*\*/);
-  const skillMatch = currentSkill.match(/^# SKILL_LISPCAD (V\d+\.\d+) PORTABLE/m);
-  if (!entryMatch?.[1] || !skillMatch?.[1] || entryMatch[1] !== skillMatch[1]) {
-    throw new Error("SKILL_FRESHNESS_UNVERIFIED: AI_ENTRYPOINT and CURRENT disagree");
+  const routerMatch = router.match(/^release:\s*(V\d+\.\d+)\s*$/m);
+  if (!entryMatch?.[1] || !routerMatch?.[1] || entryMatch[1] !== routerMatch[1]) {
+    throw new Error("SKILL_FRESHNESS_UNVERIFIED: AI_ENTRYPOINT and ROUTER.yaml disagree");
   }
+  const portablePath = join(repoRoot, "skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md");
+  const currentSkillSha256 = existsSync(portablePath)
+    ? sha256(readFileSync(portablePath, "utf8"))
+    : "";
 
   return {
     release: entryMatch[1],
     entrypointSha256: sha256(entrypoint),
-    currentSkillSha256: sha256(currentSkill)
+    currentSkillSha256
   };
 }
 

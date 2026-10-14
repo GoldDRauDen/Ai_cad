@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a scoped RAG_INDEX.yaml view from current Router; never edit rules.
+"""Generate a scoped ROUTE_INDEX.yaml view from current Router; never edit rules.
 
 This is a deterministic manifest/resolver, not vector search or a second
 independent engineering authority. Active rules remain in ROUTER.yaml.
@@ -88,7 +88,7 @@ def main() -> int:
         root = args.repo_root.resolve()
         target = args.output.expanduser().resolve()
         if target.is_relative_to(root):
-            raise ValueError("Generated RAG_INDEX.yaml must be outside the source repo")
+            raise ValueError("Generated ROUTE_INDEX.yaml must be outside the source repo")
         document = build_index(root)
         raw = yaml.safe_dump(document, allow_unicode=True, sort_keys=False)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -97,7 +97,7 @@ def main() -> int:
                   "sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
                   "active_modules": len(document["production"]["active_modules"])}
     except (ValueError, OSError, KeyError, yaml.YAMLError) as exc:
-        print(f"RAG_INDEX_FAIL: {exc}", file=sys.stderr)
+        print(f"ROUTE_INDEX_FAIL: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(record))
     return 0

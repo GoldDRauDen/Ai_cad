@@ -265,8 +265,12 @@ def export_part_artifacts(job, output_dir, composite_only=False):
     for part in job["parts"]:
         code = safe_name(part["code"])
         keep_codes.add(code)
-        wrapper = {"canonical_contract": CONTRACT, "job_id": job["job_id"],
-                   "parts": [part]}
+        # Keep the job's own contract (and legacy flag): a V4.31 fixture must not be
+        # re-stamped as V4.34, which would apply gates it was never approved under.
+        wrapper = {"canonical_contract": job.get("canonical_contract", CONTRACT),
+                   "job_id": job["job_id"], "parts": [part]}
+        if job.get("legacy_fixture") is True:
+            wrapper["legacy_fixture"] = True
         data = (json.dumps(wrapper, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
         target_json = json_dir / f"{code}.json"
         json_changed = _atomic_text(target_json, data)

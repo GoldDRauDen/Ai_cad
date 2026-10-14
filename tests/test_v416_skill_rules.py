@@ -6,7 +6,7 @@ CURRENT=ROOT/"skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md"
 RELEASE=ROOT/"skills/lispcad/versions/V4.16/SKILL_LISPCAD_V4_16_PORTABLE.md"
 OLD=ROOT/"skills/lispcad/versions/V4.15/SKILL_LISPCAD_V4_15_PORTABLE.md"
 def test_v416_preserved_and_routing_retained():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.16 PORTABLE")
     assert OLD.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.15 PORTABLE")

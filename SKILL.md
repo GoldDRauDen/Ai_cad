@@ -72,7 +72,7 @@ executable job, not only a textual interpretation.
    source group/member inventory, hole/slot/R/C families and, when applicable,
    FACE_GRAPH, attachment edge, Nobi, bend relief and fold-back ownership.
    Build per-code canonical Geometry JSON using the current contract
-   (`tools/CANONICAL_INPUT_SCHEMA_V431.md` at the present repo revision).
+   (`tools/CANONICAL_INPUT_SCHEMA_V434.md` for new jobs; V4.31 only for `legacy_fixture`).
    Preserve source evidence, entity IDs, flags and unresolved local members.
    Geometry JSON — not a manually repaired DXF — is the canonical model.
 5. **Independent validation:** Challenge the proposed complete source model;

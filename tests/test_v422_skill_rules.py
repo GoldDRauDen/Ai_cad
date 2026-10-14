@@ -7,7 +7,7 @@ RELEASE=ROOT/"skills/lispcad/versions/V4.22/SKILL_LISPCAD_V4_22_PORTABLE.md"
 PREV=ROOT/"skills/lispcad/versions/V4.21/SKILL_LISPCAD_V4_21_PORTABLE.md"
 
 def test_v422_historical_release_and_v424_inheritance():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
     assert "- **V4.22:**" in entry
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.22 PORTABLE")
@@ -19,7 +19,7 @@ def test_v422_historical_release_and_v424_inheritance():
     assert "V4.24 direct approval" not in RELEASE.read_text(encoding="utf-8")
 
 def test_v422_source_exhaustion_and_feature_completeness_wiring():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     graph=(ROOT/"references/FACE_GRAPH_UNFOLD_PROTOCOL.md").read_text(encoding="utf-8")
     validation=(ROOT/"skills/lispcad/core/VALIDATION.md").read_text(encoding="utf-8")
     qa=(ROOT/"regression/qa/520930-10_V4_22_APPROVED.md").read_text(encoding="utf-8")

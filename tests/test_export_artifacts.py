@@ -114,7 +114,7 @@ def review_part(code):
 
 def job(parts):
     return {
-        "canonical_contract": "TrainAiCad-CANONICAL-V4.31",
+        "canonical_contract": "TrainAiCad-CANONICAL-V4.31", "legacy_fixture": True,
         "job_id": "TESTJOB", "parts": parts,
     }
 

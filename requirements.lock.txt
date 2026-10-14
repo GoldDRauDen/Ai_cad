@@ -1,0 +1,10 @@
+ezdxf==1.4.4
+iniconfig==2.3.1
+numpy==2.5.3
+packaging==26.3
+pillow==12.3.0
+pluggy==1.6.0
+pyparsing==3.3.2
+pytest==9.1.1
+PyYAML==6.0.3
+typing_extensions==4.16.0
