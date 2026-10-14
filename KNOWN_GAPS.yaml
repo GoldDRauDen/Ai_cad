@@ -1,0 +1,42 @@
+# KNOWN_GAPS — every gap in the inherited rule tree, declared and tracked.
+#
+# verify FAILS when:
+#   - a rule file is UNROUTED and not listed under rule_gaps (new silent gap)
+#   - a listed rule gap is no longer unrouted (stale entry; delete it)
+#   - a tools/*.py file has no declared role, or a declared file is missing
+#
+# Entries here are NOT approvals. Fixing a gap changes routing and possibly
+# CAD output, so each fix needs explicit user approval (DUYET / PUSH).
+# Source plan: docs/PLAN_CLAUDE_FIX.md
+
+rule_gaps:
+  - path: references/MATERIAL_ALIASES.yaml
+    id: F1
+    reason: >
+      V4.34 material alias table is not listed in ROUTER.yaml, RULE_COVERAGE.yaml
+      or FEATURE_CENSUS.md. Only a pointer in AI_ENTRYPOINT.md header mentions it.
+      A router-following agent will not load it.
+
+# role: production = part of the CAD pipeline (export, validation, guards, resolver)
+# role: audit      = build, benchmark, coverage or duplicate audits, never CAD output
+tool_acks:
+  - {path: tools/assembly_datum_solver.py, role: production, reason: assembly datum candidate solver}
+  - {path: tools/canonical_contract.py, role: production, reason: V4.31/V4.34 canonical contract validation}
+  - {path: tools/cut_orientation.py, role: production, reason: V4.34 individual CUT orientation (exporter-only)}
+  - {path: tools/datum_coordinates.py, role: production, reason: datum coordinate helper}
+  - {path: tools/dimension_witness.py, role: production, reason: V4.34 typed witness graph validation}
+  - {path: tools/error_catalog.py, role: production, reason: error code catalog}
+  - {path: tools/export_canonical_dxf.py, role: production, reason: canonical DXF exporter (default E2E path)}
+  - {path: tools/export_dxf.py, role: production, reason: legacy/compat DXF writer and CHECKS list}
+  - {path: tools/export_job_artifacts.py, role: production, reason: job artifact packaging}
+  - {path: tools/holistic_engineering_guard.py, role: production, reason: V4.33 holistic challenge guard}
+  - {path: tools/material_resolver.py, role: production, reason: V4.34 material alias resolution}
+  - {path: tools/reference_exposure_guard.py, role: production, reason: V4.33 reference exposure firewall}
+  - {path: tools/resolve_rules.py, role: production, reason: deterministic rule resolver from census}
+  - {path: tools/slot_anchor.py, role: production, reason: V4.34 slot anchor validation}
+  - {path: tools/weld_kegaki_guard.py, role: production, reason: KH851 weld KEGAKI closure guard}
+  - {path: tools/audit_rule_coverage.py, role: audit, reason: routing coverage audit}
+  - {path: tools/audit_rule_duplicates.py, role: audit, reason: duplicate paragraph audit}
+  - {path: tools/benchmark_rule_routes.py, role: audit, reason: route byte benchmark}
+  - {path: tools/build_rule_bundle.py, role: audit, reason: portable single-document bundle builder}
+  - {path: tools/build_rule_index.py, role: audit, reason: router manifest builder (not RAG)}

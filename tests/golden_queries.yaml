@@ -1,0 +1,23 @@
+# Golden retrieval set. Each query must return `expect` within the top `k` hits
+# of the default scope. Expected paths were chosen from the rule tree by hand
+# before running the search; a miss is a real finding, not something to tune away.
+queries:
+  - {q: "BEND_ATTACHMENT_EDGE_LOCKED", expect: references/FACE_GRAPH_UNFOLD_PROTOCOL.md, k: 3}
+  - {q: "reference exposure firewall", expect: references/REFERENCE_EXPOSURE_FIREWALL.md, k: 5}
+  - {q: "holistic engineering challenge", expect: references/HOLISTIC_ENGINEERING_CHALLENGE.md, k: 5}
+  - {q: "bend end offset 90 slit", expect: references/BEND_EDGE_RELIEF_90.md, k: 5}
+  - {q: "KEGAKI weld site KH851", expect: references/WELD_SITE_KEGAKI_CLOSURE.md, k: 5}
+  - {q: "DXF bulge arc polyline", expect: references/DXF_PHYSICAL_CURVE_DECODING.md, k: 5}
+  - {q: "nobi table", expect: references/NOBI_TABLES.md, k: 5}
+  - {q: "thread pilot table", expect: references/THREAD_PILOT_TABLE.md, k: 5}
+  - {q: "AIKOKU 646", expect: references/AIKOKU_646_NOBI.md, k: 5}
+  - {q: "canonical member completeness", expect: references/CANONICAL_MEMBER_COMPLETENESS.md, k: 5}
+  - {q: "スリット", expect: skills/lispcad/features/SLIT_RELIEF.md, k: 5}
+  - {q: "ヘアライン 横目", expect: references/MATERIAL_RULES.md, k: 5}
+  - {q: "SECC", expect: references/MATERIAL_ALIASES.yaml, k: 5}
+  - {q: "ボンデ", expect: references/MATERIAL_ALIASES.yaml, k: 5}
+  # Initial expectation was AI_ENTRYPOINT.md (a summary of V4.34). Reviewed after the
+  # first run: the operative slot-anchor rule is SLOTS.md; the entry point only points
+  # to it. Changed to the operative rule, and the change is recorded here on purpose.
+  - {q: "source witness slot anchor", expect: skills/lispcad/features/SLOTS.md, k: 5}
+  - {q: "BOXMET four flange", expect: references/BOXMET_SLIT_RELIEF.md, k: 5}
