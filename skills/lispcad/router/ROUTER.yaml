@@ -1,0 +1,229 @@
+schema_version: 1
+release: V4.33
+authority: ROUTING_ONLY
+production_mode: repo_direct
+unknown_policy: LOAD_ROUTE
+
+# These are small, always-on rules needed to classify the source safely.
+default_load:
+  - references/RUNTIME_AUTHORITY_GUARD.md
+  - skills/lispcad/core/DRAWING_READING.md
+  - references/SOURCE_DATA_CLASSIFICATION.md
+  - references/DXF_PHYSICAL_CURVE_DECODING.md
+  - references/CANONICAL_MEMBER_COMPLETENESS.md
+  - references/MECHANICAL_CLASSIFIER.md
+  - references/HOLISTIC_ENGINEERING_CHALLENGE.md
+  - references/REFERENCE_EXPOSURE_FIREWALL.md
+  - references/PART_IDENTITY_GRAPH.md
+  - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
+  - references/SOURCE_FEATURE_GROUP_CLOSURE.md
+  - references/CAD_CUSTOMER_POLICY.md
+  - skills/lispcad/router/FEATURE_CENSUS.md
+
+# Stage-specific mandatory gates, not optional rules.
+# A normal E2E must execute all stages. Rule paths are deferred until needed.
+# Tools may calculate the plan, but cannot downgrade any stage gate.
+stage_routes:
+  L0_BOOTSTRAP:
+    load: []
+  L1_SOURCE_CENSUS:
+    load: []
+  L2_GEOMETRY:
+    load:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+  L3_VALIDATE_EXPORT_QA:
+    load:
+      - skills/lispcad/core/VALIDATION.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - references/HOLISTIC_ENGINEERING_CHALLENGE.md
+      - references/CANONICAL_MEMBER_COMPLETENESS.md
+
+source_routes:
+  PDF_ONLY:
+    load: []
+  PDF_DATA_RAW:
+    load:
+      - references/DXF_PHYSICAL_CURVE_DECODING.md
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md
+  TRAIN_REFERENCE:
+    load:
+      - references/DXF_PHYSICAL_CURVE_DECODING.md
+      - references/REFERENCE_EXPOSURE_FIREWALL.md
+  DIRECT_EXISTING_DXF_AUDIT:
+    load:
+      - references/DXF_PHYSICAL_CURVE_DECODING.md
+      - references/REFERENCE_EXPOSURE_FIREWALL.md
+
+mode_routes:
+  FLAT_NO_BEND:
+    load:
+      - skills/lispcad/modes/FLAT_NO_BEND.md
+  BEND:
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
+      - references/BEND_EDGE_RELIEF_90.md
+  MULTI_FACE:
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
+      - references/BEND_EDGE_RELIEF_90.md
+  UNKNOWN:
+    load:
+      - skills/lispcad/modes/FLAT_NO_BEND.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
+      - references/BEND_EDGE_RELIEF_90.md
+
+feature_routes:
+  HOLE:
+    load:
+      - skills/lispcad/features/HOLES_TAPS.md
+      - references/MATERIAL_RULES.md
+      - references/COUNTERSINK_COUNTERBORE.md
+  TAP:
+    depends_on: [HOLE]
+    load:
+      - skills/lispcad/features/HOLES_TAPS.md
+      - references/THREAD_PILOT_TABLE.md
+      - references/THREAD_FINE_PILOT_TABLE.md
+      - references/MATERIAL_RULES.md
+  SLOT_STRAIGHT:
+    load:
+      - skills/lispcad/features/SLOTS.md
+  CURVED_SLOT:
+    load:
+      - skills/lispcad/features/CURVED_SLOT.md
+  KEGAKI:
+    load:
+      - skills/lispcad/features/KEGAKI.md
+      - references/WELD_SITE_KEGAKI_CLOSURE.md
+  PIASU:
+    load:
+      - skills/lispcad/features/HOLES_TAPS.md
+      - skills/lispcad/features/FORMING_FEATURES.md
+      - references/MATERIAL_RULES.md
+  SLIT_RELIEF:
+    load:
+      - skills/lispcad/features/SLIT_RELIEF.md
+  RIB:
+    load:
+      - skills/lispcad/features/RIB.md
+      - skills/lispcad/features/FORMING_FEATURES.md
+  FORMING_FEATURES:
+    load:
+      - skills/lispcad/features/FORMING_FEATURES.md
+  L_PROFILE:
+    load:
+      - skills/lispcad/topology/L_PROFILE.md
+  U_PROFILE:
+    load:
+      - skills/lispcad/topology/U_PROFILE.md
+  MULTI_FACE_PROFILE:
+    depends_on: [BEND]
+    load:
+      - skills/lispcad/topology/MULTI_FACE_PROFILE.md
+  STEPPED_NOTCHED:
+    load:
+      - skills/lispcad/topology/STEPPED_PROFILE.md
+  CHAMFER_FILLET:
+    load:
+      - skills/lispcad/features/CHAMFER_RADIUS.md
+      - references/MATERIAL_RULES.md
+  HEMMING:
+    depends_on: [BEND, FORMING_FEATURES]
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+  Z_BEND:
+    depends_on: [BEND, FORMING_FEATURES]
+    load:
+      - skills/lispcad/modes/BEND_UNFOLD.md
+  ACUTE_BEND_LT85:
+    depends_on: [BEND]
+    load:
+      - references/ACUTE_BEND_LT85_METHOD.md
+      - references/ACUTE_BEND_LT85_FROM_SOURCE.md
+  BOXMET:
+    depends_on: [BEND, SLIT_RELIEF]
+    load:
+      - references/BOXMET_SLIT_RELIEF.md
+  MATERIAL_RULES:
+    load:
+      - references/MATERIAL_RULES.md
+  NOBI:
+    depends_on: [BEND]
+    load:
+      - references/NOBI_TABLES.md
+      - references/BEND_TOOLING_FEASIBILITY.md
+  REVISION_CANCELLATION:
+    load:
+      - skills/lispcad/features/REVISION_CANCELLATION.md
+
+customer_rule_catalog: references/CUSTOMER_CAD_RULES.yaml
+customer_routes:
+  '646':
+    load:
+      - references/AIKOKU_646_NOBI.md
+
+dependency_aliases:
+  BEND:
+    route_group: mode_routes
+    route_id: BEND
+
+post_route_checks:
+  - runtime_authority_guard
+  - physical_curve_decode_before_feature_census
+  - source_manufacturing_note_census
+  - source_feature_group_closure
+  - source_group_member_ledger
+  - part_identity_graph_when_applicable
+  - weld_site_kegaki_source_census_closure
+  - same_physical_parameter_before_reference_conflict
+  - source_feature_completeness
+  - dependency_closure
+  - bend_attachment_edge_lock
+  - formed_profile_od_measurement_when_applicable
+  - bend_edge_length_lock
+  - bend_end_offset_relief_90
+  - cross_feature_validation
+  - weld_site_kegaki_canonical_closure
+  - holistic_engineering_challenge
+  - views_only_source_view_completeness
+  - final_engineering_sanity_review
+  - raw_data_snapshot_freeze
+  - same_parameter_gate_before_canonicalization
+  - manufacturing_change_ledger
+  - canonical_geometry_validation
+  - proved_source_to_canonical_member_equality
+  - untouched_data_invariance
+  - source_reprojection_when_applicable
+  - canonical_to_saved_dxf_entity_id_equality
+  - source_only_snapshot_before_reference
+  - no_post_reference_source_rewrite
+  - saved_dxf_readback
+
+history_policy:
+  excluded_from_normal_production_retrieval:
+    - skills/lispcad/versions/
+    - docs/history/
+  never_select_highest_version_filename: true
+
+portable_compatibility:
+  path: skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md
+  runtime_default: false
+  purpose: complete compatibility/audit snapshot
+  on_route_gap: STOP_WITH_ROUTING_COVERAGE_GAP
+  may_read_for_gap_diagnosis: true
+  may_silently_continue_production_after_gap: false

@@ -1,0 +1,13 @@
+# V4.9 approved regression: ONE code-labeled combined DXF
+
+**User approval:** 2026-09-26, explicitly finalizing the default output format for future jobs. OUTPUT-ONLY change; it does not resolve unapproved source geometry lessons, customer Nobi, uncertain diameters or absent Z-bend lengths. Historical [dual-export regression](DXF_DUAL_EXPORT.md) remains valid **only when dual output is explicitly requested**.
+
+## Mandatory V4.9 tests
+
+1. Ordered input codes A,B,C produce exactly ONE `JOB_ALL.dxf` if all independently PASS. The modelspace contains precisely the canonical translated geometry once per code plus one generated **non-cut** `AI_META` label per code (A highest global Y, C lowest); every manufacturing primitive remains Layer 0. Geometric part bounding boxes are disjoint with >=10 mm vertical layout-only gap. By inverse translation, source and composite entities match including circles, POINTs, LWPOLYLINE bulges and bend primitives. No `JOB_A.dxf`, `JOB_B.dxf`, `JOB_C.dxf` or JSON manifest is delivered by default.
+2. PASS A + REVIEW B with missing numerical Ø + VIEWS_ONLY C with unresolved Z bend lengths produce exactly ONE `JOB_ALL_REVIEW_ONLY.dxf`, containing all three labeled code clusters, a global **REVIEW ONLY — NO CUT** warning on `AI_META`, Magenta B estimate and adjacent `Ø?` FLAG note, and separate source-view groups under C with clear original view labels. No guessed joined flat for C. Do NOT produce `JOB_ALL.dxf`.
+3. Code-label `AI_META` annotations are not cutting geometry, cannot influence bbox, counts or containment, are excluded from CAM and carry no manufacturing correction. A PASS code remains exactly unchanged when another code has a FLAG; but the one combined file cannot be production-released until all codes PASS.
+4. Incomplete customer drawings require per-code Stage 1 FLAG records. For 520728-06, 043796 missing Z lengths → VIEWS_ONLY; 043797 two unconfirmed hole diameters → numeric placeholder Ø7 only if explicitly user-authorized, Magenta + `2-Ø?` FLAG; 043799 pending 165° Nobi → temporary 3.93 only with FLAG and global review status; its 90° Nobi 5.5 is separately user-confirmed. These are **job-specific status assertions**, not general CAD dimensions for another part.
+5. Only if explicitly asked, legacy dual output may include per-code DXFs, separated production/review composites and JSON manifest using the same checked canonical geometry. Never silently claim a serializer's structural read-back proves PDF-specific shape/material/datum validation.
+
+Run synthetic packaging/read-back tests in `tests/test_export_dxf.py`. For actual drawing approval, separately run independent Section 5 engineering validation and user-declared ground-truth comparisons when available.

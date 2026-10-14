@@ -1,0 +1,71 @@
+name: TrainAiCad CAD production regression
+on:
+  push:
+    paths:
+      - 'AGENTS.md'
+      - 'AI_BOOTSTRAP.md'
+      - 'PROJECT_INSTRUCTIONS_GPT_WEB.md'
+      - 'AI_ENTRYPOINT.md'
+      - 'SKILL.md'
+      - 'QA_ENTRYPOINT.md'
+      - 'README.md'
+      - 'docs/**'
+      - 'skills/**'
+      - 'references/**'
+      - 'regression/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/dxf-export-tests.yml'
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'AI_BOOTSTRAP.md'
+      - 'PROJECT_INSTRUCTIONS_GPT_WEB.md'
+      - 'AI_ENTRYPOINT.md'
+      - 'SKILL.md'
+      - 'QA_ENTRYPOINT.md'
+      - 'README.md'
+      - 'docs/**'
+      - 'skills/**'
+      - 'references/**'
+      - 'regression/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/dxf-export-tests.yml'
+jobs:
+  serializer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pytest tests/ -q
+      - name: Rule coverage, scoped index, portable rulepack and stage benchmark
+        run: |
+          python tools/audit_rule_coverage.py
+          python tools/build_rule_index.py --output /tmp/TRAINAICAD_RAG_INDEX.yaml
+          python tools/build_rule_bundle.py --output /tmp/TRAINAICAD_E2E_RULEPACK.md
+          python tools/benchmark_rule_routes.py
+          python tools/audit_rule_duplicates.py
+      - name: V4.34 source witness, material, HL and cut pose regressions
+        run: python -m pytest tests/test_v434_material_witness_slot_orientation.py -q
+      - name: Production rule regressions V4.19-V4.33
+        run: |
+          python regression/tools/check_520929_25_v419.py
+          python regression/tools/check_v420_source_mech.py
+          python regression/tools/check_520930_10_v422.py
+          python regression/tools/check_521001_03_v423.py
+          python regression/tools/check_521001_13_v424.py
+          python regression/tools/check_521001_20_v425.py
+          python regression/tools/check_521001_19_v426.py
+          python regression/tools/check_521005_01_v427.py
+          python regression/tools/check_521005_02_v428.py
+          python regression/tools/check_521005_13_v429.py
+          python regression/tools/check_521005_05_v430.py
+          python regression/tools/check_521005_05_v431.py
+          python regression/tools/check_521006_18_v432.py
+          python regression/tools/check_521007_07_v433.py

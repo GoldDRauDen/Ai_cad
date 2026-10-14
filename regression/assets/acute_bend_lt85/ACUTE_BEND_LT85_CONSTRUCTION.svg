@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650">
+<style>text{font-family:Arial,sans-serif;font-size:18px}.small{font-size:15px}.geom{fill:none;stroke:#111;stroke-width:3}.guide{fill:none;stroke:#666;stroke-width:2;stroke-dasharray:8 6}.dim{fill:none;stroke:#333;stroke-width:2;marker-start:url(#a);marker-end:url(#a)}.r{fill:none;stroke:#111;stroke-width:2}</style>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M8,4 L0,0 L0,8 Z" fill="#333"/></marker></defs>
+<text x="40" y="35">ACUTE BEND &lt;85° — FROM SOURCE TO OUTSIDE OD</text>
+<text class="small" x="40" y="62">Normalized fixture: face 1 = 180×3, face 2 = 50×3, included angle = 75°, approved Rin = 0.6, Rout = 3.6</text>
+<path class="geom" d="M360 575 L360 125 M370 575 L370 125 M360 575 L370 575"/>
+<path class="geom" d="M370 125 L515 86 M372.6 134.7 L517.6 95.7 M515 86 L517.6 95.7"/>
+<path class="guide" d="M356 590 L356 70"/><path class="guide" d="M350 137 L560 81"/>
+<circle class="r" cx="356" cy="108" r="5"/><circle class="r" cx="356" cy="108" r="30"/><circle cx="356" cy="108" r="4" fill="#111"/>
+<text class="small" x="385" y="112">C = intersection of two Rin-offset inside-face lines</text>
+<line class="dim" x1="310" y1="575" x2="310" y2="78"/><text x="280" y="350" transform="rotate(-90 280 350)">OD1 = 182.01 mm</text>
+<line class="dim" x1="505" y1="66" x2="365" y2="104"/><text x="420" y="58" transform="rotate(-15 420 58)">OD2 = 49.71 mm</text>
+<text class="small" x="40" y="620">Mandatory chain: source faces → inside surfaces/free edges → offset by Rin → center C → Rout=Rin+t → outside-envelope support → OD1/OD2 → Nobi → flat/bend pair.</text>
+</svg>

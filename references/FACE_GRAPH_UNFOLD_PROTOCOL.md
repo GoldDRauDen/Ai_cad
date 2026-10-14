@@ -1,0 +1,228 @@
+# FACE_GRAPH_UNFOLD_PROTOCOL — V4.33 holistic challenge hardening over V4.32/V4.23/V4.19
+
+## V4.32 — BEND_ATTACHMENT_EDGE_LOCKED
+
+Before a bend may contribute to unfold, load `references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md` and prove the exact physical connection:
+
+`FACE_A.edge_i <-> physical BEND <-> FACE_B.edge_j`.
+
+Face adjacency alone is insufficient. Retain both shared-edge identities, free-edge identities, attachment orientation/transform and source evidence. `NEAREST_VIEW_EDGE`, paper proximity, page-side assumptions and visual symmetry are forbidden as proof.
+
+Thickness/hidden-line evidence is optional. Formed/profile/side/section topology, view correspondence, dimension/witness connectivity, bend notation and other explicit source cues may prove the connection.
+
+When outside face length must be established from formed geometry, also load `references/FORMED_PROFILE_OD_MEASUREMENT.md`. A formed/profile drawing used to obtain topology or `OD_actual` is a `MEASUREMENT_CONSTRUCTION_VIEW`, not automatic manufacturing CUT geometry.
+
+## V4.23 — PER_BEND_WITNESS_LEDGER and THICKNESS_SINGLE_USE
+
+Before a bend may contribute final flat coordinates, retain an evidence-equivalent `PER_BEND_WITNESS_LEDGER` containing bend id, ordered adjacent faces, both controlling physical source witnesses, dimension semantics, each thickness term/offset and exactly where it is consumed, Nobi evidence/value, bend sign/orientation, material domain, derived double-line coordinates, and fold-back/source checks.
+
+`THICKNESS_SINGLE_USE` is mandatory: a thickness term already consumed by ID→OD conversion, a proved outside-face extent, or another owned face-transition equation must not be added/subtracted again for the same bend placement. A bend-pair residual numerically equal to `+t` or `-t` is diagnostic evidence to re-trace witnesses/ownership; it is never a universal auto-fix.
+
+A correct total flat length, outer bbox, or matching CUT contour cannot pass a bend with an unclosed ledger.
+
+### G7B — BIDIRECTIONAL_SOURCE_CANONICAL_CLOSURE
+For `PDF_DATA_RAW`, after source census and before FOLD_BACK_MATCH:
+- `SOURCE_PHYSICAL_TO_CANONICAL`: every active physical source curve/family is represented or explicitly canonicalized/canceled;
+- `CANONICAL_TO_SOURCE_PHYSICAL`: every manufacturing canonical curve has physical source provenance or a recorded canonicalization rule.
+Missing source physical geometry or extra manufacturing geometry is FAIL even when selected geometry inverse-reprojects perfectly.
+
+
+**Approved:** 2026-09-29 baseline; V4.32 hardening approved 2026-10-07 from calibration job 521006-18.  
+**Scope:** every bent or multi-face sheet-metal part. This protocol adds no material, Nobi, thread, laser-R or acute-bend formula. It hardens how existing source evidence is converted into a unique formed model and then into a flat.
+
+## 1. Core principle
+
+Do **not** start a bent job from the desired flat contour, overall bbox, a familiar shape label such as U/Z/box, or the graphical edge nearest another view. First construct a source-supported formed-part model. Pattern recognition may propose a candidate topology, but only witness-owned dimensions, projection relationships, bend callouts, sections/details and explicit feature evidence may prove it.
+
+The mandatory representation is a **constraint-closed signed FACE_GRAPH**:
+
+- **FACE** = one material face with its own source/local frame and contour.
+- **DIMENSION** = exact printed/derived value plus both witness endpoints, semantic family and owner.
+- **FEATURE** = hole/slot/notch/R/C/KEGAKI/RIB/etc. with a mandatory host face and local datum.
+- **BEND** = adjacency between exactly two faces, with both physical shared-edge identities, signed fold orientation, angle/radius/thickness/Nobi evidence and actual material domain.
+- **TRANSFORM** = deterministic local-face → flat mapping derived only after the face graph and attachment edge are locked.
+
+A production flat is forbidden while an active graph element lacks its required ownership/constraint fields.
+
+## 2. Mandatory intermediate records
+
+For every multi-face part retain an internal/evidence-equivalent record sufficient to reproduce these fields:
+
+```text
+FACE:
+  face_id
+  source_view / source ROI
+  local_origin
+  local_axis_u / local_axis_v
+  contour_edges with stable edge identities
+  source-proved face dimensions
+  normal/orientation state
+
+DIMENSION:
+  dim_id
+  value
+  printed | derived | handwritten/revision
+  witness_A
+  witness_B
+  semantic = FACE_CONTOUR | FEATURE_SIZE | FEATURE_POSITION |
+             BEND_FACE_TRANSITION | OTHER_PROVED
+  owner_face or owner_bend
+
+FEATURE:
+  feature_id
+  family / size / quantity
+  host_face
+  local_datum including physical edge identity when edge-based
+  local_geometry
+  local_to_flat_transform
+
+BEND:
+  bend_id
+  face_A
+  face_A_shared_edge
+  face_B
+  face_B_shared_edge
+  face_A_free_edge(s)
+  face_B_free_edge(s)
+  edge_orientation / attachment_transform
+  attachment_source_evidence
+  signed_angle / fold_sign
+  Rin / t / Nobi evidence as applicable
+  material_domain
+  resulting double-line domain
+```
+
+A printed number may not remain an unowned scalar. A feature may not be represented first as an arbitrary final-DXF `(x,y)`; its host face/local datum must be proved first.
+
+## 3. Hard gates G1–G9
+
+### G1 — TOPOLOGY_LOCKED
+All material faces required by the source are identified and their actual adjacency is established. Similar silhouette or a closing overall sum is not topology evidence.
+
+### G1A — BEND_ATTACHMENT_EDGE_LOCKED
+For every adjacency, prove the exact physical edge on each face that participates in the bend. A correct face pair with the wrong face edge is still wrong topology.
+
+Required checks:
+- `face_A_shared_edge` and `face_B_shared_edge` are explicit physical edge identities;
+- free edges are distinguished from bend edges before transform;
+- attachment orientation/rotation/reflection follows source evidence;
+- no attachment is selected merely because its drawing edge is nearest another view;
+- if two different edge attachments remain source-compatible after source exhaustion, the bend remains unresolved.
+
+A whole-part rotation/reflection that preserves the same physical edge identities may be equivalent; page orientation by itself is not an error.
+
+### G2 — DIMENSION_WITNESS_LOCKED
+Every dimension used for contour, feature or bend construction has both witness endpoints and exactly one semantic owner. Hole/slot pitch cannot become a contour or bend distance.
+
+### G3 — FEATURE_OWNERSHIP_LOCKED
+Every manufacturing feature belongs to a proved face/local frame before unfold. Features transform with their face; they are not copied as global flat coordinates unless the source datum truly coincides with the flat datum. Edge-based datums must remain bound to the same physical edge identity through the attachment transform.
+
+### G4 — FACE_ORDER_LOCKED
+For each unfold path, preserve the ordered face chain. `sum(OD)-sum(Nobi)` may be identical for different face orders; identical total length does not validate bend positions or attachment-edge orientation.
+
+### G5 — BEND_SIGN_LOCKED
+Every bend has a source-supported sign/orientation. Track face normals or an equivalent signed state so U, Z/S, return, joggle, local channel and mixed-axis structures cannot collapse into the same unsigned 90° description.
+
+### G6 — BEND_DOMAIN_LOCKED
+A bend exists only where material actually crosses the shared edge. Split/trim double lines around reliefs, cutouts, steps and local flanges. Never extend BEND through voids merely to span the bbox.
+
+### G7 — CONSTRAINTS_CLOSED
+The chosen graph must be uniquely determined by source evidence. Required checks:
+- no unresolved owner fields;
+- no unanchored face translation/orientation DOF;
+- no alternative face order, attachment-edge or bend-sign assignment that satisfies the same used constraints;
+- all declared feature quantities and face dimensions close;
+- every derived flat equation traces back to exact printed inputs and approved formulas.
+
+If two materially different graphs remain possible after source exhaustion, production is blocked and the unresolved choice must be FLAGGED/asked. Confidence is not evidence.
+
+### G7A — SOURCE_EXHAUSTED_BEFORE_VIEWS_ONLY
+
+For `PDF_DATA_RAW`, `VIEWS_ONLY` is a production-blocking fallback only after **source exhaustion**, not a shortcut when unfolding is difficult.
+
+Before `VIEWS_ONLY` may be selected:
+- harvest every available relevant DATA view/face/primitive for that code;
+- classify retained physical geometry versus drawing-only helpers/duplicates;
+- complete the active manufacturing-family inventory and assign each detected family a host/status;
+- attempt every source-supported FACE_GRAPH candidate through G1–G7 using the complete evidence set;
+- record the specific unresolved degree of freedom, competing topology, attachment edge or missing evidence that remains after exhaustion.
+
+Hard FAIL if `VIEWS_ONLY` is selected while relevant DATA remains unharvested/unclassified, because the first graph attempt failed, or merely because the unfold is complex. A later approved/reference DXF may diagnose a prior premature `VIEWS_ONLY`, but in NEW construction it still cannot supply hidden source dimensions.
+
+### G7C — HOLISTIC_ENGINEERING_CHALLENGE
+
+After the first G1-G7 solve, but before accepting an unresolved graph or canonicalizing a flat, run `references/HOLISTIC_ENGINEERING_CHALLENGE.md`.
+
+For a bend/multi-face part, explicitly challenge:
+
+- whether every relevant source view/DATA face has been consumed or classified;
+- whether all source-supported attachment/order/sign candidates were actually tested;
+- whether a shared bend-edge length has been reused as a whole face/blank extent without proof;
+- whether handwritten/printed flat/Nobi arithmetic provides an independent closure not yet used;
+- whether a local unresolved feature is being allowed to erase an otherwise unique graph.
+
+If an anomaly remains, re-open the source. Do not call the graph source-ambiguous merely because the current solver has not solved it.
+
+### G7D — COMPLETE VIEWS_ONLY FALLBACK
+
+If G1-G7 remain genuinely unresolved only after G7A source exhaustion and G7C challenge, preserve every independently proved source-view member in the VIEWS_ONLY review output. Record the specific remaining DOF and blocker class. Missing source-view members is a hard `VIEWS_ONLY_SOURCE_VIEW_COMPLETENESS` failure.
+
+### G8 — FOLD_BACK_MATCH
+After unfold, replay/fold the flat back through the signed graph (a deterministic 2.5D face graph is sufficient; a full B-rep is not required) and reproject/compare against the source-proved formed constraints.
+
+At minimum verify:
+- face dimensions and adjacency;
+- **the same physical attachment edge on both adjacent faces**;
+- relative face orientation/bend sign;
+- formed outside dimensions that were used, including `OD_actual` when applicable;
+- feature host face, quantity, local offsets and physical datum-edge identity;
+- view silhouette/topology where source-proved;
+- local channel/tab/flange placement;
+- bend-domain ownership.
+
+A flat bbox match, total length match, or visually similar silhouette cannot pass G8 when the attachment edge is reversed. The strict `<0.01 mm` residual rule remains limited to correctly derived numeric comparisons and never repairs wrong topology, witness or printed dimensions.
+
+### G9 — DXF_READBACK_MATCH
+Only after G1–G8 pass may production geometry be serialized. Re-open the saved DXF and audit CUT/HOLE/BEND/KEGAKI/RIB, properties, mm units and code mapping independently from the source-semantic gates.
+
+## 4. Mandatory solve order
+
+`SOURCE VIEWS → witness/semantic graph → candidate FACE_GRAPH → signed adjacency → BEND_ATTACHMENT_EDGE_LOCKED → formed-profile OD measurement when applicable → constraint closure → unfold → feature transforms → material-domain BEND trim → FOLD_BACK/reprojection → manufacturing QA → DXF → DXF read-back`.
+
+Do not reorder this into `bbox → nearest edge → flat → try to explain views afterward`.
+
+## 5. Candidate-shape recognition
+
+Labels such as L, U, Z, hat, box, joggle, return flange, flexible bend or local channel are permitted only as candidate generators. They may help identify which formed topology must be tested, but they must not directly select bend order, attachment edge, sign, relief or feature placement. Test the candidate against G1–G8. Reject candidates that require borrowing a dimension from another face, ignore a witness, move a feature to another host face, swap a bend edge with a free edge, or leave a competing topology equally valid.
+
+## 6. Reference DXF boundary
+
+For NEW_PDF_TO_DXF, construct the graph independently from PDF/image source first. A customer-approved DXF may assert/audit the result afterward but may not fill missing source coordinates, choose a hidden face order/attachment edge or reverse-fit the graph.
+
+For DIRECT_EXISTING_DXF_AUDIT, compare AI DXF ↔ approved sample first as required by the existing skill, then use PDF/source to diagnose the semantic root cause. Convert only the general cause into production rules; job-specific coordinates remain regression assertions.
+
+A profile/formed view in a reference may be a `MEASUREMENT_CONSTRUCTION_VIEW`; Layer 0 membership alone does not prove manufacturing CUT semantics.
+
+## 7. Production blocker policy
+
+- G1–G7 unresolved **after G7A source exhaustion** but independently proved source views exist → `VIEWS_ONLY` / REVIEW ONLY. If relevant DATA has not been fully harvested/classified and closure attempts are incomplete, `VIEWS_ONLY` is not yet allowed.
+- A unique graph exists but a local feature remains uncertain → preserve proved flat, Magenta/FLAG only the unresolved feature under existing V4.11 rules.
+- Any G8 failure → production FAIL; fix the graph/transform, do not tune coordinates to the reference.
+- G1–G9 PASS → eligible for normal production status, subject to all other material/Nobi/R/C/relief rules.
+
+## 8. Regression intent
+
+### 520929-25 — V4.19 baseline
+- 056942 proves that the same total flat length can hide a wrong face order/BEND placement.
+- 056956 proves that perpendicular/local flanges require an actual face graph and material-domain BEND clipping.
+- 057042 proves that longitudinal Z/S bends and a local transverse channel require independent signed axes/domains and feature ownership.
+
+### 521006-18 — V4.32 attachment-edge hardening
+- 058648 proves that a correct adjacent face can still be attached by the wrong physical edge; nearest paper edge is not evidence.
+- 058652 is the control that a 180-degree whole-part representation may remain physically equivalent after normalization.
+- 058653/058655 prove the need to establish actual outside face contributions before Nobi.
+- 058654 remains unresolved where source/customer confirmation is still pending.
+
+Regression coordinates/numbers are calibration evidence only and must never become construction authority for another drawing.
+
+See `regression/qa/520929-25_V4_19_APPROVED.md`, `regression/qa/521006-18_V4_32_APPROVED.md`, and their executable checks.

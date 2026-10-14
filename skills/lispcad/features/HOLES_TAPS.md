@@ -1,0 +1,54 @@
+# LISPCAD Feature — Holes / Taps / Piercing
+
+2026-10-12 clarification: For a countersink/counterbore, only the proved through-opening/pilot is prospective laser CUT; never serialize machining-mouth diameter as a second CUT. See `references/COUNTERSINK_COUNTERBORE.md`. Fine-pitch threads only when pitch is explicitly proved; route `references/THREAD_FINE_PILOT_TABLE.md`. Even DATA-authority customer exceptions cannot waive physical hole identity/count/type/position checks. NC pierce paths and joints are deferred.
+
+
+
+## V4.24 — universal DATA M* nominal-reference / pilot canonicalization
+
+This applies to **every proved `M*` tap**, not only M6.
+
+1. Lock the PDF/source thread identity `M<n>`, quantity, leader scope, host face and DATA feature cluster before converting geometry.
+2. If that DATA cluster contains an independently identifiable concentric nominal thread reference circle/ring, classify it `THREAD_NOMINAL_REFERENCE` and compare its diameter against nominal `n` using the normal DATA<->PDF same-parameter gate: `Delta < 0.1 mm` passes; `Delta >= 0.1 mm` => `DATA_PDF_DIM_DIFF`. Exactly 0.1 mm flags.
+3. A `THREAD_NOMINAL_REFERENCE` is semantic/reference geometry and **must not** become a second laser CUT. Do not compare the raw inner pre-hole/pilot diameter against nominal `n`; those are different physical parameters.
+4. Preserve the DATA center, quantity, host-face ownership and raw pre-hole provenance. Unless the PDF explicitly specifies another effective cut diameter, serialize exactly one production hole using `THREAD_PILOT_TABLE.md` for the proved `M*`.
+5. Example only: PDF M6 + DATA outer nominal Ø6 + inner/raw Ø5.1 => identity M6 is consistent and final production CUT is one Ø5.0 pilot. M4/M5/M8/etc. follow the same mechanism with their own table values.
+6. If a DATA circle's nominal-reference role is ambiguous, FLAG that semantic assignment instead of choosing by proximity/size. If DATA has no proved nominal-reference entity, do not invent one merely to run the delta check.
+7. Production QA fails if both nominal-reference and pilot circles survive as CUT, if raw pre-hole diameter is retained where the table controls the pilot, or if a nominal-reference `Delta >= 0.1 mm` is silently accepted.
+
+Approved calibration 520924-19, 2026-09-25. Uses `../../../references/MATERIAL_RULES.md` (transcribed approved workbook) and `../../../references/THREAD_PILOT_TABLE.md`.
+
+## 3.1 Cutting features
+- A verified cut round hole is a `CIRCLE`. A tapped M feature uses the standard **pilot hole** diameter, not the nominal thread diameter, unless the drawing explicitly specifies another effective hole diameter. Countersink/counterbore cut geometry uses the proven through-hole/pilot opening; do not cut the countersink's outer diameter.
+- Slots and polygonal cutouts follow the separate `SLOTS.md` module and topology rules. A POINT is NOT a small circle, and converting an M callout does not change the required feature count.
+- Trace the arrow/leader/note scope before applying PIERCING. A large PIERCING label elsewhere on a sheet is not blanket authorization for every feature family.
+
+## V4.12 unresolved circular-hole diameter gate — before numeric POINT/CIRCLE tests
+
+When the source confirms a feature is a ROUND HOLE but its Ø is customer-pending, draw a source-supported, integer-rounded estimated **CIRCLE** on Layer `0`, Color `6` (Magenta) with adjacent `Ø? / CONFIRM DIAMETER` note and independent FLAG. Preserve separately proved centers, quantity and flat contour. Set PREVIEW / NO CUT. Do **not** apply `d<t/2` or capacity-based POINT rules using guessed Ø; those require a known effective diameter. Explicitly scoped PIERCING remains independently authoritative. Unknown round-hole identity or center follows V4.11 source-supported preview/VIEWS_ONLY and separate flags, not a fabricated verified hole.
+
+## 3.3 Approved POINT / CIRCLE decision (first matching rule)
+
+**L09:** For **SUS430**, apply **SUS, 他** rows to cut-hole minimum and 白ピアス capability, independently of SS/SUS430/BRASS Nobi. At t6 the inherited minimum hole threshold is t/2 and White Piercing is 〇 (capability only).
+
+1. If the PDF explicitly applies `PIERCING + THROUGH HOLE` to a feature family: `POINT` on Layer 0, DXF color 3 (Green); Ø/M only in Stage 1 report, not CAD.
+2. Else if the PDF applies `PIERCING`: `POINT` on Layer 0, ByLayer (no explicit color 3/6), regardless of the worksheet's `白ピアス 〇/×` or nominal diameter. That worksheet column is machine **capability**, NOT drawing intent; a `×` does not suppress the explicit PIERCING POINT or create a capacity-only FLAG.
+3. Else, if the effective cut-hole diameter `d < t/2`: `POINT` ByLayer with **no capacity FLAG**. This holds even without a worksheet row. Strict inequality: `d = t/2` proceeds to the worksheet test.
+4. Else look up the applicable material/thickness row of `references/MATERIAL_RULES.md` (the approved `Rule_Bo_R&Hole.xlsx` transcription). If `d` is below that row's inherited minimum hole diameter: `POINT` ByLayer, **no capacity FLAG** even without PIERCING. Otherwise draw `CIRCLE` ByLayer at the effective cut diameter.
+5. If the worksheet cannot resolve the material/thickness/limit or the output type remains unproved and `d >= t/2`, use a **provisional `CIRCLE` Color 6 (Magenta) plus FLAG**; never assert production readiness. For a proved tapped `M*` callout, obtain provisional `d` from the approved thread pilot table (e.g. M4 Ø3.3, M5 Ø4.2, M6 Ø5.0), except where the PDF explicitly overrides it.
+
+The precedence above is per **feature family**, never per whole sheet. No numeric capacity FLAG is warranted when a higher-priority explicit PIERCING or verified capability rule definitively selects POINT. Independent uncertainty about quantity, center coordinates, PDF legibility, handwritten instructions or customer approval **continues to require FLAG**. If feature identity/topology is unresolved, do not invent a hole or switch type merely to fill an output.
+
+**Color contract:** all geometry Layer `0`; ordinary `POINT` ByLayer (DXF 62 omitted or 256); **only explicit PIERCING + THROUGH HOLE** produces a green **POINT** (62=3). A *provisional* feature is Color 6. Do not add redundant circle geometry or Ø/M labels around a POINT. Retain Ø/M and the conversion reason in the Stage 1 report.
+
+## 3.4 Special J markings vs ordinary hole features
+
+A printed `J` associated with a special POINT operation is **exceptional**, not a general feature inferred from an adjacent POINT or reference DXF. Only create that POINT/J set when the PDF has an applicable note/leader; when the mark is unreadable, flag it. This usage must be disambiguated from any bend/Nobi `J-symbol` described by the bend module; do not transfer a J operation between them. Calibration `055957`: the user confirms the PDF has a special J indication, but exact leader location is deferred; do not manufacture its geometry from the DXF alone.
+
+## Verification and workflow
+
+Trace separately the original callout count, verified effective diameters, POINT-vs-CIRCLE type, datum for every center, and every independent FLAG. Run material-domain containment on CIRCLE features. Preserve the part and keep a distinct shop report for all converted POINTs (source Ø/M, center, method/trigger).
+
+### V4.14 approved boolean union for source-proven overlapping cut holes
+
+When the actual source proves that hole/opening CUT REGIONS genuinely intersect to form ONE connected laser-cut void, compute the geometric Boolean union and output exactly ONE continuous closed CW internal boundary for the combined region (exact ARC/LINE arcs or correct bulged LWPOLYLINE). Do NOT output each contributing complete CIRCLE on top of the union or leave redundant interior overlapping toolpaths. Count and datum-trace every ORIGINAL callout-family member independently of the resulting one DXF closed contour; containment and topology validation are still mandatory. Mere tangential contact, separately specified machining, ambiguous topology or unproved overlap do not trigger automatic union; FLAG/ask. User-approved general case: 010447 has one `Ø28.5 + 4×Ø5.5` connected cut contour built from five contributed source cut regions, preserving four Ø5.5 nominal callout locations.

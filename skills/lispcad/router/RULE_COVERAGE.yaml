@@ -1,0 +1,260 @@
+schema_version: 1
+release: V4.33
+purpose: ROUTING_COVERAGE_AUDIT
+
+# This file proves where approved release families live after modular routing.
+# It is an audit map, not an instruction to load every file for every job.
+release_coverage:
+  V4.33:
+    active:
+      - AI_ENTRYPOINT.md
+      - references/HOLISTIC_ENGINEERING_CHALLENGE.md
+      - references/REFERENCE_EXPOSURE_FIREWALL.md
+      - references/PART_IDENTITY_GRAPH.md
+      - references/WELD_SITE_KEGAKI_CLOSURE.md
+      - references/CANONICAL_MEMBER_COMPLETENESS.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - references/MECHANICAL_CLASSIFIER.md
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/VALIDATION.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/router/FEATURE_CENSUS.md
+      - skills/lispcad/router/ROUTER.yaml
+      - tools/holistic_engineering_guard.py
+      - tools/weld_kegaki_guard.py
+      - tools/reference_exposure_guard.py
+    regression:
+      - regression/qa/521007-07_V4_33_APPROVED.md
+      - regression/tools/check_521007_07_v433.py
+      - tests/test_v433_holistic_reference_guards.py
+      - tests/test_weld_kegaki_guard.py
+  V4.32:
+    active:
+      - AI_ENTRYPOINT.md
+      - references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md
+      - references/FORMED_PROFILE_OD_MEASUREMENT.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521006-18_V4_32_APPROVED.md
+      - regression/tools/check_521006_18_v432.py
+      - tests/test_v432_skill_rules.py
+  V4.31:
+    active:
+      - AI_ENTRYPOINT.md
+      - references/CANONICAL_MEMBER_COMPLETENESS.md
+      - tools/CANONICAL_INPUT_SCHEMA_V431.md
+      - tools/canonical_contract.py
+      - tools/export_canonical_dxf.py
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-05_V4_31_APPROVED.md
+      - regression/tools/check_521005_05_v431.py
+      - tests/test_v431_skill_rules.py
+  V4.30:
+    active:
+      - AI_ENTRYPOINT.md
+      - references/RUNTIME_AUTHORITY_GUARD.md
+      - references/SOURCE_FEATURE_GROUP_CLOSURE.md
+      - references/BEND_EDGE_RELIEF_90.md
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-05_V4_30_APPROVED.md
+      - regression/tools/check_521005_05_v430.py
+      - tests/test_v430_skill_rules.py
+  V4.29:
+    active:
+      - references/SOURCE_MANUFACTURING_NOTE_CENSUS.md
+      - skills/lispcad/router/FEATURE_CENSUS.md
+      - skills/lispcad/features/SLIT_RELIEF.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-13_V4_29_APPROVED.md
+      - regression/tools/check_521005_13_v429.py
+      - regression/assets/521005-13/SLIT_FIXTURE.dxf
+  V4.28:
+    active:
+      - references/FACE_CREATION_BEND_EVIDENCE.md
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-02_V4_28_APPROVED.md
+      - regression/tools/check_521005_02_v428.py
+  V4.27:
+    active:
+      - skills/lispcad/router/FEATURE_CENSUS.md
+      - skills/lispcad/features/KEGAKI.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - skills/lispcad/router/ROUTER.yaml
+    regression:
+      - regression/qa/521005-01_V4_27_APPROVED.md
+      - regression/tools/check_521005_01_v427.py
+  V4.26:
+    active:
+      - references/DXF_PHYSICAL_CURVE_DECODING.md
+      - skills/lispcad/router/FEATURE_CENSUS.md
+      - skills/lispcad/router/ROUTER.yaml
+      - skills/lispcad/core/CAD_OUTPUT.md
+    regression:
+      - regression/qa/521001-19_V4_26_APPROVED.md
+      - regression/tools/check_521001_19_v426.py
+  V4.25:
+    active:
+      - references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - references/SOURCE_DATA_CLASSIFICATION.md
+      - references/MATERIAL_RULES.md
+      - skills/lispcad/features/HOLES_TAPS.md
+      - skills/lispcad/features/CHAMFER_RADIUS.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/521001-20_V4_25_APPROVED.md
+      - regression/tools/check_521001_20_v425.py
+  V4.24:
+    active:
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - references/SOURCE_DATA_CLASSIFICATION.md
+      - references/MATERIAL_RULES.md
+      - skills/lispcad/features/HOLES_TAPS.md
+      - skills/lispcad/core/CROSS_FEATURE_VALIDATION.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/521001-13_V4_24_APPROVED.md
+      - regression/tools/check_521001_13_v424.py
+  V4.23:
+    active:
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/521001-03_V4_23_APPROVED.md
+      - regression/tools/check_521001_03_v423.py
+  V4.22:
+    active:
+      - references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520930-10_V4_22_APPROVED.md
+      - regression/tools/check_520930_10_v422.py
+  V4.21:
+    active:
+      - references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520930-03_V4_21_APPROVED.md
+  V4.20:
+    active:
+      - references/SOURCE_DATA_CLASSIFICATION.md
+      - references/MECHANICAL_CLASSIFIER.md
+      - skills/lispcad/features/KEGAKI.md
+      - skills/lispcad/features/SLIT_RELIEF.md
+      - skills/lispcad/features/RIB.md
+      - skills/lispcad/features/CURVED_SLOT.md
+    regression:
+      - regression/qa/520928-20_V4_20_APPROVED.md
+      - regression/qa/HD4_V4_20_APPROVED.md
+      - regression/qa/SILT_GT90_V4_20_APPROVED.md
+      - regression/tools/check_v420_source_mech.py
+  V4.19:
+    active:
+      - references/FACE_GRAPH_UNFOLD_PROTOCOL.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+    regression:
+      - regression/qa/520929-25_V4_19_APPROVED.md
+      - regression/tools/check_520929_25_v419.py
+  V4.18:
+    active:
+      - references/BOXMET_SLIT_RELIEF.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520929-18_V4_18_APPROVED.md
+      - regression/tools/check_520929_18_v418.py
+  V4.17:
+    active:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/features/KEGAKI.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520929-10_V4_17_APPROVED.md
+      - regression/tools/check_520929_10_v417.py
+  V4.16:
+    active:
+      - references/BOXMET_SLIT_RELIEF.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+    regression:
+      - regression/qa/520801-04_V4_16_APPROVED.md
+      - regression/tools/check_520801_04_v416.py
+  V4.15:
+    active:
+      - references/ACUTE_BEND_LT85_METHOD.md
+      - references/ACUTE_BEND_LT85_FROM_SOURCE.md
+    regression:
+      - regression/qa/ACUTE_BEND_LT85_APPROVED.md
+      - regression/tools/check_acute_bend_lt85.py
+  V4.14:
+    active:
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520217-26_V4_14_APPROVED.md
+  V4.13:
+    active:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+    regression:
+      - regression/qa/520315-18_V4_13_APPROVED.md
+  V4.12:
+    active:
+      - references/MATERIAL_RULES.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520217-27_V4_12_APPROVED.md
+  V4.11:
+    active:
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/qa/520625-15_V4_11_APPROVED.md
+  V4.10:
+    active:
+      - skills/lispcad/core/DATUM_DIMENSION.md
+    regression:
+      - regression/datum/520728-06_043793_TOP_LEFT_APPROVED.md
+  V4.9:
+    active:
+      - skills/lispcad/core/CAD_OUTPUT.md
+    regression:
+      - regression/export/DXF_SINGLE_COMPOSITE.md
+  V4.8:
+    active:
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/VALIDATION.md
+    regression:
+      - regression/datum/520709-07_APPROVED.md
+  BASELINE_V4_3_TO_V4_7:
+    active:
+      - skills/lispcad/core/DRAWING_READING.md
+      - skills/lispcad/core/DATUM_DIMENSION.md
+      - skills/lispcad/core/VALIDATION.md
+      - skills/lispcad/core/CAD_OUTPUT.md
+      - skills/lispcad/modes/FLAT_NO_BEND.md
+      - skills/lispcad/modes/BEND_UNFOLD.md
+      - references/MATERIAL_RULES.md
+      - references/NOBI_TABLES.md
+      - references/THREAD_PILOT_TABLE.md
+
+audit_only_snapshots:
+  - skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md
+  - skills/lispcad/versions/
+  - docs/history/

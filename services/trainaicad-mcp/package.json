@@ -1,0 +1,23 @@
+{
+  "name": "@trainaicad/mcp",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Experimental TrainAiCad MCP V0.3 full CAD runtime",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "tsx src/http.ts",
+    "check": "tsc --noEmit && npm test",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/node": "^2.1.0",
+    "@modelcontextprotocol/server": "^2.2.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.0"
+  }
+}
