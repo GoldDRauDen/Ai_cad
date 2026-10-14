@@ -7,9 +7,12 @@ from collections import defaultdict
 
 from weld_kegaki_guard import WeldKegakiError, validate_weld_kegaki
 
-CONTRACT = "TrainAiCad-CANONICAL-V4.31"
+CONTRACT_V431 = "TrainAiCad-CANONICAL-V4.31"  # legacy: only for approved fixtures
 CONTRACT_V434 = "TrainAiCad-CANONICAL-V4.34"
-SUPPORTED_CONTRACTS = {CONTRACT, CONTRACT_V434}
+# Default for every new job (plan_claude_fix F2). V4.31 requires legacy_fixture: true,
+# so a new job cannot silently skip the V4.34 material / HL / witness gates.
+CONTRACT = CONTRACT_V434
+SUPPORTED_CONTRACTS = {CONTRACT_V431, CONTRACT_V434}
 SOURCE_STATUSES = {"PROVED", "FLAGGED", "CANCELED"}
 CANON_SOURCE_STATUSES = {"PROVED", "PREVIEW", "FLAGGED_NO_GEOMETRY", "SOURCE_VIEW"}
 ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$")
@@ -190,6 +193,9 @@ def validate_canonical_job(job: dict) -> dict:
     contract = job.get("canonical_contract")
     if contract not in SUPPORTED_CONTRACTS:
         fail(f"job canonical_contract must be in {sorted(SUPPORTED_CONTRACTS)}")
+    if contract == CONTRACT_V431 and job.get("legacy_fixture") is not True:
+        fail("CANONICAL-V4.31 is legacy-only: new jobs must use CANONICAL-V4.34, "
+             "or set legacy_fixture: true for an approved V4.31 fixture")
     parts = job.get("parts")
     if not isinstance(parts, list) or not parts:
         fail("canonical job requires parts")

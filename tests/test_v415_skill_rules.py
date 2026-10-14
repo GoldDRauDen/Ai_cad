@@ -15,7 +15,7 @@ PROOF=ROOT/"regression/assets/acute_bend_lt85/ACUTE_BEND_LT85_OD_PROOF.dxf"
 SVG=ROOT/"regression/assets/acute_bend_lt85/ACUTE_BEND_LT85_CONSTRUCTION.svg"
 BEND=ROOT/"skills/lispcad/modes/BEND_UNFOLD.md"
 def test_v415_preserved_v414_preserved():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     assert RELEASE.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.15 PORTABLE")
     assert V414.read_text(encoding="utf-8").startswith("# SKILL_LISPCAD V4.14 PORTABLE")
     assert "V4.15" in entry

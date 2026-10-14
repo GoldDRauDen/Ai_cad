@@ -3,7 +3,7 @@ Production E2E for **new** jobs uses `TrainAiCad-CANONICAL-V4.34` plus `tools/CA
 
 # AI ENTRYPOINT — TrainAiCad repo-direct production
 
-Current production release is **V4.33**.
+Current production release is **V4.34**.
 
 **KH851 weld-location KEGAKI completeness:** after reading numeric customer
 code and before declaring KEGAKI=NO, follow
@@ -75,7 +75,8 @@ SOURCE
 Mandatory router files:
 - `skills/lispcad/router/FEATURE_CENSUS.md`
 - `skills/lispcad/router/ROUTER.yaml`
-- `skills/lispcad/router/RULE_COVERAGE.yaml`
+
+Audit-only map, NOT loaded per job: `skills/lispcad/router/RULE_COVERAGE.yaml` (plan_claude_fix Phase 3).
 
 Always-on core/source-parsing references are declared in `ROUTER.yaml`. Do not invent a different core set from memory.
 
@@ -91,7 +92,7 @@ Before final canonical serialization, run `FINAL_ENGINEERING_SANITY_REVIEW`. A P
 
 For calibration/reference work, freeze `SOURCE_ONLY_SNAPSHOT` before reference exposure. After the sample/reference is visible, a previously unresolved claim cannot be rewritten as source-proved unless new non-reference evidence is recorded. Otherwise retain `REFERENCE_ASSISTED_UNDERSTANDING`. Operator-declared sample FLAG/Magenta geometry remains `CUSTOMER_CONFIRMATION_PENDING` and is not approved-reference authority.
 
-V4.33 does **not** change the canonical serialization schema; continue using `TrainAiCad-CANONICAL-V4.31` and `tools/export_canonical_dxf.py`.
+New jobs use `TrainAiCad-CANONICAL-V4.34` (`tools/CANONICAL_INPUT_SCHEMA_V434.md`) through `tools/export_canonical_dxf.py`. `TrainAiCad-CANONICAL-V4.31` is legacy-only and requires `legacy_fixture: true` on an approved fixture.
 
 ## 2A. V4.32 bend attachment-edge / formed-profile OD hard gate
 
@@ -115,7 +116,7 @@ Bent-face features retain physical datum-edge identity such as `BEND_EDGE` or `F
 
 Regression `521006-18_V4_32_APPROVED` covers the demonstrated 058648 reversed attachment, 058653/058655 outside-length ownership, 058649/058650 R3 depth endpoint semantics, 058652 180-degree equivalence control, and 058654 unresolved-reference boundary. Job-specific directions/numbers remain regression evidence only.
 
-V4.32 does **not** change the canonical serialization schema. Continue using `TrainAiCad-CANONICAL-V4.31` and `tools/export_canonical_dxf.py` until a separately approved canonical schema change exists.
+V4.32 does **not** change the canonical serialization schema. For new jobs, the schema is the current `TrainAiCad-CANONICAL-V4.34` (see the V4.34 supplement at the top of this file).
 
 ## 2B. V4.31 E2E canonical completeness hard gate
 
@@ -222,37 +223,9 @@ V4.25 requires `RAW_DATA_SNAPSHOT`, `PHYSICAL_DATA_BASELINE`, `SAME_PARAMETER_GA
 
 For reference/sample calibration of a new/source-only solve, freeze `SOURCE_ONLY_SNAPSHOT` before exposing or decoding the sample/reference geometry; customer DXF DATA remains source-authoritative and is decoded normally. After freeze, compare physical reference geometry without reverse-fitting the source interpretation. DIRECT_EXISTING_DXF_AUDIT may compare existing AI DXF ↔ sample as required by that audit mode, but any later claim about what the original source alone established remains bounded by the frozen/pre-existing source evidence. V4.30 additionally requires same-physical-parameter identity before a numeric source/reference conflict is declared.
 
-## 7. Release wiring index — backward-compatible regression contract
+## 7. Release wiring index
 
-- **V4.33:** `HOLISTIC_ENGINEERING_CHALLENGE`, `PART_IDENTITY_GRAPH`, `VIEWS_ONLY_SOURCE_VIEW_COMPLETENESS`, `FINAL_ENGINEERING_SANITY_REVIEW`, `SOURCE_ONLY_SNAPSHOT`, `POST_REFERENCE_SOURCE_REWRITE`; active references `references/HOLISTIC_ENGINEERING_CHALLENGE.md`, `references/PART_IDENTITY_GRAPH.md`, `references/REFERENCE_EXPOSURE_FIREWALL.md`; executable guards `tools/holistic_engineering_guard.py`, `tools/reference_exposure_guard.py`; regression `regression/qa/521007-07_V4_33_APPROVED.md`; executable `regression/tools/check_521007_07_v433.py`; tests `tests/test_v433_holistic_reference_guards.py`.
-- **V4.32:** `BEND_ATTACHMENT_EDGE_LOCKED`, physical `FACE_A.edge_i <-> BEND <-> FACE_B.edge_j`, `MEASUREMENT_CONSTRUCTION_VIEW`, `OD_actual` ownership and bent-face physical edge datum propagation; active references `references/BEND_ATTACHMENT_EDGE_OWNERSHIP.md`, `references/FORMED_PROFILE_OD_MEASUREMENT.md`, `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`; regression `regression/qa/521006-18_V4_32_APPROVED.md`; executable `regression/tools/check_521006_18_v432.py`.
-- **V4.31:** `CANONICAL_MEMBER_COMPLETENESS`, `NO_DIRECT_DXF_FROM_INTERPRETATION`, `PROVED_SOURCE_MEMBERS_EQ_CANONICAL`, `CANONICAL_ENTITY_IDS_EQ_SAVED_DXF_ENTITY_IDS`; active reference `references/CANONICAL_MEMBER_COMPLETENESS.md`; executable production path `tools/canonical_contract.py` + `tools/export_canonical_dxf.py`; schema `tools/CANONICAL_INPUT_SCHEMA_V431.md`; regression `regression/qa/521005-05_V4_31_APPROVED.md`; executable `regression/tools/check_521005_05_v431.py`.
-- **V4.30:** `RUNTIME_AUTHORITY_GUARD`, `SOURCE_FEATURE_GROUP`, `GROUP_COUNT_CLOSURE`, `SAME_PHYSICAL_PARAMETER_BEFORE_REFERENCE_CONFLICT`, `BEND_EDGE_LENGTH_LOCK`, `BEND_END_OFFSET_90`; active references `references/RUNTIME_AUTHORITY_GUARD.md`, `references/SOURCE_FEATURE_GROUP_CLOSURE.md`, `references/BEND_EDGE_RELIEF_90.md`; regression `regression/qa/521005-05_V4_30_APPROVED.md`; executable `regression/tools/check_521005_05_v430.py`. The 90-degree rule is `S>0 -> NO SLIT`, `S=0 -> T+0.2`, `S<0 -> T+0.2 from actual recessed edge / |S|+T+0.2 from zero reference`.
-- **V4.29:** `SOURCE_MANUFACTURING_NOTE_CENSUS`, `SOURCE_NOTE_TO_FAMILY`, `SOURCE_NOTE_FEATURE_COMPLETENESS`, and custom source-instructed `スリット/SLIT`; active reference `references/SOURCE_MANUFACTURING_NOTE_CENSUS.md`; regression `regression/qa/521005-13_V4_29_APPROVED.md`; executable `regression/tools/check_521005_13_v429.py`; physical read-back fixture `regression/assets/521005-13/SLIT_FIXTURE.dxf`. Custom slit size/position is source-specific.
-- **V4.28:** `FACE_CREATION_REQUIRES_BEND_EVIDENCE`, `SAME_FACE_FIRST`, `LOCAL_BEND_DOMAIN_BEFORE_UNFOLD`, `THEORETICAL_SHARP_CLOSURE_FOR_R_CONTOURS`; active reference `references/FACE_CREATION_BEND_EVIDENCE.md`; regression `regression/qa/521005-02_V4_28_APPROVED.md`; executable `regression/tools/check_521005_02_v428.py`.
-- **V4.27:** `REVERSED_E_ABOVE_BARCODE`, `WELD_REQUIRED_CUE`; regression `regression/qa/521005-01_V4_27_APPROVED.md`; executable `regression/tools/check_521005_01_v427.py`.
-- **V4.26:** `DXF_PHYSICAL_CURVE_DECODE_BEFORE_CENSUS`, `PHYSICAL_CURVE_CENSUS`, `POLYLINE_BULGE_IS_ARC`, `BULGE_ARC_NOT_CHORD`; reference `references/DXF_PHYSICAL_CURVE_DECODING.md`; regression `regression/qa/521001-19_V4_26_APPROVED.md`; executable `regression/tools/check_521001_19_v426.py`.
-- **V4.25:** `RAW_DATA_SNAPSHOT`, `PHYSICAL_DATA_BASELINE`, `SAME_PARAMETER_GATE`, `MANUFACTURING_CHANGE_LEDGER`, `UNTOUCHED_DATA_INVARIANCE_CHECK`; reference `references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md`; regression `regression/qa/521001-20_V4_25_APPROVED.md`; executable `regression/tools/check_521001_20_v425.py`.
-- **V4.24:** `DATA_MANUFACTURING_CANONICALIZATION`, `DATA_AUTO_R_CANONICALIZATION`, `DATA_TAP_NOMINAL_VALIDATION`; regression `regression/qa/521001-13_V4_24_APPROVED.md`; executable `regression/tools/check_521001_13_v424.py`.
-- **V4.23:** `SOURCE_PHYSICAL_TO_CANONICAL`, `CANONICAL_TO_SOURCE_PHYSICAL`, `PER_BEND_WITNESS_LEDGER`, `THICKNESS_SINGLE_USE`, `THICKNESS_REPRESENTATION`; regression `regression/qa/521001-03_V4_23_APPROVED.md`; executable `regression/tools/check_521001_03_v423.py`.
-- **V4.22:** `SOURCE_EXHAUSTED_BEFORE_VIEWS_ONLY` and `SOURCE_FEATURE_COMPLETENESS`; regression `regression/qa/520930-10_V4_22_APPROVED.md`; executable `regression/tools/check_520930_10_v422.py`.
-- **V4.21:** `references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md`; regression `regression/qa/520930-03_V4_21_APPROVED.md`; retain `DATA_REQUIRED_MISSING` and mandatory source reprojection.
-- **V4.20:** source/mechanical classification plus independent KEGAKI / SLIT_RELIEF / RIB / CURVED_SLOT routing; regression `regression/qa/520928-20_V4_20_APPROVED.md`, `regression/qa/HD4_V4_20_APPROVED.md`, `regression/qa/SILT_GT90_V4_20_APPROVED.md`; executable `regression/tools/check_v420_source_mech.py`.
-- **V4.19:** V4.19 520929-25 hard-gate routing; `references/FACE_GRAPH_UNFOLD_PROTOCOL.md`; regression `regression/qa/520929-25_V4_19_APPROVED.md`; executable `regression/tools/check_520929_25_v419.py`.
-- **V4.18:** V4.18 520929-18 hard-gate routing; detailed-source bundle, C/R semantic lock and BOXMET signed orientation; `references/BOXMET_SLIT_RELIEF.md`; regression `regression/qa/520929-18_V4_18_APPROVED.md`; executable `regression/tools/check_520929_18_v418.py`.
-- **V4.17:** V4.17 520929-10 hard-gate routing; source witness, mirror scope, datum, KEGAKI and actual-unit guards; regression `regression/qa/520929-10_V4_17_APPROVED.md`; executable `regression/tools/check_520929_10_v417.py`.
-- **V4.16:** face-first dimension ownership, explicit R/C family quantity closure and BOXMET four-flange routing through `references/BOXMET_SLIT_RELIEF.md`; regression `regression/qa/520801-04_V4_16_APPROVED.md`.
-- **V4.15:** acute bend <85° routing through `references/ACUTE_BEND_LT85_METHOD.md` and `references/ACUTE_BEND_LT85_FROM_SOURCE.md`; regression `regression/qa/ACUTE_BEND_LT85_APPROVED.md`; executable `regression/tools/check_acute_bend_lt85.py`.
-- **V4.14:** existing-output direct audit and overlapping-cut QA retained in active core modules; regression `regression/qa/520217-26_V4_14_APPROVED.md`.
-- **V4.13:** source-unit conflict, strict derived comparison, inside-view and local-face mapping hardening; regression `regression/qa/520315-18_V4_13_APPROVED.md`.
-- **V4.12:** material/preview/shop-distance hardening; regression `regression/qa/520217-27_V4_12_APPROVED.md`.
-- **V4.11:** DRAW -> FLAG -> CONFIRM review-only preview; regression `regression/qa/520625-15_V4_11_APPROVED.md`.
-- **V4.10:** source-origin/axis mapping; regression `regression/datum/520728-06_043793_TOP_LEFT_APPROVED.md`.
-- **V4.9:** one composite DXF output contract; regression `regression/export/DXF_SINGLE_COMPOSITE.md`.
-- **V4.8:** cancellation + datum/feature family regression `regression/datum/520709-07_APPROVED.md`.
-- **V4.3–V4.7:** approved baseline rules remain in active modular core/mode/feature/reference files as mapped by `skills/lispcad/router/RULE_COVERAGE.yaml`.
-
-The compact index preserves machine-readable/testable release wiring. It is not an instruction to load every listed regression on every job.
+Moved to `docs/RELEASE_INDEX.md` to keep the per-job load small. Release gates themselves remain in Sections 2–6 of this file.
 
 ## 8. Production completeness
 

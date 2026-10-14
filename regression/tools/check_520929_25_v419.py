@@ -71,7 +71,7 @@ def main():
     portable = (root/"skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md").read_text(encoding="utf-8")
     release = (root/"skills/lispcad/versions/V4.19/SKILL_LISPCAD_V4_19_PORTABLE.md").read_text(encoding="utf-8")
     old = (root/"skills/lispcad/versions/V4.18/SKILL_LISPCAD_V4_18_PORTABLE.md").read_text(encoding="utf-8")
-    entry = (root/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (root / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (root / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     protocol = (root/"references/FACE_GRAPH_UNFOLD_PROTOCOL.md").read_text(encoding="utf-8")
     bend = (root/"skills/lispcad/modes/BEND_UNFOLD.md").read_text(encoding="utf-8")
     validation = (root/"skills/lispcad/core/VALIDATION.md").read_text(encoding="utf-8")

@@ -28,7 +28,7 @@ def unchanged_curve_signature_ok(source_signature, output_signature, canonicaliz
 current = read("skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md")
 v422 = read("skills/lispcad/versions/V4.22/SKILL_LISPCAD_V4_22_PORTABLE.md")
 v421 = read("skills/lispcad/versions/V4.21/SKILL_LISPCAD_V4_21_PORTABLE.md")
-entry = read("AI_ENTRYPOINT.md")
+entry = (read("AI_ENTRYPOINT.md") + read("docs/RELEASE_INDEX.md"))
 face_graph = read("references/FACE_GRAPH_UNFOLD_PROTOCOL.md")
 validation = read("skills/lispcad/core/VALIDATION.md")
 qa = read("regression/qa/520930-10_V4_22_APPROVED.md")

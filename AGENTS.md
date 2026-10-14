@@ -8,7 +8,7 @@ For every new CAD job:
 
 1. Read root `SKILL.md` as the universal cross-agent workflow contract, then `AI_BOOTSTRAP.md`.
 2. Resolve the current repository snapshot/freshness using the environment available to the agent.
-3. Read the current `AI_ENTRYPOINT.md` and mandatory routing files: `skills/lispcad/router/FEATURE_CENSUS.md`, `skills/lispcad/router/ROUTER.yaml`, and `skills/lispcad/router/RULE_COVERAGE.yaml`, then load the current Router-declared modules/references.
+3. Read the current `AI_ENTRYPOINT.md` and mandatory routing files: `skills/lispcad/router/FEATURE_CENSUS.md` and `skills/lispcad/router/ROUTER.yaml` (`RULE_COVERAGE.yaml` is audit-only, not read per job), then load the current Router-declared modules/references.
 4. Pin that repository/routing snapshot for the job; do not silently change engineering authority halfway through an unfinished DXF.
 5. Execute the current repo-direct E2E workflow on the supplied source.
 

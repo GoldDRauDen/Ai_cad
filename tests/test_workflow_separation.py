@@ -23,7 +23,7 @@ def test_mcp_research_workflow_isolated():
     assert "serializer" not in data.get("jobs", {})
 
 def test_entrypoint_declares_repo_direct_default():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     assert "MCP is research-only and is NOT part of the production CAD pipeline" in entry
     assert "Default CAD behavior remains repo-direct" in entry
     assert "Do not route through MCP" in entry

@@ -92,12 +92,12 @@ Generated scoped RAG index, single-file portable rulepack and benchmark:
 
 ```sh
 python tools/audit_rule_coverage.py
-python tools/build_rule_index.py --output ../RAG_INDEX.yaml
+python tools/build_rule_index.py --output ../ROUTE_INDEX.yaml
 python tools/build_rule_bundle.py --output ../TrainAiCad_E2E_RULEPACK.md
 python tools/benchmark_rule_routes.py
 ```
 
-`RAG_INDEX.yaml` is an on-demand derivative of Router; it is **not**
+`ROUTE_INDEX.yaml` is an on-demand derivative of Router; it is **not**
 another manually maintained source of production authority. Regression
 documents and history remain evidence, not live rule context; experimental
 MCP stays isolated. Exact duplicate-paragraph analysis is available via

@@ -61,7 +61,7 @@ def test_source_note_rule_wiring():
         assert token in text
 
     router = yaml.safe_load((root / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
-    entry = (root / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (root / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (root / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     coverage = yaml.safe_load((root / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
 
     assert _release_number(router["release"]) >= 29

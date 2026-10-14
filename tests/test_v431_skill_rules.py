@@ -13,7 +13,7 @@ def _release_number(value: str) -> int:
 
 
 def test_v431_release_wiring():
-    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
     assert "- **V4.31:**" in entry
@@ -61,7 +61,7 @@ def test_v431_contract_and_serializer_tokens():
 
 
 def test_v431_normal_entrypoint_names_canonical_serializer():
-    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     assert "tools/export_canonical_dxf.py" in entry
     assert "NO_DIRECT_DXF_FROM_INTERPRETATION" in entry
     assert "PROVED SOURCE MEMBERS" in entry

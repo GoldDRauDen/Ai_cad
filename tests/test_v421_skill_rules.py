@@ -7,7 +7,7 @@ RELEASE=ROOT/"skills/lispcad/versions/V4.21/SKILL_LISPCAD_V4_21_PORTABLE.md"
 BASE=ROOT/"skills/lispcad/versions/V4.20/SKILL_LISPCAD_V4_20_PORTABLE.md"
 
 def test_v421_historical_release_and_inheritance():
-    entry=(ROOT/"AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry=(ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     skill=CURRENT.read_text(encoding="utf-8")
     release=RELEASE.read_text(encoding="utf-8")
     assert release.startswith("# SKILL_LISPCAD V4.21 PORTABLE")

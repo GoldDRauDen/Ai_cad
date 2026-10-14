@@ -15,7 +15,7 @@ def normalize_coincident(lines,ndigits=9):
 current=read("skills/lispcad/portable/SKILL_LISPCAD_CURRENT.md")
 v423=read("skills/lispcad/versions/V4.23/SKILL_LISPCAD_V4_23_PORTABLE.md")
 v422=read("skills/lispcad/versions/V4.22/SKILL_LISPCAD_V4_22_PORTABLE.md")
-entry=read("AI_ENTRYPOINT.md"); physical=read("references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md")
+entry=(read("AI_ENTRYPOINT.md") + read("docs/RELEASE_INDEX.md")); physical=read("references/DATA_PHYSICAL_CENSUS_AND_BIDIRECTIONAL_QA.md")
 geom=read("references/PDF_DATA_RAW_GEOMETRY_PRESERVATION.md"); mech=read("references/MECHANICAL_CLASSIFIER.md")
 face=read("references/FACE_GRAPH_UNFOLD_PROTOCOL.md"); val=read("skills/lispcad/core/VALIDATION.md")
 bend=read("skills/lispcad/modes/BEND_UNFOLD.md"); qa=read("regression/qa/521001-03_V4_23_APPROVED.md")

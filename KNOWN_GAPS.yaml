@@ -9,13 +9,7 @@
 # CAD output, so each fix needs explicit user approval (DUYET / PUSH).
 # Source plan: docs/PLAN_CLAUDE_FIX.md
 
-rule_gaps:
-  - path: references/MATERIAL_ALIASES.yaml
-    id: F1
-    reason: >
-      V4.34 material alias table is not listed in ROUTER.yaml, RULE_COVERAGE.yaml
-      or FEATURE_CENSUS.md. Only a pointer in AI_ENTRYPOINT.md header mentions it.
-      A router-following agent will not load it.
+rule_gaps: []   # F1 closed: MATERIAL_ALIASES.yaml is routed in ROUTER.yaml (V4.34)
 
 # role: production = part of the CAD pipeline (export, validation, guards, resolver)
 # role: audit      = build, benchmark, coverage or duplicate audits, never CAD output
@@ -25,7 +19,7 @@ tool_acks:
   - {path: tools/cut_orientation.py, role: production, reason: V4.34 individual CUT orientation (exporter-only)}
   - {path: tools/datum_coordinates.py, role: production, reason: datum coordinate helper}
   - {path: tools/dimension_witness.py, role: production, reason: V4.34 typed witness graph validation}
-  - {path: tools/error_catalog.py, role: production, reason: error code catalog}
+  - {path: tools/error_catalog.py, role: audit, reason: read-only error catalog inspection (never modifies CAD)}
   - {path: tools/export_canonical_dxf.py, role: production, reason: canonical DXF exporter (default E2E path)}
   - {path: tools/export_dxf.py, role: production, reason: legacy/compat DXF writer and CHECKS list}
   - {path: tools/export_job_artifacts.py, role: production, reason: job artifact packaging}

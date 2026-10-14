@@ -12,7 +12,7 @@ QA = ROOT / "regression/qa/520217-26_V4_14_APPROVED.md"
 
 def test_repo_direct_release_and_preserves_v414_portable_history():
     """Repo-direct production may advance beyond the audit-only portable snapshot."""
-    entrypoint = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entrypoint = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     match = re.search(r"Current production release is [*][*](V[0-9]+[.][0-9]+)[*][*]", entrypoint)
     assert match, "Entrypoint must declare the currently approved repo-direct production release"
     active_version = match.group(1)

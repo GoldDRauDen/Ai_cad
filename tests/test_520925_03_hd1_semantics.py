@@ -115,7 +115,7 @@ def _part(code):
 
 def _job():
     return {
-        "canonical_contract": "TrainAiCad-CANONICAL-V4.31",
+        "canonical_contract": "TrainAiCad-CANONICAL-V4.31", "legacy_fixture": True,
         "job_id": "HD1_SEMANTIC_FIXTURE",
         "parts": [_part(code) for code in (*BENDS, *MARKS)],
     }

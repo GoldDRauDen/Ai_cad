@@ -45,7 +45,7 @@ particular it blocks silently omitting `STEPPED_PROFILE.md`,
 `FORMING_FEATURES.md`, and any new active rule file. This is file-level
 reachability; approval and semantic correctness still require regression.
 
-`tools/build_rule_index.py` generates a scoped `RAG_INDEX.yaml` on demand
+`tools/build_rule_index.py` generates a scoped `ROUTE_INDEX.yaml` on demand
 from the Router, separating production, opt-in QA, evidence, executable
 tools, history and experimental MCP. Do not maintain another live rule list.
 

@@ -23,7 +23,7 @@ def arc_radii(entity):
     return [float(e.dxf.radius) for e in entity.virtual_entities() if e.dxftype() == "ARC"]
 
 
-entry = read("AI_ENTRYPOINT.md")
+entry = (read("AI_ENTRYPOINT.md") + read("docs/RELEASE_INDEX.md"))
 router = read("skills/lispcad/router/ROUTER.yaml")
 coverage = read("skills/lispcad/router/RULE_COVERAGE.yaml")
 ref = read("references/DXF_PHYSICAL_CURVE_DECODING.md")

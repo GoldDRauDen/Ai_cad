@@ -41,7 +41,7 @@ def physical_segments_equal(a, b, tol=1e-12):
     return sorted(canon(x) for x in a) == sorted(canon(x) for x in b)
 
 
-entry = read("AI_ENTRYPOINT.md")
+entry = (read("AI_ENTRYPOINT.md") + read("docs/RELEASE_INDEX.md"))
 router = read("skills/lispcad/router/ROUTER.yaml")
 coverage = read("skills/lispcad/router/RULE_COVERAGE.yaml")
 contract = read("references/DATA_RAW_TO_MANUFACTURING_CONTRACT.md")

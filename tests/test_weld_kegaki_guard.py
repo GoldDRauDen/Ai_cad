@@ -25,7 +25,7 @@ CHECKS = dict.fromkeys(("contour_topology", "datum", "feature_count", "unfold",
 def fixture_job(code="059685", customer="851"):
     # Deliberate small synthetic rectangle, NOT a digitization of PDF 521013-12.
     return {
-        "canonical_contract": "TrainAiCad-CANONICAL-V4.31",
+        "canonical_contract": "TrainAiCad-CANONICAL-V4.31", "legacy_fixture": True,
         "job_id": "REGRESSION_KH851_SYNTHETIC",
         "customer_code": customer,
         "parts": [{

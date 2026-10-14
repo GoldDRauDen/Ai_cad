@@ -11,7 +11,7 @@ def _release_number(value: str) -> int:
 
 
 def test_v428_release_wiring():
-    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
     assert "- **V4.28:**" in entry

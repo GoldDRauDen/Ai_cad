@@ -9,7 +9,7 @@ V424 = ROOT / "skills/lispcad/versions/V4.24/SKILL_LISPCAD_V4_24_PORTABLE.md"
 
 
 def test_v426_release_wiring_and_portable_compatibility():
-    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     router = yaml.safe_load((ROOT / "skills/lispcad/router/ROUTER.yaml").read_text(encoding="utf-8"))
     coverage = yaml.safe_load((ROOT / "skills/lispcad/router/RULE_COVERAGE.yaml").read_text(encoding="utf-8"))
     assert "- **V4.26:**" in entry

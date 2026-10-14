@@ -53,7 +53,7 @@ rule union is still needed and its total bytes are listed.
 
 ## Rule/index/evidence audits
 
-- Generated `RAG_INDEX.yaml`: `python tools/build_rule_index.py --output ../RAG_INDEX.yaml`.
+- Generated `ROUTE_INDEX.yaml`: `python tools/build_rule_index.py --output ../ROUTE_INDEX.yaml`.
   Derived from active Router, separates production, QA-only, evidence,
   executable tools, archived history and MCP research.
 - Generated portable one-file skill:

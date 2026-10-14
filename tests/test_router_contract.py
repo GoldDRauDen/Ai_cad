@@ -80,7 +80,7 @@ def test_coverage_map_paths_exist():
 
 
 def test_entrypoint_and_agents_use_router_not_full_portable():
-    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8")
+    entry = (ROOT / "AI_ENTRYPOINT.md").read_text(encoding="utf-8") + (ROOT / "docs/RELEASE_INDEX.md").read_text(encoding="utf-8")
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     assert "skills/lispcad/router/FEATURE_CENSUS.md" in entry
     assert "skills/lispcad/router/ROUTER.yaml" in entry
